@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AddEntryForm } from "@/components/add-entry-form";
 import { DeleteEntryButton } from "@/components/delete-entry-button";
+import { MileageChart } from "@/components/mileage-chart";
 import {
   Table,
   TableBody,
@@ -42,6 +43,16 @@ export default async function CarPage(props: PageProps<"/cars/[carId]">) {
           Odometer readings in <span data-testid="car-unit">{car.unit}</span>
         </p>
       </div>
+
+      <section className="flex min-w-0 flex-col gap-2">
+        <h2 className="font-medium">Mileage over time</h2>
+        <MileageChart
+          unit={car.unit}
+          points={[...entries]
+            .reverse()
+            .map(({ recordedAt, odometer }) => ({ recordedAt, odometer }))}
+        />
+      </section>
 
       <AddEntryForm carId={car.id} unit={car.unit} />
 

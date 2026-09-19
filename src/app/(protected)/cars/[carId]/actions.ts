@@ -15,11 +15,7 @@ export type AddEntryState =
   | { status: "idle" }
   | { status: "saved" }
   | { status: "error"; message: string }
-  | {
-      status: "lower";
-      latest: number;
-      entered: { odometer: number; recordedAt: string; note: string };
-    };
+  | { status: "lower"; odometer: number; latest: number };
 
 export async function addMileageEntry(
   carId: string,
@@ -47,7 +43,7 @@ export async function addMileageEntry(
 
   const latest = await latestOdometer(owned.id);
   if (latest !== null && odometer < latest && !confirmLower) {
-    return { status: "lower", latest, entered: { odometer, recordedAt, note } };
+    return { status: "lower", odometer, latest };
   }
 
   await db.insert(mileageEntry).values({

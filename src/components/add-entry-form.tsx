@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useSyncExternalStore } from "react";
+import { useActionState, useState, useSyncExternalStore } from "react";
 import {
   addMileageEntry,
   type AddEntryState,
@@ -25,7 +25,14 @@ export function AddEntryForm({ carId, unit }: { carId: string; unit: Unit }) {
   );
   // Today's date depends on the visitor's timezone, so it is only known on the client.
   const mounted = useSyncExternalStore(noopSubscribe, () => true, () => false);
-  const entered = state.status === "lower" ? state.entered : null;
+  const [fields, setFields] = useState({ odometer: "", recordedAt: "", note: "" });
+  const [seenState, setSeenState] = useState(state);
+  if (state !== seenState) {
+    setSeenState(state);
+    if (state.status === "saved") setFields({ odometer: "", recordedAt: "", note: "" });
+  }
+  const update = (name: keyof typeof fields) => (e: React.ChangeEvent<HTMLInputElement>) =>
+    setFields((current) => ({ ...current, [name]: e.target.value }));
 
   return (
     <form action={action} className="flex flex-col gap-4 rounded-lg border p-4">
@@ -41,7 +48,8 @@ export function AddEntryForm({ carId, unit }: { carId: string; unit: Unit }) {
             min={0}
             step={1}
             required
-            defaultValue={entered?.odometer ?? ""}
+            value={fields.odometer}
+            onChange={update("odometer")}
           />
         </div>
         <div className="flex flex-col gap-1.5">
@@ -51,7 +59,8 @@ export function AddEntryForm({ carId, unit }: { carId: string; unit: Unit }) {
             name="recordedAt"
             type="date"
             required
-            defaultValue={entered?.recordedAt ?? (mounted ? localIsoDate() : "")}
+            value={fields.recordedAt || (mounted ? localIsoDate() : "")}
+            onChange={update("recordedAt")}
           />
         </div>
       </div>
@@ -62,7 +71,8 @@ export function AddEntryForm({ carId, unit }: { carId: string; unit: Unit }) {
           name="note"
           maxLength={200}
           placeholder="e.g. oil change"
-          defaultValue={entered?.note ?? ""}
+          value={fields.note}
+          onChange={update("note")}
         />
       </div>
 
@@ -79,7 +89,7 @@ export function AddEntryForm({ carId, unit }: { carId: string; unit: Unit }) {
           className="flex flex-col gap-3 rounded-md border border-amber-500/50 bg-amber-500/10 p-3 text-sm"
         >
           <p>
-            {state.entered.odometer.toLocaleString("en")} {unit} is lower than the
+            {state.odometer.toLocaleString("en")} {unit} is lower than the
             latest reading of {state.latest.toLocaleString("en")} {unit}. Save it
             anyway?
           </p>
