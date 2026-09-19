@@ -2,14 +2,18 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { AddCarDialog } from "@/components/add-car-dialog";
 import { DeleteCarButton } from "@/components/delete-car-button";
-import { listCars } from "@/lib/cars";
+import { SetDefaultCarButton } from "@/components/set-default-car-button";
+import { getDefaultCarId, listCars } from "@/lib/cars";
 import { requireSession } from "@/lib/session";
 
 export const metadata: Metadata = { title: "Cars" };
 
 export default async function CarsPage() {
   const { user } = await requireSession();
-  const cars = await listCars(user.id);
+  const [cars, defaultCarId] = await Promise.all([
+    listCars(user.id),
+    getDefaultCarId(user.id),
+  ]);
 
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-4 py-8">
@@ -27,21 +31,34 @@ export default async function CarsPage() {
         </div>
       ) : (
         <ul className="divide-y rounded-lg border">
-          {cars.map((car) => (
-            <li
-              key={car.id}
-              className="flex items-center justify-between gap-4 px-4 py-3"
-            >
-              <Link
-                href={`/cars/${car.id}`}
-                className="flex min-w-0 flex-1 items-baseline gap-2"
+          {cars.map((car) => {
+            const isDefault = car.id === defaultCarId;
+            return (
+              <li
+                key={car.id}
+                className="flex items-center justify-between gap-4 px-4 py-3"
               >
-                <span className="truncate font-medium">{car.name}</span>
-                <span className="text-muted-foreground text-sm">{car.unit}</span>
-              </Link>
-              <DeleteCarButton carId={car.id} carName={car.name} />
-            </li>
-          ))}
+                <Link
+                  href={`/cars/${car.id}`}
+                  className="flex min-w-0 flex-1 flex-wrap items-baseline gap-x-2 gap-y-1"
+                >
+                  <span className="truncate font-medium">{car.name}</span>
+                  <span className="text-muted-foreground text-sm">{car.unit}</span>
+                  {isDefault && (
+                    <span className="bg-secondary text-secondary-foreground rounded-full px-2 py-0.5 text-xs font-medium">
+                      Default
+                    </span>
+                  )}
+                </Link>
+                <div className="flex items-center gap-1">
+                  {!isDefault && (
+                    <SetDefaultCarButton carId={car.id} carName={car.name} />
+                  )}
+                  <DeleteCarButton carId={car.id} carName={car.name} />
+                </div>
+              </li>
+            );
+          })}
         </ul>
       )}
     </main>

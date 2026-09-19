@@ -17,6 +17,15 @@ export const car = pgTable(
   (table) => [index("car_user_id_idx").on(table.userId)],
 );
 
+export const userPreference = pgTable("user_preference", {
+  userId: text("user_id")
+    .primaryKey()
+    .references(() => user.id, { onDelete: "cascade" }),
+  defaultCarId: uuid("default_car_id").references(() => car.id, {
+    onDelete: "set null",
+  }),
+});
+
 export type Car = typeof car.$inferSelect;
 export type Unit = Car["unit"];
 export const UNITS = unitEnum.enumValues;

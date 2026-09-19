@@ -3,7 +3,7 @@
 import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { isCarId } from "@/lib/cars";
+import { findOwnedCar, isCarId, listCars, setDefaultCarId } from "@/lib/cars";
 import { db } from "@/lib/db";
 import { car, UNITS, type Unit } from "@/lib/db/schema";
 import { requireSession } from "@/lib/session";
@@ -22,7 +22,21 @@ export async function createCar(formData: FormData) {
     throw new Error("Invalid car.");
   }
 
-  await db.insert(car).values({ userId: user.id, name, unit });
+  const isFirstCar = (await listCars(user.id)).length === 0;
+  const [created] = await db
+    .insert(car)
+    .values({ userId: user.id, name, unit })
+    .returning({ id: car.id });
+  if (isFirstCar) await setDefaultCarId(user.id, created.id);
+  revalidatePath("/cars");
+}
+
+export async function setDefaultCar(carId: string) {
+  const { user } = await requireSession();
+  const owned = await findOwnedCar(user.id, carId);
+  if (!owned) throw new Error("Invalid car.");
+
+  await setDefaultCarId(user.id, owned.id);
   revalidatePath("/cars");
 }
 
