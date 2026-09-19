@@ -50,7 +50,7 @@ export default async function CarsPage() {
                       src={photoUrl(car.id, "thumb", car.photoUpdatedAt)}
                       alt=""
                       data-testid="car-thumb"
-                      className="h-10 w-15 shrink-0 rounded-md object-cover"
+                      className="bg-muted h-10 w-15 shrink-0 rounded-md object-contain"
                     />
                   ) : (
                     <span

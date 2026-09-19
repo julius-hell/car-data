@@ -41,7 +41,8 @@ test("add, replace and remove a car photo", async ({ page }) => {
   const thumb = await sharp(
     await (await page.request.get(`/cars/${carId}/photo?variant=thumb`)).body(),
   ).metadata();
-  expect([thumb.width, thumb.height]).toEqual([192, 128]);
+  expect(thumb.width! / thumb.height!).toBeCloseTo(640 / 480, 2);
+  expect(thumb.height).toBeLessThanOrEqual(128);
 
   await page.goto("/cars");
   await expect(page.getByTestId("car-thumb")).toBeVisible();

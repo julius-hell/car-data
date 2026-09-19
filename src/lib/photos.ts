@@ -10,14 +10,14 @@ export type PhotoVariant = (typeof PHOTO_VARIANTS)[number];
 // regenerated from the original on first request instead of needing a re-upload.
 const RENDITION_FILES: Record<Exclude<PhotoVariant, "original">, string> = {
   display: "display-v2.webp",
-  thumb: "thumb-v2.webp",
+  thumb: "thumb-v3.webp",
 };
 
 function rendition(variant: Exclude<PhotoVariant, "original">, file: Buffer) {
   const image = sharp(file).rotate();
   return variant === "display"
     ? image.resize({ width: 1600, height: 1600, fit: "inside", withoutEnlargement: true }).webp({ quality: 82 })
-    : image.resize({ width: 192, height: 128, fit: "cover" }).webp({ quality: 80 });
+    : image.resize({ width: 192, height: 128, fit: "inside" }).webp({ quality: 80 });
 }
 
 const ACCEPTED_FORMATS: Record<string, string> = {
