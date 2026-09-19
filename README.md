@@ -47,8 +47,14 @@ pnpm test:e2e      # Playwright; builds and serves a production build on :3100, 
 ```
 
 The suite runs against a production build because the service worker is
-network-only in development. To run it against the docker compose app instead:
-`PLAYWRIGHT_BASE_URL=http://localhost:3000 pnpm test:e2e`.
+network-only in development. To run it against the docker compose app instead,
+start the stack with auth rate limiting off (all tests share one IP) and point
+Playwright at it:
+
+```sh
+BETTER_AUTH_RATE_LIMIT=off docker compose up -d
+PLAYWRIGHT_BASE_URL=http://localhost:3000 pnpm test:e2e
+```
 
 First-time Playwright setup: `pnpm exec playwright install chromium`.
 

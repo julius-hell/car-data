@@ -1,5 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { addCar } from "./helpers/cars";
+import { addCar, deleteCar } from "./helpers/cars";
 import { enableVirtualPasskeys, signUp } from "./helpers/passkey";
 
 const row = (page: Page, name: string) =>
@@ -43,9 +43,7 @@ test("deleting the default car clears it and the root lands on the list", async 
   await addCar(page, "First");
   await addCar(page, "Second");
 
-  await page.getByRole("button", { name: "Delete First" }).click();
-  await page.getByRole("alertdialog").getByRole("button", { name: "Delete" }).click();
-  await expect(row(page, "First")).toBeHidden();
+  await deleteCar(page, "First");
   await expect(row(page, "Second")).not.toContainText("Default");
 
   await page.goto("/");
@@ -62,9 +60,7 @@ test("signing in lands on the default car", async ({ page }) => {
 test("signing in with cars but no default lands on the list", async ({ page }) => {
   await addCar(page, "First");
   await addCar(page, "Second");
-  await page.getByRole("button", { name: "Delete First" }).click();
-  await page.getByRole("alertdialog").getByRole("button", { name: "Delete" }).click();
-  await expect(row(page, "First")).toBeHidden();
+  await deleteCar(page, "First");
 
   await signOutAndBackIn(page);
   await expect(page).toHaveURL("/cars");

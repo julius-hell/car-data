@@ -11,8 +11,14 @@ async function disableConditionalMediation(page: Page) {
 
 export async function enableVirtualPasskeys(
   page: Page,
-  { hasResidentKey = true }: { hasResidentKey?: boolean } = {},
+  {
+    hasResidentKey = true,
+    serviceWorker = false,
+  }: { hasResidentKey?: boolean; serviceWorker?: boolean } = {},
 ) {
+  // Only the PWA tests need the service worker; keeping it out of the others
+  // stops it intercepting their navigations.
+  if (!serviceWorker) await page.route("**/serwist/sw.js", (route) => route.abort());
   await disableConditionalMediation(page);
   const cdp = await page.context().newCDPSession(page);
   await cdp.send("WebAuthn.enable", { enableUI: false });

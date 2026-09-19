@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AddEntryForm } from "@/components/add-entry-form";
+import { CarPhoto } from "@/components/car-photo";
 import { DeleteEntryButton } from "@/components/delete-entry-button";
 import { MileageChart } from "@/components/mileage-chart";
 import {
@@ -43,6 +44,8 @@ export default async function CarPage(props: PageProps<"/cars/[carId]">) {
           Odometer readings in <span data-testid="car-unit">{car.unit}</span>
         </p>
       </div>
+
+      <CarPhoto carId={car.id} carName={car.name} photoUpdatedAt={car.photoUpdatedAt} />
 
       <section className="flex min-w-0 flex-col gap-2">
         <h2 className="font-medium">Mileage over time</h2>

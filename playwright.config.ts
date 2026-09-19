@@ -21,7 +21,7 @@ export default defineConfig({
   webServer: {
     command: `pnpm build && pnpm start -p ${port}`,
     url: baseURL,
-    env: { BETTER_AUTH_URL: baseURL },
+    env: { BETTER_AUTH_URL: baseURL, BETTER_AUTH_RATE_LIMIT: "off" },
     reuseExistingServer: true,
     timeout: 240_000,
   },

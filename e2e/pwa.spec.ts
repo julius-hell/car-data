@@ -55,7 +55,7 @@ test("a visited page reloads offline to the app shell or the offline fallback", 
   page,
   context,
 }) => {
-  await enableVirtualPasskeys(page);
+  await enableVirtualPasskeys(page, { serviceWorker: true });
   await signUp(page, `Roamer ${Date.now()}`);
   await waitForActiveServiceWorker(page);
   await page.goto("/cars");

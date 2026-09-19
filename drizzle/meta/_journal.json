@@ -29,6 +29,13 @@
       "when": 1789833828252,
       "tag": "0003_spicy_madame_masque",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1789846187069,
+      "tag": "0004_naive_betty_ross",
+      "breakpoints": true
     }
   ]
 }

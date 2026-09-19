@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { CarIcon } from "lucide-react";
 import { AddCarDialog } from "@/components/add-car-dialog";
+import { photoUrl } from "@/lib/photo-url";
 import { DeleteCarButton } from "@/components/delete-car-button";
 import { SetDefaultCarButton } from "@/components/set-default-car-button";
 import { getDefaultCarId, listCars } from "@/lib/cars";
@@ -40,8 +42,25 @@ export default async function CarsPage() {
               >
                 <Link
                   href={`/cars/${car.id}`}
-                  className="flex min-w-0 flex-1 flex-wrap items-baseline gap-x-2 gap-y-1"
+                  className="flex min-w-0 flex-1 items-center gap-3"
                 >
+                  {car.photoUpdatedAt ? (
+                    // eslint-disable-next-line @next/next/no-img-element -- served by our own ownership-checked route
+                    <img
+                      src={photoUrl(car.id, "thumb", car.photoUpdatedAt)}
+                      alt=""
+                      data-testid="car-thumb"
+                      className="size-10 shrink-0 rounded-md object-cover"
+                    />
+                  ) : (
+                    <span
+                      aria-hidden
+                      className="bg-muted text-muted-foreground flex size-10 shrink-0 items-center justify-center rounded-md"
+                    >
+                      <CarIcon className="size-5" />
+                    </span>
+                  )}
+                  <span className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1">
                   <span className="truncate font-medium">{car.name}</span>
                   <span className="text-muted-foreground text-sm">{car.unit}</span>
                   {isDefault && (
@@ -49,6 +68,7 @@ export default async function CarsPage() {
                       Default
                     </span>
                   )}
+                  </span>
                 </Link>
                 <div className="flex items-center gap-1">
                   {!isDefault && (

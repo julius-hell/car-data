@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { findOwnedCar, isCarId, listCars, setDefaultCarId } from "@/lib/cars";
 import { db } from "@/lib/db";
 import { car, UNITS, type Unit } from "@/lib/db/schema";
+import { deleteCarPhoto } from "@/lib/photos";
 import { requireSession } from "@/lib/session";
 
 const CAR_NAME_MAX_LENGTH = 64;
@@ -44,7 +45,11 @@ export async function deleteCar(carId: string) {
   const { user } = await requireSession();
   if (!isCarId(carId)) throw new Error("Invalid car.");
 
-  await db.delete(car).where(and(eq(car.id, carId), eq(car.userId, user.id)));
+  const [deleted] = await db
+    .delete(car)
+    .where(and(eq(car.id, carId), eq(car.userId, user.id)))
+    .returning({ id: car.id });
+  if (deleted) await deleteCarPhoto(deleted.id);
   revalidatePath("/cars");
   redirect("/cars");
 }

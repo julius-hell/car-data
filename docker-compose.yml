@@ -35,6 +35,10 @@ services:
       BETTER_AUTH_URL: ${BETTER_AUTH_URL:-http://localhost:3000}
       PASSKEY_RP_ID: ${PASSKEY_RP_ID:-localhost}
       PASSKEY_RP_NAME: ${PASSKEY_RP_NAME:-Car Data}
+      BETTER_AUTH_RATE_LIMIT: ${BETTER_AUTH_RATE_LIMIT:-on}
+      PHOTO_DIR: /data/photos
+    volumes:
+      - photos:/data/photos
     ports:
       - "${APP_PORT:-3000}:3000"
     depends_on:
@@ -45,3 +49,4 @@ services:
 
 volumes:
   pgdata:
+  photos:

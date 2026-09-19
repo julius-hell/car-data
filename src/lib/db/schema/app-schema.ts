@@ -21,6 +21,8 @@ export const car = pgTable(
       .references(() => user.id, { onDelete: "cascade" }),
     name: text("name").notNull(),
     unit: unitEnum("unit").notNull().default("km"),
+    photoContentType: text("photo_content_type"),
+    photoUpdatedAt: timestamp("photo_updated_at"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },
   (table) => [index("car_user_id_idx").on(table.userId)],

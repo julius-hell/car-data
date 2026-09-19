@@ -42,6 +42,7 @@ test("deleting a car asks for confirmation first", async ({ page }) => {
 
   await page.getByRole("button", { name: "Delete Panda" }).click();
   await page.getByRole("alertdialog").getByRole("button", { name: "Delete" }).click();
+  await expect(page.getByRole("alertdialog")).toBeHidden();
   await expect(page.getByRole("listitem").filter({ hasText: "Panda" })).toBeHidden();
   await expect(page.getByText("Add your first car")).toBeVisible();
 });
