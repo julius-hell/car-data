@@ -6,6 +6,14 @@ import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 
+// The service worker keeps visited pages for offline use; drop them so a
+// shared device shows nothing of this account after sign-out.
+async function clearOfflineCaches() {
+  if (typeof caches === "undefined") return;
+  const keys = await caches.keys();
+  await Promise.all(keys.map((key) => caches.delete(key)));
+}
+
 export function AppHeader({ userName }: { userName: string }) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
@@ -13,6 +21,7 @@ export function AppHeader({ userName }: { userName: string }) {
   async function signOut() {
     setPending(true);
     await authClient.signOut();
+    await clearOfflineCaches();
     router.push("/login");
   }
 

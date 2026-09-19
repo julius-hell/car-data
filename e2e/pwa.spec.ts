@@ -70,3 +70,34 @@ test("a visited page reloads offline to the app shell or the offline fallback", 
   ).toBeVisible();
   await context.setOffline(false);
 });
+
+test("responses carry security headers", async ({ page }) => {
+  const response = await page.goto("/login");
+  const headers = response!.headers();
+  expect(headers["x-content-type-options"]).toBe("nosniff");
+  expect(headers["x-frame-options"]).toBe("DENY");
+  expect(headers["content-security-policy"]).toContain("frame-ancestors 'none'");
+  expect(headers["referrer-policy"]).toBe("strict-origin-when-cross-origin");
+});
+
+test("signing out empties the offline caches", async ({ page }) => {
+  await enableVirtualPasskeys(page, { serviceWorker: true });
+  await signUp(page, `Leaver ${Date.now()}`);
+  await waitForActiveServiceWorker(page);
+  await page.goto("/cars");
+  const cachedCarUrls = () =>
+    page.evaluate(async () => {
+      const urls: string[] = [];
+      for (const key of await caches.keys()) {
+        for (const request of await (await caches.open(key)).keys()) {
+          if (new URL(request.url).pathname.startsWith("/cars")) urls.push(request.url);
+        }
+      }
+      return urls;
+    });
+  await expect.poll(cachedCarUrls).not.toEqual([]);
+
+  await page.getByRole("button", { name: "Sign out" }).click();
+  await expect(page).toHaveURL("/login");
+  await expect.poll(cachedCarUrls).toEqual([]);
+});
