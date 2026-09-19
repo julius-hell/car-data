@@ -1,0 +1,13 @@
+# Local development override: run with
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up
+# The app service runs `next dev` against the bind-mounted source instead of the
+# production image. node_modules stays inside the container.
+services:
+  app:
+    build:
+      target: deps
+    command: ["pnpm", "dev"]
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
