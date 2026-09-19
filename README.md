@@ -11,6 +11,8 @@ docker compose up
 
 The stack starts Postgres, applies migrations, then serves the app on http://localhost:3000. Postgres data lives in the `pgdata` volume.
 
+Passkeys and the installable PWA need a secure context: `localhost` works as is, any other hostname must be served over HTTPS by a reverse proxy (Caddy, Traefik, nginx) in front of the app, with `BETTER_AUTH_URL` and `PASSKEY_RP_ID` set to match.
+
 ## Develop
 
 ```sh
@@ -41,10 +43,19 @@ pnpm db:migrate    # applies pending migrations to DATABASE_URL
 ```sh
 pnpm typecheck
 pnpm lint
-pnpm test:e2e      # Playwright; starts `pnpm dev` itself, needs Postgres up
+pnpm test:e2e      # Playwright; builds and serves a production build on :3100, needs Postgres up
 ```
 
+The suite runs against a production build because the service worker is
+network-only in development. To run it against the docker compose app instead:
+`PLAYWRIGHT_BASE_URL=http://localhost:3000 pnpm test:e2e`.
+
 First-time Playwright setup: `pnpm exec playwright install chromium`.
+
+### PWA icons
+
+`public/icons/` is generated from `scripts/icon-source.svg`; after changing the
+source run `node scripts/generate-icons.mjs` and commit the PNGs.
 
 ## Docs for agents
 

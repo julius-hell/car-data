@@ -1,7 +1,11 @@
 import "dotenv/config";
 import { defineConfig, devices } from "@playwright/test";
 
-const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? "http://localhost:3000";
+// Tests run against a production build so service-worker behaviour is real
+// (Serwist is network-only in development). Point PLAYWRIGHT_BASE_URL at an
+// already running server (e.g. the docker compose app on :3000) to reuse it.
+const port = 3100;
+const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? `http://localhost:${port}`;
 
 export default defineConfig({
   testDir: "./e2e",
@@ -15,9 +19,10 @@ export default defineConfig({
   },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   webServer: {
-    command: "pnpm dev",
+    command: `pnpm build && pnpm start -p ${port}`,
     url: baseURL,
-    reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
+    env: { BETTER_AUTH_URL: baseURL },
+    reuseExistingServer: true,
+    timeout: 240_000,
   },
 });
