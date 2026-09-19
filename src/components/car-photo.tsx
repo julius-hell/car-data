@@ -1,13 +1,10 @@
 "use client";
 
 import { CarIcon } from "lucide-react";
-import { useActionState, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
 import { useFormStatus } from "react-dom";
-import {
-  removeCarPhoto,
-  setCarPhoto,
-  type PhotoActionState,
-} from "@/app/(protected)/cars/[carId]/photo-actions";
+import { removeCarPhoto } from "@/app/(protected)/cars/[carId]/photo-actions";
 import { Button } from "@/components/ui/button";
 import { photoUrl } from "@/lib/photo-url";
 
@@ -29,12 +26,26 @@ export function CarPhoto({
   carName: string;
   photoUpdatedAt: Date | null;
 }) {
-  const [state, upload, uploading] = useActionState<PhotoActionState, FormData>(
-    setCarPhoto.bind(null, carId),
-    { status: "idle" },
-  );
-  const formRef = useRef<HTMLFormElement>(null);
+  const router = useRouter();
+  const [uploading, startUpload] = useTransition();
+  const [error, setError] = useState<string | null>(null);
   const inputId = `photo-${carId}`;
+
+  function upload(file: File | undefined) {
+    if (!file) return;
+    setError(null);
+    startUpload(async () => {
+      const body = new FormData();
+      body.set("photo", file);
+      const response = await fetch(`/cars/${carId}/photo`, { method: "POST", body });
+      if (!response.ok) {
+        const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+        setError(payload?.error ?? "Uploading the photo failed. Please try again.");
+        return;
+      }
+      router.refresh();
+    });
+  }
 
   return (
     <section className="flex flex-col gap-3">
@@ -56,26 +67,26 @@ export function CarPhoto({
       )}
 
       <div className="flex flex-wrap items-center gap-2">
-        <form ref={formRef} action={upload}>
-          <input
-            id={inputId}
-            name="photo"
-            type="file"
-            accept="image/*"
-            className="sr-only"
-            aria-label={photoUpdatedAt ? "Change photo" : "Add photo"}
-            onChange={() => formRef.current?.requestSubmit()}
-          />
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            disabled={uploading}
-            onClick={() => document.getElementById(inputId)?.click()}
-          >
-            {uploading ? "Uploading…" : photoUpdatedAt ? "Change photo" : "Add photo"}
-          </Button>
-        </form>
+        <input
+          id={inputId}
+          type="file"
+          accept="image/*"
+          className="sr-only"
+          aria-label={photoUpdatedAt ? "Change photo" : "Add photo"}
+          onChange={(event) => {
+            upload(event.target.files?.[0]);
+            event.target.value = "";
+          }}
+        />
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          disabled={uploading}
+          onClick={() => document.getElementById(inputId)?.click()}
+        >
+          {uploading ? "Uploading…" : photoUpdatedAt ? "Change photo" : "Add photo"}
+        </Button>
         {photoUpdatedAt && (
           <form action={removeCarPhoto.bind(null, carId)}>
             <RemoveButton />
@@ -83,9 +94,9 @@ export function CarPhoto({
         )}
       </div>
 
-      {state.status === "error" && (
+      {error && (
         <p role="alert" data-testid="photo-error" className="text-destructive text-sm">
-          {state.message}
+          {error}
         </p>
       )}
     </section>

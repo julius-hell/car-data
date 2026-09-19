@@ -99,3 +99,28 @@ test("deleting a car deletes its photo", async ({ page }) => {
   await deleteCar(page, "Doomed");
   expect((await page.request.get(`/cars/${carId}/photo`)).status()).toBe(404);
 });
+
+test("oversized uploads are refused before being read", async ({ page }) => {
+  const carId = await addCar(page, "Heavy");
+  await page.goto(`/cars/${carId}`);
+  const tooBig = Buffer.alloc(16 * 1024 * 1024, 1);
+  await upload(page, "huge.png", tooBig);
+  await expect(page.getByTestId("photo-error")).toContainText("15 MB");
+  await expect(page.getByTestId("car-photo-placeholder")).toBeVisible();
+});
+
+test("the upload route rejects cross-site and signed-out requests", async ({ page, browser }) => {
+  const carId = await addCar(page, "Guarded");
+  const crossSite = await page.request.post(`/cars/${carId}/photo`, {
+    headers: { origin: "https://evil.example", "sec-fetch-site": "cross-site" },
+    multipart: { photo: { name: "x.png", mimeType: "image/png", buffer: Buffer.from("x") } },
+  });
+  expect(crossSite.status()).toBe(403);
+
+  const anonymous = await browser.newContext();
+  const signedOut = await anonymous.request.post(`/cars/${carId}/photo`, {
+    multipart: { photo: { name: "x.png", mimeType: "image/png", buffer: Buffer.from("x") } },
+  });
+  expect(signedOut.status()).toBe(401);
+  await anonymous.close();
+});
