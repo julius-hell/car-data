@@ -22,6 +22,13 @@
       "when": 1789833706051,
       "tag": "0002_colossal_crystal",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1789833828252,
+      "tag": "0003_spicy_madame_masque",
+      "breakpoints": true
     }
   ]
 }

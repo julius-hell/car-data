@@ -1,4 +1,13 @@
-import { pgEnum, pgTable, text, timestamp, uuid, index } from "drizzle-orm/pg-core";
+import {
+  date,
+  index,
+  integer,
+  pgEnum,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+} from "drizzle-orm/pg-core";
 import { user } from "./auth-schema";
 
 export const unitEnum = pgEnum("unit", ["km", "mi"]);
@@ -17,6 +26,21 @@ export const car = pgTable(
   (table) => [index("car_user_id_idx").on(table.userId)],
 );
 
+export const mileageEntry = pgTable(
+  "mileage_entry",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    carId: uuid("car_id")
+      .notNull()
+      .references(() => car.id, { onDelete: "cascade" }),
+    odometer: integer("odometer").notNull(),
+    recordedAt: date("recorded_at").notNull(),
+    note: text("note"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [index("mileage_entry_car_id_idx").on(table.carId)],
+);
+
 export const userPreference = pgTable("user_preference", {
   userId: text("user_id")
     .primaryKey()
@@ -29,3 +53,4 @@ export const userPreference = pgTable("user_preference", {
 export type Car = typeof car.$inferSelect;
 export type Unit = Car["unit"];
 export const UNITS = unitEnum.enumValues;
+export type MileageEntry = typeof mileageEntry.$inferSelect;
