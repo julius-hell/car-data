@@ -44,7 +44,7 @@ export function CarPhoto({
           src={photoUrl(carId, "display", photoUpdatedAt)}
           alt={`Photo of ${carName}`}
           data-testid="car-photo"
-          className="max-h-80 w-full rounded-lg object-cover"
+          className="h-auto w-full rounded-lg"
         />
       ) : (
         <div

@@ -50,12 +50,12 @@ export default async function CarsPage() {
                       src={photoUrl(car.id, "thumb", car.photoUpdatedAt)}
                       alt=""
                       data-testid="car-thumb"
-                      className="size-10 shrink-0 rounded-md object-cover"
+                      className="h-10 w-15 shrink-0 rounded-md object-cover"
                     />
                   ) : (
                     <span
                       aria-hidden
-                      className="bg-muted text-muted-foreground flex size-10 shrink-0 items-center justify-center rounded-md"
+                      className="bg-muted text-muted-foreground flex h-10 w-15 shrink-0 items-center justify-center rounded-md"
                     >
                       <CarIcon className="size-5" />
                     </span>

@@ -36,6 +36,12 @@ test("add, replace and remove a car photo", async ({ page }) => {
   expect(first.headers()["content-type"]).toBe("image/webp");
   const original = await page.request.get(`/cars/${carId}/photo?variant=original`);
   expect(original.headers()["content-type"]).toBe("image/png");
+  const display = await sharp(await first.body()).metadata();
+  expect(display.width! / display.height!).toBeCloseTo(640 / 480, 2);
+  const thumb = await sharp(
+    await (await page.request.get(`/cars/${carId}/photo?variant=thumb`)).body(),
+  ).metadata();
+  expect([thumb.width, thumb.height]).toEqual([192, 128]);
 
   await page.goto("/cars");
   await expect(page.getByTestId("car-thumb")).toBeVisible();
