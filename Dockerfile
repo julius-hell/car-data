@@ -16,6 +16,9 @@ CMD ["pnpm", "db:migrate"]
 FROM deps AS builder
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
+# `next build` evaluates the auth module while collecting page data; Better Auth
+# refuses to initialise without a secret. This value never reaches the runtime image.
+ENV BETTER_AUTH_SECRET=build-time-placeholder-not-used-at-runtime
 RUN pnpm build
 
 FROM node:24-alpine AS runner
