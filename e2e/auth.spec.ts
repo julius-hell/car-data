@@ -9,17 +9,33 @@ test("a signed-out visitor is sent to the login page", async ({ page }) => {
   ).toBeVisible();
 });
 
+test("the login page arms passkey autofill when the browser supports it", async ({
+  page,
+}) => {
+  // No virtual authenticator here, so the armed request cannot auto-complete.
+  await page.addInitScript(() => {
+    PublicKeyCredential.isConditionalMediationAvailable = async () => true;
+  });
+  const autofillOptions = page.waitForRequest((request) =>
+    request.url().includes("/passkey/generate-authenticate-options"),
+  );
+  await page.goto("/login");
+  await autofillOptions;
+  await expect(page.getByLabel("Passkey autofill")).toHaveAttribute(
+    "autocomplete",
+    "username webauthn",
+  );
+});
+
 test("sign up with a passkey, sign out, sign back in", async ({ page }) => {
   await enableVirtualPasskeys(page);
   const name = `Alice ${Date.now()}`;
 
   await signUp(page, name);
-  await expect(
-    page.getByRole("heading", { name: `Signed in as ${name}` }),
-  ).toBeVisible();
+  await expect(page.getByRole("banner")).toContainText(name);
 
   await page.goto("/login");
-  await expect(page).toHaveURL("/");
+  await expect(page).toHaveURL("/cars");
 
   await page.getByRole("button", { name: "Sign out" }).click();
   await expect(page).toHaveURL("/login");
@@ -27,10 +43,8 @@ test("sign up with a passkey, sign out, sign back in", async ({ page }) => {
   await expect(page).toHaveURL("/login");
 
   await page.getByRole("button", { name: "Sign in with passkey" }).click();
-  await expect(page).toHaveURL("/");
-  await expect(
-    page.getByRole("heading", { name: `Signed in as ${name}` }),
-  ).toBeVisible();
+  await expect(page).toHaveURL("/cars");
+  await expect(page.getByRole("banner")).toContainText(name);
 });
 
 test("a failed passkey ceremony shows an error and leaves the visitor signed out", async ({

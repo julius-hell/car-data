@@ -8,6 +8,13 @@
       "when": 1789831945375,
       "tag": "0000_complex_firelord",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1789832473878,
+      "tag": "0001_clear_strong_guy",
+      "breakpoints": true
     }
   ]
 }

@@ -14,7 +14,6 @@ export function AppHeader({ userName }: { userName: string }) {
     setPending(true);
     await authClient.signOut();
     router.push("/login");
-    router.refresh();
   }
 
   return (

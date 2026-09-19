@@ -1,8 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { authClient } from "@/lib/auth-client";
+import { useEffect, useRef, useState } from "react";
+import { authClient, whenPasskeyIdle } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -22,11 +22,9 @@ export function PasskeyAuthForm() {
   const [name, setName] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState<"signIn" | "signUp" | null>(null);
+  const explicitCeremonyStarted = useRef(false);
 
-  const enterApp = () => {
-    router.push("/");
-    router.refresh();
-  };
+  const enterApp = () => router.push("/");
 
   useEffect(() => {
     if (
@@ -38,7 +36,7 @@ export function PasskeyAuthForm() {
     let cancelled = false;
     void PublicKeyCredential.isConditionalMediationAvailable().then(
       (available) => {
-        if (!available || cancelled) return;
+        if (!available || cancelled || explicitCeremonyStarted.current) return;
         void authClient.signIn.passkey({
           autoFill: true,
           fetchOptions: { onSuccess: enterApp },
@@ -54,6 +52,8 @@ export function PasskeyAuthForm() {
   async function signIn() {
     setError(null);
     setPending("signIn");
+    explicitCeremonyStarted.current = true;
+    await whenPasskeyIdle();
     const { error } = await authClient.signIn.passkey();
     setPending(null);
     if (error) {
@@ -72,6 +72,8 @@ export function PasskeyAuthForm() {
       return;
     }
     setPending("signUp");
+    explicitCeremonyStarted.current = true;
+    await whenPasskeyIdle();
     const { error } = await authClient.passkey.addPasskey({
       name: trimmed,
       context: trimmed,
