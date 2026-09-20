@@ -55,12 +55,12 @@ export function CarPhoto({
           src={photoUrl(carId, "display", photoUpdatedAt)}
           alt={`Photo of ${carName}`}
           data-testid="car-photo"
-          className="h-auto w-full rounded-lg"
+          className="h-auto w-full rounded-xl border shadow-xs"
         />
       ) : (
         <div
           data-testid="car-photo-placeholder"
-          className="bg-muted text-muted-foreground flex h-40 items-center justify-center rounded-lg"
+          className="bg-muted/60 text-muted-foreground flex aspect-[3/2] items-center justify-center rounded-xl border border-dashed"
         >
           <CarIcon aria-hidden className="size-10" />
         </div>

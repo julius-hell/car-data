@@ -2,6 +2,7 @@
 
 import { useFormStatus } from "react-dom";
 import { deleteCar } from "@/app/(protected)/cars/actions";
+import { Trash2Icon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -28,10 +29,10 @@ export function DeleteCarButton({ carId, carName }: { carId: string; carName: st
   return (
     <AlertDialog>
       <AlertDialogTrigger
-        render={<Button variant="ghost" size="sm" />}
+        render={<Button variant="ghost" size="icon-sm" className="text-muted-foreground hover:text-destructive" />}
         aria-label={`Delete ${carName}`}
       >
-        Delete
+        <Trash2Icon className="size-4" />
       </AlertDialogTrigger>
       <AlertDialogContent>
         <form action={deleteCar.bind(null, carId)}>

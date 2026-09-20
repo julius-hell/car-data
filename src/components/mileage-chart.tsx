@@ -50,7 +50,7 @@ export function MileageChart({ points, unit }: { points: MileagePoint[]; unit: U
     return (
       <div
         data-testid="mileage-chart-empty"
-        className="text-muted-foreground flex h-40 items-center justify-center rounded-lg border border-dashed px-4 text-center text-sm"
+        className="text-muted-foreground bg-muted/40 flex h-40 items-center justify-center rounded-lg border border-dashed px-4 text-center text-sm"
       >
         Log a reading to start the chart.
       </div>

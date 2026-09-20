@@ -35,8 +35,13 @@ export function AddEntryForm({ carId, unit }: { carId: string; unit: Unit }) {
     setFields((current) => ({ ...current, [name]: e.target.value }));
 
   return (
-    <form action={action} className="flex flex-col gap-4 rounded-lg border p-4">
-      <h2 className="font-medium">Log a reading</h2>
+    <form
+      action={action}
+      className="bg-card flex flex-col gap-4 rounded-xl border p-4 shadow-xs sm:p-5"
+    >
+      <h2 className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
+        Log a reading
+      </h2>
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="flex flex-col gap-1.5">
           <Label htmlFor="odometer">Odometer ({unit})</Label>
@@ -48,6 +53,7 @@ export function AddEntryForm({ carId, unit }: { carId: string; unit: Unit }) {
             min={0}
             step={1}
             required
+            className="font-mono tabular-nums"
             value={fields.odometer}
             onChange={update("odometer")}
           />

@@ -89,7 +89,7 @@ export function PasskeyAuthForm() {
 
   return (
     <div className="flex w-full max-w-sm flex-col gap-4">
-      <Card>
+      <Card className="shadow-sm">
         <CardHeader>
           <CardTitle>Sign in</CardTitle>
           <CardDescription>Use the passkey saved on this device.</CardDescription>
@@ -113,7 +113,13 @@ export function PasskeyAuthForm() {
         </CardContent>
       </Card>
 
-      <Card>
+      <div className="text-muted-foreground flex items-center gap-3 text-xs uppercase tracking-wider">
+        <span className="bg-border h-px flex-1" />
+        New here
+        <span className="bg-border h-px flex-1" />
+      </div>
+
+      <Card className="shadow-sm">
         <CardHeader>
           <CardTitle>Create account</CardTitle>
           <CardDescription>
@@ -136,7 +142,7 @@ export function PasskeyAuthForm() {
             </div>
             <Button
               type="submit"
-              variant="secondary"
+              variant="outline"
               disabled={pending !== null}
               className="w-full"
             >
