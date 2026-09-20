@@ -119,5 +119,15 @@
     "orMaybe": "or",
     "nothingFound": "Couldn't find a mileage in that photo. Try again closer to the display, or type it in.",
     "failed": "The scanner couldn't start. Type the reading in instead."
+  },
+  "Stats": {
+    "thisYear": "This year",
+    "perDay": "Per day",
+    "projectedPerYear": "Projected per year",
+    "needsTwo": "Needs two readings",
+    "onAverage": "over the last {count, plural, one {# day} other {# days}}",
+    "atCurrentRate": "at the current rate",
+    "monthlyTitle": "Distance per month",
+    "monthlyEmpty": "Two readings in different months start this chart."
   }
 }

@@ -119,5 +119,15 @@
     "orMaybe": "oder",
     "nothingFound": "Im Foto wurde kein Kilometerstand gefunden. Versuche es näher am Display oder tippe ihn ein.",
     "failed": "Der Scanner konnte nicht starten. Tippe den Stand stattdessen ein."
+  },
+  "Stats": {
+    "thisYear": "Dieses Jahr",
+    "perDay": "Pro Tag",
+    "projectedPerYear": "Hochgerechnet pro Jahr",
+    "needsTwo": "Braucht zwei Einträge",
+    "onAverage": "über {count, plural, one {den letzten Tag} other {die letzten # Tage}}",
+    "atCurrentRate": "beim aktuellen Tempo",
+    "monthlyTitle": "Strecke pro Monat",
+    "monthlyEmpty": "Zwei Einträge in verschiedenen Monaten starten dieses Diagramm."
   }
 }

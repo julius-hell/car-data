@@ -7,6 +7,7 @@ import { AddEntryForm } from "@/components/add-entry-form";
 import { CarPhoto } from "@/components/car-photo";
 import { DeleteEntryButton } from "@/components/delete-entry-button";
 import { MileageChart } from "@/components/mileage-chart";
+import { MonthlyChart } from "@/components/monthly-chart";
 import { StatTile } from "@/components/stat-tile";
 import {
   Table,
@@ -19,6 +20,7 @@ import {
 import { findOwnedCar, getDefaultCarId } from "@/lib/cars";
 import { isoDateToDate } from "@/lib/dates";
 import { listEntries } from "@/lib/entries";
+import { mileageStats, monthlyDistances } from "@/lib/stats";
 import { requireSession } from "@/lib/session";
 
 const DAY_MS = 86_400_000;
@@ -37,12 +39,25 @@ export default async function CarPage(props: PageProps<"/cars/[carId]">) {
   const { carId } = await props.params;
   const car = await findOwnedCar(user.id, carId);
   if (!car) notFound();
-  const [entries, defaultCarId, t, format] = await Promise.all([
+  const [entries, defaultCarId, t, ts, format] = await Promise.all([
     listEntries(car.id),
     getDefaultCarId(user.id),
     getTranslations("Car"),
+    getTranslations("Stats"),
     getFormatter(),
   ]);
+  const now = new Date();
+  const stats = mileageStats(entries, now);
+  const months = monthlyDistances(entries, now);
+  const rateDays = Math.min(
+    90,
+    entries.length >= 2
+      ? Math.round(
+          (Date.parse(entries[0].recordedAt) - Date.parse(entries[entries.length - 1].recordedAt)) /
+            DAY_MS,
+        )
+      : 0,
+  );
   const formatDate = (isoDate: string) =>
     format.dateTime(isoDateToDate(isoDate), { dateStyle: "medium" });
 
@@ -107,6 +122,31 @@ export default async function CarPage(props: PageProps<"/cars/[carId]">) {
         </div>
       </div>
 
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+        <StatTile
+          label={ts("thisYear")}
+          value={stats.thisYear !== null ? format.number(stats.thisYear) : "—"}
+          unit={stats.thisYear !== null ? car.unit : undefined}
+          detail={stats.thisYear !== null ? String(now.getUTCFullYear()) : ts("needsTwo")}
+          testId="stat-this-year"
+        />
+        <StatTile
+          label={ts("perDay")}
+          value={stats.perDay !== null ? format.number(stats.perDay, { maximumFractionDigits: 1 }) : "—"}
+          unit={stats.perDay !== null ? car.unit : undefined}
+          detail={stats.perDay !== null ? ts("onAverage", { count: rateDays }) : ts("needsTwo")}
+          testId="stat-per-day"
+        />
+        <StatTile
+          label={ts("projectedPerYear")}
+          value={stats.projectedPerYear !== null ? format.number(stats.projectedPerYear) : "—"}
+          unit={stats.projectedPerYear !== null ? car.unit : undefined}
+          detail={stats.projectedPerYear !== null ? ts("atCurrentRate") : ts("needsTwo")}
+          className="col-span-2 sm:col-span-1"
+          testId="stat-projected"
+        />
+      </div>
+
       <section className="bg-card flex min-w-0 flex-col gap-3 rounded-xl border p-4 shadow-xs sm:p-5">
         <h2 className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
           {t("chartTitle")}
@@ -117,6 +157,13 @@ export default async function CarPage(props: PageProps<"/cars/[carId]">) {
             .reverse()
             .map(({ recordedAt, odometer }) => ({ recordedAt, odometer }))}
         />
+      </section>
+
+      <section className="bg-card flex min-w-0 flex-col gap-3 rounded-xl border p-4 shadow-xs sm:p-5">
+        <h2 className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
+          {ts("monthlyTitle")}
+        </h2>
+        <MonthlyChart months={months} unit={car.unit} />
       </section>
 
       <AddEntryForm carId={car.id} unit={car.unit} latest={latest?.odometer ?? null} />
