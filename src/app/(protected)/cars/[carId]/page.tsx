@@ -36,9 +36,10 @@ export async function generateMetadata(
 
 export default async function CarPage(props: PageProps<"/cars/[carId]">) {
   const { user } = await requireSession();
-  const { carId } = await props.params;
+  const [{ carId }, searchParams] = await Promise.all([props.params, props.searchParams]);
   const car = await findOwnedCar(user.id, carId);
   if (!car) notFound();
+  const focusForm = searchParams.log === "1";
   const [entries, defaultCarId, t, ts, format] = await Promise.all([
     listEntries(car.id),
     getDefaultCarId(user.id),
@@ -166,7 +167,12 @@ export default async function CarPage(props: PageProps<"/cars/[carId]">) {
         <MonthlyChart months={months} unit={car.unit} />
       </section>
 
-      <AddEntryForm carId={car.id} unit={car.unit} latest={latest?.odometer ?? null} />
+      <AddEntryForm
+        carId={car.id}
+        unit={car.unit}
+        latest={latest?.odometer ?? null}
+        autoFocus={focusForm}
+      />
 
       <section className="flex min-w-0 flex-col gap-3">
         <h2 className="text-muted-foreground text-xs font-medium tracking-wider uppercase">

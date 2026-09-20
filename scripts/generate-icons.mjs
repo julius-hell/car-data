@@ -29,7 +29,28 @@ async function render(file, size, { maskable = false } = {}) {
   console.log(`wrote public/icons/${file}`);
 }
 
+// Shortcut icon: the mark with a plus badge, for the "Log reading" shortcut.
+async function renderShortcut(file, size) {
+  const badge = Math.round(size * 0.42);
+  const plus = Buffer.from(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${badge}" height="${badge}">
+      <circle cx="${badge / 2}" cy="${badge / 2}" r="${badge / 2}" fill="#ffffff"/>
+      <path d="M${badge / 2} ${badge * 0.26}v${badge * 0.48}M${badge * 0.26} ${badge / 2}h${badge * 0.48}" stroke="#2a78d6" stroke-width="${Math.max(2, badge * 0.14)}" stroke-linecap="round"/>
+    </svg>`,
+  );
+  await sharp(source)
+    .resize(size, size)
+    .composite([
+      { input: rounded(size), blend: "dest-in" },
+      { input: plus, left: size - badge - Math.round(size * 0.04), top: size - badge - Math.round(size * 0.04) },
+    ])
+    .png()
+    .toFile(path.join(outDir, file));
+  console.log(`wrote public/icons/${file}`);
+}
+
 await render("icon-192.png", 192);
 await render("icon-512.png", 512);
 await render("icon-512-maskable.png", 512, { maskable: true });
 await render("apple-touch-icon.png", 180);
+await renderShortcut("shortcut-log.png", 96);

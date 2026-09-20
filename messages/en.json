@@ -1,7 +1,9 @@
 {
   "Meta": {
     "appName": "Car Data",
-    "description": "Track the mileage of your cars over time."
+    "description": "Track the mileage of your cars over time.",
+    "logShortcut": "Log reading",
+    "logShortcutDescription": "Add today's odometer reading to your default car"
   },
   "Header": {
     "signOut": "Sign out",
@@ -49,7 +51,8 @@
     "name": "Name",
     "namePlaceholder": "e.g. Honda Civic",
     "unit": "Unit",
-    "adding": "Adding…"
+    "adding": "Adding…",
+    "logReading": "Log reading"
   },
   "Car": {
     "allCars": "All cars",

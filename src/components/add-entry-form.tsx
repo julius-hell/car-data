@@ -24,10 +24,12 @@ export function AddEntryForm({
   carId,
   unit,
   latest,
+  autoFocus = false,
 }: {
   carId: string;
   unit: Unit;
   latest: number | null;
+  autoFocus?: boolean;
 }) {
   const t = useTranslations("Entry");
   const format = useFormatter();
@@ -65,6 +67,7 @@ export function AddEntryForm({
             min={0}
             step={1}
             required
+            autoFocus={autoFocus}
             className="font-mono tabular-nums"
             value={fields.odometer}
             onChange={update("odometer")}

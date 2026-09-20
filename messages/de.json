@@ -1,7 +1,9 @@
 {
   "Meta": {
     "appName": "Car Data",
-    "description": "Behalte den Kilometerstand deiner Autos im Blick."
+    "description": "Behalte den Kilometerstand deiner Autos im Blick.",
+    "logShortcut": "Stand eintragen",
+    "logShortcutDescription": "Heutigen Kilometerstand für dein Standardauto eintragen"
   },
   "Header": {
     "signOut": "Abmelden",
@@ -49,7 +51,8 @@
     "name": "Name",
     "namePlaceholder": "z. B. Honda Civic",
     "unit": "Einheit",
-    "adding": "Hinzufügen…"
+    "adding": "Hinzufügen…",
+    "logReading": "Stand eintragen"
   },
   "Car": {
     "allCars": "Alle Autos",

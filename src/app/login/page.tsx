@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { BrandMark, Wordmark } from "@/components/brand";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { PasskeyAuthForm } from "@/components/passkey-auth-form";
+import { safeNextPath } from "@/lib/next-path";
 import { getSession } from "@/lib/session";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -11,8 +12,9 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("title") };
 }
 
-export default async function LoginPage() {
-  if (await getSession()) redirect("/");
+export default async function LoginPage(props: PageProps<"/login">) {
+  const next = safeNextPath((await props.searchParams).next) ?? "/";
+  if (await getSession()) redirect(next);
   const t = await getTranslations("Auth");
 
   return (
@@ -33,7 +35,7 @@ export default async function LoginPage() {
           <p className="text-muted-foreground mt-1">{t("tagline")}</p>
         </div>
       </div>
-      <PasskeyAuthForm />
+      <PasskeyAuthForm next={next} />
       <p className="text-muted-foreground max-w-xs text-center text-xs">{t("footer")}</p>
     </main>
   );

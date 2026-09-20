@@ -15,7 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export function PasskeyAuthForm() {
+export function PasskeyAuthForm({ next = "/" }: { next?: string }) {
   const t = useTranslations("Auth");
   const router = useRouter();
   const [name, setName] = useState("");
@@ -23,7 +23,7 @@ export function PasskeyAuthForm() {
   const [pending, setPending] = useState<"signIn" | "signUp" | null>(null);
   const explicitCeremonyStarted = useRef(false);
 
-  const enterApp = () => router.push("/");
+  const enterApp = () => router.push(next);
 
   useEffect(() => {
     if (

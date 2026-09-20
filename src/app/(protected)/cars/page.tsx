@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CarIcon } from "lucide-react";
+import { CarIcon, PlusIcon } from "lucide-react";
 import { getFormatter, getTranslations } from "next-intl/server";
 import { AddCarDialog } from "@/components/add-car-dialog";
 import { DeleteCarButton } from "@/components/delete-car-button";
 import { SetDefaultCarButton } from "@/components/set-default-car-button";
+import { Button } from "@/components/ui/button";
 import { getDefaultCarId, listCarsWithLatestReading } from "@/lib/cars";
 import { photoUrl } from "@/lib/photo-url";
 import { requireSession } from "@/lib/session";
@@ -32,7 +33,15 @@ export default async function CarsPage() {
           </p>
           <h1 className="text-2xl font-semibold tracking-tight">{t("heading")}</h1>
         </div>
-        <AddCarDialog />
+        <div className="flex items-center gap-2">
+          {defaultCarId && (
+            <Button variant="outline" render={<Link href="/log" />}>
+              <PlusIcon aria-hidden className="size-4" />
+              {t("logReading")}
+            </Button>
+          )}
+          <AddCarDialog />
+        </div>
       </div>
 
       {cars.length === 0 ? (
