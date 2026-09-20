@@ -11,6 +11,7 @@ import {
   type PhotoVariant,
 } from "@/lib/photos";
 import { getSession } from "@/lib/session";
+import { getTranslations } from "next-intl/server";
 
 function isVariant(value: string | null): value is PhotoVariant {
   return (PHOTO_VARIANTS as readonly string[]).includes(value ?? "");
@@ -52,33 +53,34 @@ export async function GET(request: Request, context: RouteContext<"/cars/[carId]
 }
 
 export async function POST(request: Request, context: RouteContext<"/cars/[carId]/photo">) {
+  const t = await getTranslations("Photo");
   const session = await getSession();
-  if (!session) return json(401, { error: "Sign in to add a photo." });
-  if (!isSameOrigin(request)) return json(403, { error: "Cross-site request rejected." });
+  if (!session) return json(401, { error: t("errorSignedOut") });
+  if (!isSameOrigin(request)) return json(403, { error: t("errorCrossSite") });
 
   const { carId } = await context.params;
   const owned = await findOwnedCar(session.user.id, carId);
-  if (!owned) return json(404, { error: "This car no longer exists." });
+  if (!owned) return json(404, { error: t("errorCarGone") });
 
   // Reject oversized bodies before reading them; the multipart wrapper is small.
   const declared = Number(request.headers.get("content-length"));
   if (declared > PHOTO_MAX_BYTES + 64 * 1024) {
-    return json(413, { error: "Photos must be 15 MB or smaller." });
+    return json(413, { error: t("errorTooLarge") });
   }
 
   const file = (await request.formData()).get("photo");
   if (!(file instanceof File) || file.size === 0) {
-    return json(400, { error: "Choose a photo first." });
+    return json(400, { error: t("errorMissing") });
   }
   if (file.size > PHOTO_MAX_BYTES) {
-    return json(413, { error: "Photos must be 15 MB or smaller." });
+    return json(413, { error: t("errorTooLarge") });
   }
 
   let stored;
   try {
     stored = await storeCarPhoto(owned.id, Buffer.from(await file.arrayBuffer()));
   } catch {
-    return json(415, { error: "That file is not an image we can read." });
+    return json(415, { error: t("errorNotImage") });
   }
 
   await db

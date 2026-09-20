@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeftIcon } from "lucide-react";
+import { getFormatter, getTranslations } from "next-intl/server";
 import { AddEntryForm } from "@/components/add-entry-form";
 import { CarPhoto } from "@/components/car-photo";
 import { DeleteEntryButton } from "@/components/delete-entry-button";
@@ -16,22 +17,19 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { findOwnedCar, getDefaultCarId } from "@/lib/cars";
+import { isoDateToDate } from "@/lib/dates";
 import { listEntries } from "@/lib/entries";
 import { requireSession } from "@/lib/session";
 
-const numberFormat = new Intl.NumberFormat("en");
-const dateFormat = new Intl.DateTimeFormat("en", { day: "numeric", month: "short", year: "numeric" });
 const DAY_MS = 86_400_000;
-
-const formatDate = (isoDate: string) => dateFormat.format(new Date(`${isoDate}T00:00:00Z`));
 
 export async function generateMetadata(
   props: PageProps<"/cars/[carId]">,
 ): Promise<Metadata> {
   const { user } = await requireSession();
   const { carId } = await props.params;
-  const car = await findOwnedCar(user.id, carId);
-  return { title: car?.name ?? "Not found" };
+  const [car, t] = await Promise.all([findOwnedCar(user.id, carId), getTranslations("Car")]);
+  return { title: car?.name ?? t("notFound") };
 }
 
 export default async function CarPage(props: PageProps<"/cars/[carId]">) {
@@ -39,10 +37,14 @@ export default async function CarPage(props: PageProps<"/cars/[carId]">) {
   const { carId } = await props.params;
   const car = await findOwnedCar(user.id, carId);
   if (!car) notFound();
-  const [entries, defaultCarId] = await Promise.all([
+  const [entries, defaultCarId, t, format] = await Promise.all([
     listEntries(car.id),
     getDefaultCarId(user.id),
+    getTranslations("Car"),
+    getFormatter(),
   ]);
+  const formatDate = (isoDate: string) =>
+    format.dateTime(isoDateToDate(isoDate), { dateStyle: "medium" });
 
   const latest = entries[0] ?? null;
   const previous = entries[1] ?? null;
@@ -61,13 +63,16 @@ export default async function CarPage(props: PageProps<"/cars/[carId]">) {
           className="text-muted-foreground hover:text-foreground inline-flex w-fit items-center gap-1 text-sm transition-colors"
         >
           <ArrowLeftIcon className="size-4" aria-hidden />
-          All cars
+          {t("allCars")}
         </Link>
         <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
           <h1 className="text-3xl font-semibold tracking-tight">{car.name}</h1>
           <p className="text-muted-foreground text-sm">
-            Odometer in <span data-testid="car-unit">{car.unit}</span>
-            {car.id === defaultCarId && " · default car"}
+            {t.rich("odometerIn", {
+              unit: car.unit,
+              u: (chunks) => <span data-testid="car-unit">{chunks}</span>,
+            })}
+            {car.id === defaultCarId && ` · ${t("defaultCar")}`}
           </p>
         </div>
       </div>
@@ -78,27 +83,25 @@ export default async function CarPage(props: PageProps<"/cars/[carId]">) {
         </div>
         <div className="grid grid-cols-2 gap-3 sm:col-span-2 sm:grid-cols-1">
           <StatTile
-            label="Latest reading"
-            value={latest ? numberFormat.format(latest.odometer) : "—"}
+            label={t("latestReading")}
+            value={latest ? format.number(latest.odometer) : "—"}
             unit={latest ? car.unit : undefined}
-            detail={latest ? formatDate(latest.recordedAt) : "No readings yet"}
+            detail={latest ? formatDate(latest.recordedAt) : t("noReadingsYet")}
           />
           <StatTile
-            label="Since previous"
+            label={t("sincePrevious")}
             value={
               distance !== null
-                ? `${distance >= 0 ? "+" : ""}${numberFormat.format(distance)}`
+                ? `${distance >= 0 ? "+" : ""}${format.number(distance)}`
                 : "—"
             }
             unit={distance !== null ? car.unit : undefined}
-            detail={
-              days !== null ? `over ${days} ${days === 1 ? "day" : "days"}` : "Needs two readings"
-            }
+            detail={days !== null ? t("overDays", { count: days }) : t("needsTwo")}
           />
           <StatTile
-            label="Readings"
-            value={String(entries.length)}
-            detail={first ? `since ${formatDate(first.recordedAt)}` : "Log the first one below"}
+            label={t("readings")}
+            value={format.number(entries.length)}
+            detail={first ? t("since", { date: formatDate(first.recordedAt) }) : t("logFirst")}
             className="col-span-2 sm:col-span-1"
           />
         </div>
@@ -106,7 +109,7 @@ export default async function CarPage(props: PageProps<"/cars/[carId]">) {
 
       <section className="bg-card flex min-w-0 flex-col gap-3 rounded-xl border p-4 shadow-xs sm:p-5">
         <h2 className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
-          Mileage over time
+          {t("chartTitle")}
         </h2>
         <MileageChart
           unit={car.unit}
@@ -120,18 +123,18 @@ export default async function CarPage(props: PageProps<"/cars/[carId]">) {
 
       <section className="flex min-w-0 flex-col gap-3">
         <h2 className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
-          Readings
+          {t("readings")}
         </h2>
         {entries.length === 0 ? (
-          <p className="text-muted-foreground text-sm">No readings yet.</p>
+          <p className="text-muted-foreground text-sm">{t("noReadings")}</p>
         ) : (
           <div className="bg-card overflow-hidden rounded-xl border shadow-xs">
             <Table data-testid="entries" className="table-fixed">
               <TableHeader>
                 <TableRow className="hover:bg-transparent">
-                  <TableHead className="w-32 pl-4">Date</TableHead>
-                  <TableHead className="w-32 text-right">Odometer</TableHead>
-                  <TableHead>Note</TableHead>
+                  <TableHead className="w-32 pl-4">{t("date")}</TableHead>
+                  <TableHead className="w-32 text-right">{t("odometer")}</TableHead>
+                  <TableHead>{t("note")}</TableHead>
                   <TableHead className="w-12" />
                 </TableRow>
               </TableHeader>
@@ -139,17 +142,20 @@ export default async function CarPage(props: PageProps<"/cars/[carId]">) {
                 {entries.map((entry) => (
                   <TableRow key={entry.id}>
                     <TableCell className="pl-4 whitespace-nowrap tabular-nums">
-                      {entry.recordedAt}
+                      <time dateTime={entry.recordedAt}>{formatDate(entry.recordedAt)}</time>
                     </TableCell>
                     <TableCell className="text-right font-mono whitespace-nowrap tabular-nums">
-                      {numberFormat.format(entry.odometer)}{" "}
+                      {format.number(entry.odometer)}{" "}
                       <span className="text-muted-foreground font-sans">{car.unit}</span>
                     </TableCell>
                     <TableCell className="text-muted-foreground truncate">{entry.note}</TableCell>
                     <TableCell className="py-1 pr-2">
                       <DeleteEntryButton
                         entryId={entry.id}
-                        label={`Delete reading ${entry.odometer} on ${entry.recordedAt}`}
+                        label={t("deleteReading", {
+                          odometer: format.number(entry.odometer),
+                          date: formatDate(entry.recordedAt),
+                        })}
                       />
                     </TableCell>
                   </TableRow>

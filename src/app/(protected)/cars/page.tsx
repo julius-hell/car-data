@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { CarIcon } from "lucide-react";
+import { getFormatter, getTranslations } from "next-intl/server";
 import { AddCarDialog } from "@/components/add-car-dialog";
 import { DeleteCarButton } from "@/components/delete-car-button";
 import { SetDefaultCarButton } from "@/components/set-default-car-button";
@@ -8,15 +9,18 @@ import { getDefaultCarId, listCarsWithLatestReading } from "@/lib/cars";
 import { photoUrl } from "@/lib/photo-url";
 import { requireSession } from "@/lib/session";
 
-export const metadata: Metadata = { title: "Cars" };
-
-const numberFormat = new Intl.NumberFormat("en");
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("Cars");
+  return { title: t("title") };
+}
 
 export default async function CarsPage() {
   const { user } = await requireSession();
-  const [cars, defaultCarId] = await Promise.all([
+  const [cars, defaultCarId, t, format] = await Promise.all([
     listCarsWithLatestReading(user.id),
     getDefaultCarId(user.id),
+    getTranslations("Cars"),
+    getFormatter(),
   ]);
 
   return (
@@ -24,11 +28,11 @@ export default async function CarsPage() {
       <div className="flex items-end justify-between gap-4">
         <div>
           <p className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
-            Garage
+            {t("eyebrow")}
           </p>
-          <h1 className="text-2xl font-semibold tracking-tight">Your cars</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">{t("heading")}</h1>
         </div>
-        <AddCarDialog>Add car</AddCarDialog>
+        <AddCarDialog />
       </div>
 
       {cars.length === 0 ? (
@@ -37,10 +41,8 @@ export default async function CarsPage() {
             <CarIcon className="size-6" />
           </span>
           <div>
-            <p className="font-medium">Add your first car</p>
-            <p className="text-muted-foreground mt-1 text-sm">
-              Log its odometer readings and watch the mileage grow.
-            </p>
+            <p className="font-medium">{t("emptyTitle")}</p>
+            <p className="text-muted-foreground mt-1 text-sm">{t("emptyDescription")}</p>
           </div>
         </div>
       ) : (
@@ -77,22 +79,18 @@ export default async function CarsPage() {
                       <span className="truncate font-medium">{car.name}</span>
                       {isDefault && (
                         <span className="bg-accent text-accent-foreground shrink-0 rounded-full px-2 py-0.5 text-[11px] font-medium tracking-wide uppercase">
-                          Default
+                          {t("default")}
                         </span>
                       )}
                     </span>
                     <span className="text-muted-foreground text-sm">
-                      {car.latest ? (
-                        <>
-                          <span className="text-foreground font-mono tabular-nums">
-                            {numberFormat.format(car.latest.odometer)}
-                          </span>{" "}
-                          {car.unit} · {car.latest.readings}{" "}
-                          {car.latest.readings === 1 ? "reading" : "readings"}
-                        </>
-                      ) : (
-                        <>No readings yet · {car.unit}</>
-                      )}
+                      {car.latest
+                        ? t("latest", {
+                            odometer: format.number(car.latest.odometer),
+                            unit: car.unit,
+                            count: car.latest.readings,
+                          })
+                        : t("noReadings", { unit: car.unit })}
                     </span>
                   </span>
                 </Link>

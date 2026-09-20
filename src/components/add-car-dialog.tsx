@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { useFormStatus } from "react-dom";
 import { createCar } from "@/app/(protected)/cars/actions";
@@ -18,15 +19,17 @@ import { Label } from "@/components/ui/label";
 import { UNITS } from "@/lib/db/schema";
 
 function SubmitButton() {
+  const t = useTranslations("Cars");
   const { pending } = useFormStatus();
   return (
     <Button type="submit" disabled={pending}>
-      {pending ? "Adding…" : "Add car"}
+      {pending ? t("adding") : t("addCar")}
     </Button>
   );
 }
 
-export function AddCarDialog({ children }: { children: React.ReactNode }) {
+export function AddCarDialog() {
+  const t = useTranslations("Cars");
   const [open, setOpen] = useState(false);
 
   async function submit(formData: FormData) {
@@ -36,28 +39,26 @@ export function AddCarDialog({ children }: { children: React.ReactNode }) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button />}>{children}</DialogTrigger>
+      <DialogTrigger render={<Button />}>{t("addCar")}</DialogTrigger>
       <DialogContent>
         <form action={submit} className="flex flex-col gap-4">
           <DialogHeader>
-            <DialogTitle>Add a car</DialogTitle>
-            <DialogDescription>
-              Give it a name and pick the unit its odometer uses.
-            </DialogDescription>
+            <DialogTitle>{t("dialogTitle")}</DialogTitle>
+            <DialogDescription>{t("dialogDescription")}</DialogDescription>
           </DialogHeader>
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="car-name">Name</Label>
+            <Label htmlFor="car-name">{t("name")}</Label>
             <Input
               id="car-name"
               name="name"
               maxLength={64}
-              placeholder="e.g. Honda Civic"
+              placeholder={t("namePlaceholder")}
               autoFocus
               required
             />
           </div>
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="car-unit">Unit</Label>
+            <Label htmlFor="car-unit">{t("unit")}</Label>
             <select
               id="car-unit"
               name="unit"

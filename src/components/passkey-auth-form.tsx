@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { authClient, whenPasskeyIdle } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
@@ -14,10 +15,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-const CEREMONY_FAILED =
-  "The passkey prompt was cancelled or failed. Please try again.";
-
 export function PasskeyAuthForm() {
+  const t = useTranslations("Auth");
   const router = useRouter();
   const [name, setName] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -57,7 +56,7 @@ export function PasskeyAuthForm() {
     const { error } = await authClient.signIn.passkey();
     setPending(null);
     if (error) {
-      setError(error.message ?? CEREMONY_FAILED);
+      setError(t("ceremonyFailed"));
       return;
     }
     enterApp();
@@ -68,7 +67,7 @@ export function PasskeyAuthForm() {
     setError(null);
     const trimmed = name.trim();
     if (!trimmed) {
-      setError("Enter a name to create your account.");
+      setError(t("nameRequired"));
       return;
     }
     setPending("signUp");
@@ -81,7 +80,7 @@ export function PasskeyAuthForm() {
     });
     setPending(null);
     if (error) {
-      setError(error.message ?? CEREMONY_FAILED);
+      setError(error.message ?? t("ceremonyFailed"));
       return;
     }
     enterApp();
@@ -91,16 +90,16 @@ export function PasskeyAuthForm() {
     <div className="flex w-full max-w-sm flex-col gap-4">
       <Card className="shadow-sm">
         <CardHeader>
-          <CardTitle>Sign in</CardTitle>
-          <CardDescription>Use the passkey saved on this device.</CardDescription>
+          <CardTitle>{t("signInTitle")}</CardTitle>
+          <CardDescription>{t("signInDescription")}</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
           <Input
             type="text"
             name="username"
             autoComplete="username webauthn"
-            placeholder="Your saved passkeys appear here"
-            aria-label="Passkey autofill"
+            placeholder={t("autofillPlaceholder")}
+            aria-label={t("autofillLabel")}
           />
           <Button
             type="button"
@@ -108,28 +107,26 @@ export function PasskeyAuthForm() {
             disabled={pending !== null}
             className="w-full"
           >
-            {pending === "signIn" ? "Waiting for passkey…" : "Sign in with passkey"}
+            {pending === "signIn" ? t("waiting") : t("signInButton")}
           </Button>
         </CardContent>
       </Card>
 
       <div className="text-muted-foreground flex items-center gap-3 text-xs uppercase tracking-wider">
         <span className="bg-border h-px flex-1" />
-        New here
+        {t("divider")}
         <span className="bg-border h-px flex-1" />
       </div>
 
       <Card className="shadow-sm">
         <CardHeader>
-          <CardTitle>Create account</CardTitle>
-          <CardDescription>
-            Pick a name, then register a passkey. No password needed.
-          </CardDescription>
+          <CardTitle>{t("signUpTitle")}</CardTitle>
+          <CardDescription>{t("signUpDescription")}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={signUp} className="flex flex-col gap-3">
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="display-name">Name</Label>
+              <Label htmlFor="display-name">{t("name")}</Label>
               <Input
                 id="display-name"
                 name="displayName"
@@ -146,7 +143,7 @@ export function PasskeyAuthForm() {
               disabled={pending !== null}
               className="w-full"
             >
-              {pending === "signUp" ? "Waiting for passkey…" : "Create account with passkey"}
+              {pending === "signUp" ? t("waiting") : t("signUpButton")}
             </Button>
           </form>
         </CardContent>

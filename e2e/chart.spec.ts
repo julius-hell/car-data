@@ -1,5 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 import { addCar } from "./helpers/cars";
+import { displayDate } from "./helpers/format";
 import { enableVirtualPasskeys, signUp } from "./helpers/passkey";
 
 const dots = (page: Page) =>
@@ -50,7 +51,9 @@ test("deleting a reading removes its point", async ({ page }) => {
   await addReading(page, 300, "2026-04-01");
   await addReading(page, 400, "2026-04-02");
   await expect(dots(page)).toHaveCount(2);
-  await page.getByRole("button", { name: "Delete reading 400 on 2026-04-02" }).click();
+  await page
+    .getByRole("button", { name: `Delete reading 400 on ${displayDate("2026-04-02")}` })
+    .click();
   await expect(dots(page)).toHaveCount(1);
 });
 

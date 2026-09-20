@@ -1,6 +1,8 @@
 import { SerwistProvider } from "@serwist/turbopack/react";
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getTranslations } from "next-intl/server";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -13,44 +15,51 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  applicationName: "Car Data",
-  title: {
-    default: "Car Data",
-    template: "%s · Car Data",
-  },
-  description: "Track the mileage of your cars over time.",
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "default",
-    title: "Car Data",
-  },
-  icons: {
-    apple: "/icons/apple-touch-icon.png",
-  },
-  formatDetection: {
-    telephone: false,
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("Meta");
+  return {
+    applicationName: t("appName"),
+    title: {
+      default: t("appName"),
+      template: `%s · ${t("appName")}`,
+    },
+    description: t("description"),
+    appleWebApp: {
+      capable: true,
+      statusBarStyle: "default",
+      title: t("appName"),
+    },
+    icons: {
+      apple: "/icons/apple-touch-icon.png",
+    },
+    formatDetection: {
+      telephone: false,
+    },
+  };
+}
 
 export const viewport: Viewport = {
   colorScheme: "light dark",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
+    { media: "(prefers-color-scheme: light)", color: "#fbfaf8" },
+    { media: "(prefers-color-scheme: dark)", color: "#090a0c" },
   ],
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const locale = await getLocale();
+
   return (
     <html
-      lang="en"
+      lang={locale}
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
-        <SerwistProvider swUrl="/serwist/sw.js" options={{ scope: "/" }}>
-          {children}
-        </SerwistProvider>
+        <NextIntlClientProvider>
+          <SerwistProvider swUrl="/serwist/sw.js" options={{ scope: "/" }}>
+            {children}
+          </SerwistProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

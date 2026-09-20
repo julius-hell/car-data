@@ -14,7 +14,7 @@ const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 export type AddEntryState =
   | { status: "idle" }
   | { status: "saved" }
-  | { status: "error"; message: string }
+  | { status: "error"; message: "errorCarGone" | "errorOdometer" | "errorDate" | "errorNote" }
   | { status: "lower"; odometer: number; latest: number };
 
 export async function addMileageEntry(
@@ -24,7 +24,7 @@ export async function addMileageEntry(
 ): Promise<AddEntryState> {
   const { user } = await requireSession();
   const owned = await findOwnedCar(user.id, carId);
-  if (!owned) return { status: "error", message: "This car no longer exists." };
+  if (!owned) return { status: "error", message: "errorCarGone" };
 
   const odometer = Number(formData.get("odometer"));
   const recordedAt = String(formData.get("recordedAt") ?? "");
@@ -32,13 +32,13 @@ export async function addMileageEntry(
   const confirmLower = formData.get("confirmLower") === "1";
 
   if (!Number.isInteger(odometer) || odometer < 0) {
-    return { status: "error", message: "Enter the odometer as a whole number." };
+    return { status: "error", message: "errorOdometer" };
   }
   if (!ISO_DATE.test(recordedAt) || Number.isNaN(Date.parse(recordedAt))) {
-    return { status: "error", message: "Enter a valid date." };
+    return { status: "error", message: "errorDate" };
   }
   if (note.length > NOTE_MAX_LENGTH) {
-    return { status: "error", message: `Keep the note under ${NOTE_MAX_LENGTH} characters.` };
+    return { status: "error", message: "errorNote" };
   }
 
   const latest = await latestOdometer(owned.id);

@@ -10,19 +10,12 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { useFormatter, useTranslations } from "next-intl";
 import type { Unit } from "@/lib/db/schema";
 
 export type MileagePoint = { recordedAt: string; odometer: number };
 
 const DAY_MS = 86_400_000;
-
-const dateFormat = new Intl.DateTimeFormat("en", { day: "numeric", month: "short" });
-const dateYearFormat = new Intl.DateTimeFormat("en", {
-  day: "numeric",
-  month: "short",
-  year: "numeric",
-});
-const numberFormat = new Intl.NumberFormat("en");
 
 function toTimestamp(isoDate: string) {
   return Date.parse(`${isoDate}T00:00:00Z`);
@@ -46,13 +39,19 @@ function niceTicks(min: number, max: number, targetCount = 4) {
 }
 
 export function MileageChart({ points, unit }: { points: MileagePoint[]; unit: Unit }) {
+  const t = useTranslations("Car");
+  const format = useFormatter();
+  const shortDate = (date: Date) => format.dateTime(date, { day: "numeric", month: "short" });
+  const fullDate = (date: Date) =>
+    format.dateTime(date, { day: "numeric", month: "short", year: "numeric" });
+
   if (points.length === 0) {
     return (
       <div
         data-testid="mileage-chart-empty"
         className="text-muted-foreground bg-muted/40 flex h-40 items-center justify-center rounded-lg border border-dashed px-4 text-center text-sm"
       >
-        Log a reading to start the chart.
+        {t("chartEmpty")}
       </div>
     );
   }
@@ -63,8 +62,7 @@ export function MileageChart({ points, unit }: { points: MileagePoint[]; unit: U
   const xDomain = padDomain(Math.min(...times), Math.max(...times), DAY_MS);
   const { ticks: yTicks, domain: yDomain } = niceTicks(Math.min(...values), Math.max(...values));
   const spansYears = new Date(xDomain[0]).getUTCFullYear() !== new Date(xDomain[1]).getUTCFullYear();
-  const formatTick = (t: number) =>
-    (spansYears ? dateYearFormat : dateFormat).format(new Date(t));
+  const formatTick = (ms: number) => (spansYears ? fullDate : shortDate)(new Date(ms));
 
   return (
     <div data-testid="mileage-chart" className="h-64 w-full">
@@ -85,7 +83,7 @@ export function MileageChart({ points, unit }: { points: MileagePoint[]; unit: U
           <YAxis
             domain={yDomain}
             ticks={yTicks}
-            tickFormatter={(v: number) => numberFormat.format(v)}
+            tickFormatter={(v: number) => format.number(v)}
             tick={{ fill: "var(--muted-foreground)", fontSize: 12 }}
             tickLine={false}
             axisLine={false}
@@ -103,10 +101,10 @@ export function MileageChart({ points, unit }: { points: MileagePoint[]; unit: U
                   <div className="flex items-center gap-2">
                     <span aria-hidden className="bg-chart-1 inline-block h-0.5 w-3 rounded-full" />
                     <span className="font-semibold tabular-nums">
-                      {numberFormat.format(point.odometer)} {unit}
+                      {format.number(point.odometer)} {unit}
                     </span>
                   </div>
-                  <div className="text-muted-foreground">{dateYearFormat.format(new Date(point.t))}</div>
+                  <div className="text-muted-foreground">{fullDate(new Date(point.t))}</div>
                 </div>
               );
             }}

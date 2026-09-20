@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { BrandMark, Wordmark } from "@/components/brand";
+import { LocaleSwitcher } from "@/components/locale-switcher";
 import { Button } from "@/components/ui/button";
 
 // The service worker keeps visited pages for offline use; drop them so a
@@ -16,6 +18,7 @@ async function clearOfflineCaches() {
 }
 
 export function AppHeader({ userName }: { userName: string }) {
+  const t = useTranslations("Header");
   const router = useRouter();
   const [pending, setPending] = useState(false);
 
@@ -33,8 +36,9 @@ export function AppHeader({ userName }: { userName: string }) {
           <BrandMark />
           <Wordmark className="text-lg" />
         </Link>
-        <div className="flex min-w-0 items-center gap-1">
-          <span className="text-muted-foreground min-w-0 truncate px-2 text-sm">{userName}</span>
+        <div className="flex min-w-0 items-center gap-2">
+          <span className="text-muted-foreground min-w-0 truncate text-sm">{userName}</span>
+          <LocaleSwitcher />
           <Button
             type="button"
             variant="ghost"
@@ -43,7 +47,7 @@ export function AppHeader({ userName }: { userName: string }) {
             disabled={pending}
             className="shrink-0"
           >
-            Sign out
+            {t("signOut")}
           </Button>
         </div>
       </div>

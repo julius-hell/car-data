@@ -2,6 +2,7 @@
 
 import { CarIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { useFormStatus } from "react-dom";
 import { removeCarPhoto } from "@/app/(protected)/cars/[carId]/photo-actions";
@@ -9,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { photoUrl } from "@/lib/photo-url";
 
 function RemoveButton() {
+  const t = useTranslations("Photo");
   const { pending } = useFormStatus();
   return (
     <Button
@@ -18,7 +20,7 @@ function RemoveButton() {
       disabled={pending}
       className="bg-background/85 backdrop-blur dark:bg-background/85"
     >
-      {pending ? "Removing…" : "Remove photo"}
+      {pending ? t("removing") : t("remove")}
     </Button>
   );
 }
@@ -32,6 +34,7 @@ export function CarPhoto({
   carName: string;
   photoUpdatedAt: Date | null;
 }) {
+  const t = useTranslations("Photo");
   const router = useRouter();
   const [uploading, startUpload] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -46,7 +49,7 @@ export function CarPhoto({
       const response = await fetch(`/cars/${carId}/photo`, { method: "POST", body });
       if (!response.ok) {
         const payload = (await response.json().catch(() => null)) as { error?: string } | null;
-        setError(payload?.error ?? "Uploading the photo failed. Please try again.");
+        setError(payload?.error ?? t("errorGeneric"));
         return;
       }
       router.refresh();
@@ -65,7 +68,7 @@ export function CarPhoto({
           // eslint-disable-next-line @next/next/no-img-element -- served by our own ownership-checked route
           <img
             src={photoUrl(carId, "display", photoUpdatedAt)}
-            alt={`Photo of ${carName}`}
+            alt={t("alt", { name: carName })}
             data-testid="car-photo"
             className="absolute inset-0 size-full object-contain"
           />
@@ -84,7 +87,7 @@ export function CarPhoto({
             type="file"
             accept="image/*"
             className="sr-only"
-            aria-label={photoUpdatedAt ? "Change photo" : "Add photo"}
+            aria-label={photoUpdatedAt ? t("change") : t("add")}
             onChange={(event) => {
               upload(event.target.files?.[0]);
               event.target.value = "";
@@ -98,7 +101,7 @@ export function CarPhoto({
             className="bg-background/85 backdrop-blur dark:bg-background/85"
             onClick={() => document.getElementById(inputId)?.click()}
           >
-            {uploading ? "Uploading…" : photoUpdatedAt ? "Change photo" : "Add photo"}
+            {uploading ? t("uploading") : photoUpdatedAt ? t("change") : t("add")}
           </Button>
           {photoUpdatedAt && (
             <form action={removeCarPhoto.bind(null, carId)}>

@@ -1,5 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 import { addCar } from "./helpers/cars";
+import { displayDate } from "./helpers/format";
 import { enableVirtualPasskeys, signUp } from "./helpers/passkey";
 
 const rows = (page: Page) => page.getByTestId("entries").locator("tbody tr");
@@ -34,7 +35,7 @@ test("a reading defaults to today and appears at the top with the unit", async (
 
   await addReading(page, 12345);
   await expect(rows(page)).toHaveCount(1);
-  await expect(rows(page).first()).toContainText(today);
+  await expect(rows(page).first()).toContainText(displayDate(today));
   await expect(rows(page).first()).toContainText("12,345 mi");
   await expect(page.getByLabel(/Odometer/)).toHaveValue("");
 });
@@ -49,10 +50,10 @@ test("readings are listed newest first with their notes", async ({ page }) => {
   await addReading(page, 21000, { date: "2026-05-20" });
   await expect(rows(page)).toHaveCount(3);
 
-  await expect(rows(page).nth(0)).toContainText("2026-05-20");
-  await expect(rows(page).nth(1)).toContainText("2026-03-01");
+  await expect(rows(page).nth(0)).toContainText(displayDate("2026-05-20"));
+  await expect(rows(page).nth(1)).toContainText(displayDate("2026-03-01"));
   await expect(rows(page).nth(1)).toContainText("spring check");
-  await expect(rows(page).nth(2)).toContainText("2026-01-15");
+  await expect(rows(page).nth(2)).toContainText(displayDate("2026-01-15"));
   await expect(rows(page).nth(2)).toContainText("winter tyres");
 });
 
@@ -76,7 +77,9 @@ test("a reading lower than the latest warns but can still be saved", async ({ pa
 test("a reading can be deleted", async ({ page }) => {
   await addReading(page, 777, { date: "2026-04-04" });
   await expect(rows(page)).toHaveCount(1);
-  await page.getByRole("button", { name: "Delete reading 777 on 2026-04-04" }).click();
+  await page
+    .getByRole("button", { name: `Delete reading 777 on ${displayDate("2026-04-04")}` })
+    .click();
   await expect(page.getByText("No readings yet.")).toBeVisible();
 });
 

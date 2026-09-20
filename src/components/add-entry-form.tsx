@@ -1,5 +1,6 @@
 "use client";
 
+import { useFormatter, useTranslations } from "next-intl";
 import { useActionState, useState, useSyncExternalStore } from "react";
 import {
   addMileageEntry,
@@ -19,6 +20,8 @@ function localIsoDate() {
 const noopSubscribe = () => () => {};
 
 export function AddEntryForm({ carId, unit }: { carId: string; unit: Unit }) {
+  const t = useTranslations("Entry");
+  const format = useFormatter();
   const [state, action, pending] = useActionState<AddEntryState, FormData>(
     addMileageEntry.bind(null, carId),
     { status: "idle" },
@@ -40,11 +43,11 @@ export function AddEntryForm({ carId, unit }: { carId: string; unit: Unit }) {
       className="bg-card flex flex-col gap-4 rounded-xl border p-4 shadow-xs sm:p-5"
     >
       <h2 className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
-        Log a reading
+        {t("title")}
       </h2>
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="odometer">Odometer ({unit})</Label>
+          <Label htmlFor="odometer">{t("odometer", { unit })}</Label>
           <Input
             id="odometer"
             name="odometer"
@@ -59,7 +62,7 @@ export function AddEntryForm({ carId, unit }: { carId: string; unit: Unit }) {
           />
         </div>
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="recordedAt">Date</Label>
+          <Label htmlFor="recordedAt">{t("date")}</Label>
           <Input
             id="recordedAt"
             name="recordedAt"
@@ -71,12 +74,12 @@ export function AddEntryForm({ carId, unit }: { carId: string; unit: Unit }) {
         </div>
       </div>
       <div className="flex flex-col gap-1.5">
-        <Label htmlFor="note">Note (optional)</Label>
+        <Label htmlFor="note">{t("note")}</Label>
         <Input
           id="note"
           name="note"
           maxLength={200}
-          placeholder="e.g. oil change"
+          placeholder={t("notePlaceholder")}
           value={fields.note}
           onChange={update("note")}
         />
@@ -84,7 +87,7 @@ export function AddEntryForm({ carId, unit }: { carId: string; unit: Unit }) {
 
       {state.status === "error" && (
         <p role="alert" data-testid="entry-error" className="text-destructive text-sm">
-          {state.message}
+          {t(state.message, { max: 200 })}
         </p>
       )}
 
@@ -95,19 +98,21 @@ export function AddEntryForm({ carId, unit }: { carId: string; unit: Unit }) {
           className="flex flex-col gap-3 rounded-md border border-amber-500/50 bg-amber-500/10 p-3 text-sm"
         >
           <p>
-            {state.odometer.toLocaleString("en")} {unit} is lower than the
-            latest reading of {state.latest.toLocaleString("en")} {unit}. Save it
-            anyway?
+            {t("lower", {
+              odometer: format.number(state.odometer),
+              latest: format.number(state.latest),
+              unit,
+            })}
           </p>
           <div>
             <Button type="submit" name="confirmLower" value="1" size="sm" disabled={pending}>
-              {pending ? "Saving…" : "Save anyway"}
+              {pending ? t("saving") : t("saveAnyway")}
             </Button>
           </div>
         </div>
       ) : (
         <Button type="submit" disabled={pending} className="sm:self-start">
-          {pending ? "Saving…" : "Add reading"}
+          {pending ? t("saving") : t("submit")}
         </Button>
       )}
     </form>

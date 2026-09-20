@@ -1,10 +1,12 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useFormStatus } from "react-dom";
 import { setDefaultCar } from "@/app/(protected)/cars/actions";
 import { Button } from "@/components/ui/button";
 
 function SubmitButton({ carName }: { carName: string }) {
+  const t = useTranslations("Cars");
   const { pending } = useFormStatus();
   return (
     <Button
@@ -12,9 +14,9 @@ function SubmitButton({ carName }: { carName: string }) {
       variant="outline"
       size="sm"
       disabled={pending}
-      aria-label={`Set ${carName} as default`}
+      aria-label={t("setDefaultLabel", { name: carName })}
     >
-      {pending ? "Saving…" : "Set default"}
+      {pending ? t("saving") : t("setDefault")}
     </Button>
   );
 }
