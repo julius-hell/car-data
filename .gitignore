@@ -50,3 +50,6 @@ next-env.d.ts
 
 # tesseract assets staged by scripts/prepare-ocr-assets.mjs
 /public/ocr/
+
+# tesseract.js cache written when running OCR in Node
+/*.traineddata
