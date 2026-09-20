@@ -73,7 +73,7 @@ export default async function CarPage(props: PageProps<"/cars/[carId]">) {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-5">
-        <div className="sm:col-span-3">
+        <div className="aspect-[3/2] sm:col-span-3 sm:aspect-auto">
           <CarPhoto carId={car.id} carName={car.name} photoUpdatedAt={car.photoUpdatedAt} />
         </div>
         <div className="grid grid-cols-2 gap-3 sm:col-span-2 sm:grid-cols-1">
