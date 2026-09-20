@@ -52,7 +52,9 @@
     "namePlaceholder": "e.g. Honda Civic",
     "unit": "Unit",
     "adding": "Adding…",
-    "logReading": "Log reading"
+    "logReading": "Log reading",
+    "reminderSoon": "Due soon",
+    "reminderOverdue": "Overdue"
   },
   "Car": {
     "allCars": "All cars",
@@ -132,5 +134,37 @@
     "atCurrentRate": "at the current rate",
     "monthlyTitle": "Distance per month",
     "monthlyEmpty": "Two readings in different months start this chart."
+  },
+  "Reminders": {
+    "heading": "Reminders",
+    "add": "Add reminder",
+    "addTitle": "Add a reminder",
+    "editTitle": "Edit reminder",
+    "dialogDescription": "Give it a name and a distance target, a date target, or both.",
+    "title": "Title",
+    "titlePlaceholder": "e.g. Service",
+    "targetOdometer": "At odometer ({unit})",
+    "targetDate": "By date",
+    "save": "Save",
+    "saving": "Saving…",
+    "empty": "No reminders. Add one for the next service or inspection.",
+    "atOdometer": "at {value} {unit}",
+    "byDate": "by {date}",
+    "toGo": "{value} {unit} to go",
+    "reached": "target reached",
+    "estimated": "≈ {date}",
+    "daysLeft": "{count, plural, one {# day left} other {# days left}}",
+    "daysOver": "{count, plural, one {# day overdue} other {# days overdue}}",
+    "soon": "Due soon",
+    "overdue": "Overdue",
+    "done": "Done",
+    "doneLabel": "Mark {title} as done",
+    "editLabel": "Edit {title}",
+    "deleteLabel": "Delete reminder {title}",
+    "completed": "{count, plural, one {# completed} other {# completed}}",
+    "errorTitle": "Give the reminder a title.",
+    "errorTarget": "Set a distance target, a date target, or both.",
+    "errorOdometer": "Enter the target odometer as a whole number.",
+    "errorDate": "Enter a valid date."
   }
 }

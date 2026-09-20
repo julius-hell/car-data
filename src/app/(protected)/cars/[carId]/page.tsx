@@ -8,6 +8,7 @@ import { CarPhoto } from "@/components/car-photo";
 import { DeleteEntryButton } from "@/components/delete-entry-button";
 import { MileageChart } from "@/components/mileage-chart";
 import { MonthlyChart } from "@/components/monthly-chart";
+import { ReminderList } from "@/components/reminder-list";
 import { StatTile } from "@/components/stat-tile";
 import {
   Table,
@@ -20,6 +21,7 @@ import {
 import { findOwnedCar, getDefaultCarId } from "@/lib/cars";
 import { isoDateToDate } from "@/lib/dates";
 import { listEntries } from "@/lib/entries";
+import { listReminders } from "@/lib/reminders";
 import { mileageStats, monthlyDistances } from "@/lib/stats";
 import { requireSession } from "@/lib/session";
 
@@ -40,8 +42,9 @@ export default async function CarPage(props: PageProps<"/cars/[carId]">) {
   const car = await findOwnedCar(user.id, carId);
   if (!car) notFound();
   const focusForm = searchParams.log === "1";
-  const [entries, defaultCarId, t, ts, format] = await Promise.all([
+  const [entries, reminders, defaultCarId, t, ts, format] = await Promise.all([
     listEntries(car.id),
+    listReminders(car.id),
     getDefaultCarId(user.id),
     getTranslations("Car"),
     getTranslations("Stats"),
@@ -172,6 +175,15 @@ export default async function CarPage(props: PageProps<"/cars/[carId]">) {
         unit={car.unit}
         latest={latest?.odometer ?? null}
         autoFocus={focusForm}
+      />
+
+      <ReminderList
+        carId={car.id}
+        unit={car.unit}
+        reminders={reminders}
+        latestOdometer={latest?.odometer ?? null}
+        perDay={stats.perDay}
+        now={now}
       />
 
       <section className="flex min-w-0 flex-col gap-3">

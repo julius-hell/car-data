@@ -52,7 +52,9 @@
     "namePlaceholder": "z. B. Honda Civic",
     "unit": "Einheit",
     "adding": "Hinzufügen…",
-    "logReading": "Stand eintragen"
+    "logReading": "Stand eintragen",
+    "reminderSoon": "Bald fällig",
+    "reminderOverdue": "Überfällig"
   },
   "Car": {
     "allCars": "Alle Autos",
@@ -132,5 +134,37 @@
     "atCurrentRate": "beim aktuellen Tempo",
     "monthlyTitle": "Strecke pro Monat",
     "monthlyEmpty": "Zwei Einträge in verschiedenen Monaten starten dieses Diagramm."
+  },
+  "Reminders": {
+    "heading": "Erinnerungen",
+    "add": "Erinnerung hinzufügen",
+    "addTitle": "Erinnerung hinzufügen",
+    "editTitle": "Erinnerung bearbeiten",
+    "dialogDescription": "Gib ihr einen Namen und ein Kilometer-Ziel, ein Datum oder beides.",
+    "title": "Titel",
+    "titlePlaceholder": "z. B. Inspektion",
+    "targetOdometer": "Bei Kilometerstand ({unit})",
+    "targetDate": "Bis Datum",
+    "save": "Speichern",
+    "saving": "Speichern…",
+    "empty": "Keine Erinnerungen. Lege eine für die nächste Inspektion oder den TÜV an.",
+    "atOdometer": "bei {value} {unit}",
+    "byDate": "bis {date}",
+    "toGo": "noch {value} {unit}",
+    "reached": "Ziel erreicht",
+    "estimated": "≈ {date}",
+    "daysLeft": "{count, plural, one {noch # Tag} other {noch # Tage}}",
+    "daysOver": "{count, plural, one {# Tag überfällig} other {# Tage überfällig}}",
+    "soon": "Bald fällig",
+    "overdue": "Überfällig",
+    "done": "Erledigt",
+    "doneLabel": "{title} als erledigt markieren",
+    "editLabel": "{title} bearbeiten",
+    "deleteLabel": "Erinnerung {title} löschen",
+    "completed": "{count, plural, one {# erledigt} other {# erledigt}}",
+    "errorTitle": "Gib der Erinnerung einen Titel.",
+    "errorTarget": "Lege ein Kilometer-Ziel, ein Datum oder beides fest.",
+    "errorOdometer": "Gib den Ziel-Kilometerstand als ganze Zahl ein.",
+    "errorDate": "Gib ein gültiges Datum ein."
   }
 }

@@ -43,6 +43,22 @@ export const mileageEntry = pgTable(
   (table) => [index("mileage_entry_car_id_idx").on(table.carId)],
 );
 
+export const reminder = pgTable(
+  "reminder",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    carId: uuid("car_id")
+      .notNull()
+      .references(() => car.id, { onDelete: "cascade" }),
+    title: text("title").notNull(),
+    targetOdometer: integer("target_odometer"),
+    targetDate: date("target_date"),
+    doneAt: timestamp("done_at"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [index("reminder_car_id_idx").on(table.carId)],
+);
+
 export const userPreference = pgTable("user_preference", {
   userId: text("user_id")
     .primaryKey()
@@ -56,3 +72,4 @@ export type Car = typeof car.$inferSelect;
 export type Unit = Car["unit"];
 export const UNITS = unitEnum.enumValues;
 export type MileageEntry = typeof mileageEntry.$inferSelect;
+export type Reminder = typeof reminder.$inferSelect;
