@@ -8,7 +8,7 @@ import {
   timestamp,
   uuid,
 } from "drizzle-orm/pg-core";
-import { user } from "./auth-schema";
+import { user } from "./auth-schema.ts";
 
 export const unitEnum = pgEnum("unit", ["km", "mi"]);
 

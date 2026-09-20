@@ -65,6 +65,23 @@ First-time Playwright setup: `pnpm exec playwright install chromium`.
 `public/icons/` is generated from `scripts/icon-source.svg`; after changing the
 source run `node scripts/generate-icons.mjs` and commit the PNGs.
 
+## Migrating mileage from the legacy Firebase app
+
+`scripts/migrate-legacy-mileage.mts` copies the `mileage` subcollection of one
+legacy car (`cars/{id}/mileage`, fields `timestamp` and `value`) into a car in
+this app. Only the readings move; create the car here first and take its id
+from the URL.
+
+```sh
+export GOOGLE_APPLICATION_CREDENTIALS=~/car-stats-service-account.json   # or: gcloud auth application-default login
+pnpm migrate:legacy --legacy dmEz5yySfTldLPtPHWJU --car <new car uuid> --dry-run
+pnpm migrate:legacy --legacy dmEz5yySfTldLPtPHWJU --car <new car uuid>
+```
+
+Timestamps become calendar dates in `--tz` (default `Europe/Berlin`).
+Re-running is safe: readings that already exist with the same date and value
+are skipped.
+
 ## Docs for agents
 
 See `AGENTS.md`, `CONTEXT.md` (domain vocabulary) and `docs/agents/`.

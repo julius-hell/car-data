@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "migrate:legacy": "node --env-file=.env scripts/migrate-legacy-mileage.mts"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
@@ -44,6 +45,7 @@
     "esbuild": "^0.28.2",
     "eslint": "^9",
     "eslint-config-next": "16.3.5",
+    "firebase-admin": "^14.4.0",
     "serwist": "^9.5.12",
     "tailwindcss": "^4",
     "typescript": "^5"
