@@ -119,7 +119,7 @@ export default async function CarPage(props: PageProps<"/cars/[carId]">) {
         />
       </section>
 
-      <AddEntryForm carId={car.id} unit={car.unit} />
+      <AddEntryForm carId={car.id} unit={car.unit} latest={latest?.odometer ?? null} />
 
       <section className="flex min-w-0 flex-col gap-3">
         <h2 className="text-muted-foreground text-xs font-medium tracking-wider uppercase">

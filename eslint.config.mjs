@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Vendor files staged by scripts/prepare-ocr-assets.mjs.
+    "public/ocr/**",
   ]),
 ]);
 

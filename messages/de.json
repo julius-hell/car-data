@@ -111,5 +111,13 @@
     "title": "Offline",
     "heading": "Du bist offline",
     "description": "Car Data braucht eine Verbindung, um deine Einträge zu laden. Versuche es erneut, sobald du wieder online bist."
+  },
+  "Scan": {
+    "button": "Tacho scannen",
+    "scanning": "Foto wird gelesen… {percent}%",
+    "recognized": "{value} {unit} aus dem Foto gelesen – prüfe den Wert vor dem Speichern.",
+    "orMaybe": "oder",
+    "nothingFound": "Im Foto wurde kein Kilometerstand gefunden. Versuche es näher am Display oder tippe ihn ein.",
+    "failed": "Der Scanner konnte nicht starten. Tippe den Stand stattdessen ein."
   }
 }

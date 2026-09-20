@@ -111,5 +111,13 @@
     "title": "Offline",
     "heading": "You are offline",
     "description": "Car Data needs a connection to load your readings. Try again once you are back online."
+  },
+  "Scan": {
+    "button": "Scan odometer",
+    "scanning": "Reading photo… {percent}%",
+    "recognized": "Read {value} {unit} from the photo — check it before saving.",
+    "orMaybe": "or",
+    "nothingFound": "Couldn't find a mileage in that photo. Try again closer to the display, or type it in.",
+    "failed": "The scanner couldn't start. Type the reading in instead."
   }
 }

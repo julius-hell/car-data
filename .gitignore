@@ -47,3 +47,6 @@ next-env.d.ts
 
 # car photos (local dev)
 /data/
+
+# tesseract assets staged by scripts/prepare-ocr-assets.mjs
+/public/ocr/

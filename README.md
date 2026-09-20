@@ -65,6 +65,13 @@ First-time Playwright setup: `pnpm exec playwright install chromium`.
 `public/icons/` is generated from `scripts/icon-source.svg`; after changing the
 source run `node scripts/generate-icons.mjs` and commit the PNGs.
 
+## Odometer scanning
+
+"Scan odometer" on the car page runs Tesseract.js in the browser (nothing is
+uploaded). `scripts/prepare-ocr-assets.mjs` stages the worker, WASM core and
+English model into `public/ocr/` before `pnpm dev` and `pnpm build`; the
+folder is git-ignored.
+
 ## Migrating mileage from the legacy Firebase app
 
 `scripts/migrate-legacy-mileage.mts` copies the `mileage` subcollection of one
