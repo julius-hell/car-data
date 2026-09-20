@@ -42,6 +42,7 @@ test("the y-axis and tooltip carry the car's unit", async ({ page }) => {
   const chart = page.getByTestId("mileage-chart");
   await expect(chart.getByText(/^12,\d{3}$/).first()).toBeVisible();
 
+  await chart.scrollIntoViewIfNeeded();
   const box = (await chart.boundingBox())!;
   await page.mouse.move(box.x + box.width * 0.8, box.y + box.height / 2);
   await expect(chart.locator(".recharts-tooltip-wrapper")).toContainText("12,500 km");
