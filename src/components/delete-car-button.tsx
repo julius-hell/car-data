@@ -27,20 +27,20 @@ function ConfirmButton() {
   );
 }
 
-export function DeleteCarButton({ carId, carName }: { carId: string; carName: string }) {
+export function DeleteCarButton({ carId, plate }: { carId: string; plate: string }) {
   const t = useTranslations("Cars");
   return (
     <AlertDialog>
       <AlertDialogTrigger
         render={<Button variant="ghost" size="icon-sm" className="text-muted-foreground hover:text-destructive" />}
-        aria-label={t("deleteLabel", { name: carName })}
+        aria-label={t("deleteLabel", { name: plate })}
       >
         <Trash2Icon className="size-4" />
       </AlertDialogTrigger>
       <AlertDialogContent>
         <form action={deleteCar.bind(null, carId)}>
           <AlertDialogHeader>
-            <AlertDialogTitle>{t("deleteTitle", { name: carName })}</AlertDialogTitle>
+            <AlertDialogTitle>{t("deleteTitle", { name: plate })}</AlertDialogTitle>
             <AlertDialogDescription>{t("deleteDescription")}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

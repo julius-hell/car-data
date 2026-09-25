@@ -28,10 +28,10 @@ test("switching to German translates the app and formats numbers and dates", asy
   await expect(page.getByRole("button", { name: "Eintragen" })).toBeVisible();
 
   await page.goto("/cars");
-  await expect(page.getByRole("heading", { name: "Deine Autos" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Fahrzeuge", exact: true })).toBeVisible();
   await expect(page.getByRole("listitem").filter({ hasText: "Golf" })).toContainText("1 Eintrag");
 
   await page.getByRole("group", { name: "Sprache" }).getByRole("button", { name: "English" }).click();
-  await expect(page.getByRole("heading", { name: "Your cars" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Cars", exact: true })).toBeVisible();
   await expect(page.getByRole("listitem").filter({ hasText: "Golf" })).toContainText("1 reading");
 });

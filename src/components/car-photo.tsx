@@ -27,12 +27,12 @@ function RemoveButton() {
 
 export function CarPhoto({
   carId,
-  carName,
+  plate,
   photoUpdatedAt,
   editable,
 }: {
   carId: string;
-  carName: string;
+  plate: string;
   photoUpdatedAt: Date | null;
   editable: boolean;
 }) {
@@ -70,7 +70,7 @@ export function CarPhoto({
           // eslint-disable-next-line @next/next/no-img-element -- served by our own ownership-checked route
           <img
             src={photoUrl(carId, "display", photoUpdatedAt)}
-            alt={t("alt", { name: carName })}
+            alt={t("alt", { name: plate })}
             data-testid="car-photo"
             className="absolute inset-0 size-full object-contain"
           />

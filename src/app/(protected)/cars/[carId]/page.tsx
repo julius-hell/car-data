@@ -4,7 +4,12 @@ import { notFound } from "next/navigation";
 import { ArrowLeftIcon } from "lucide-react";
 import { getFormatter, getTranslations } from "next-intl/server";
 import { AddEntryForm } from "@/components/add-entry-form";
+import { CarDialog } from "@/components/car-dialog";
 import { CarPhoto } from "@/components/car-photo";
+import { DeleteCarButton } from "@/components/delete-car-button";
+import { RetireCarDialog } from "@/components/retire-car-dialog";
+import { Button } from "@/components/ui/button";
+import { reactivateCar } from "../actions";
 import { DeleteEntryButton } from "@/components/delete-entry-button";
 import { MileageChart } from "@/components/mileage-chart";
 import { MonthlyChart } from "@/components/monthly-chart";
@@ -31,7 +36,7 @@ export async function generateMetadata(
   const actor = await requireActor();
   const { carId } = await props.params;
   const [car, t] = await Promise.all([findCar(actor, carId), getTranslations("Car")]);
-  return { title: car?.name ?? t("notFound") };
+  return { title: car?.licencePlate ?? t("notFound") };
 }
 
 export default async function CarPage(props: PageProps<"/cars/[carId]">) {
@@ -43,10 +48,11 @@ export default async function CarPage(props: PageProps<"/cars/[carId]">) {
   const canAddEntry = can(actor, "addEntry");
   const canDeleteEntry = can(actor, "deleteEntry");
   const focusForm = searchParams.log === "1";
-  const [entries, t, ts, format] = await Promise.all([
+  const [entries, t, ts, tc, format] = await Promise.all([
     listEntries(car.id),
     getTranslations("Car"),
     getTranslations("Stats"),
+    getTranslations("Cars"),
     getFormatter(),
   ]);
   const now = new Date();
@@ -83,14 +89,60 @@ export default async function CarPage(props: PageProps<"/cars/[carId]">) {
           <ArrowLeftIcon className="size-4" aria-hidden />
           {t("allCars")}
         </Link>
-        <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-          <h1 className="text-3xl font-semibold tracking-tight">{car.name}</h1>
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <h1 className="font-mono text-3xl font-semibold tracking-wide">{car.licencePlate}</h1>
+            <p className="text-muted-foreground" data-testid="car-make-model">
+              {car.make} {car.model}
+            </p>
+            {car.retiredOn && (
+              <span
+                data-testid="car-retired"
+                className="bg-muted text-muted-foreground rounded-full px-2 py-0.5 text-xs font-medium"
+              >
+                {tc("retiredSummary", {
+                  date: formatDate(car.retiredOn),
+                  reason: tc(`reasons.${car.retirementReason ?? "other"}`),
+                })}
+              </span>
+            )}
+          </div>
+          {canManage && (
+            <div className="flex flex-wrap items-center gap-2">
+              <CarDialog car={car} />
+              {car.retiredOn ? (
+                <form action={reactivateCar.bind(null, car.id)}>
+                  <Button type="submit" variant="outline">
+                    {tc("reactivate")}
+                  </Button>
+                </form>
+              ) : (
+                <RetireCarDialog carId={car.id} plate={car.licencePlate} />
+              )}
+              <DeleteCarButton carId={car.id} plate={car.licencePlate} />
+            </div>
+          )}
         </div>
+        <dl className="text-muted-foreground grid grid-cols-2 gap-x-6 gap-y-1 text-sm sm:grid-cols-4" data-testid="car-details">
+          {[
+            ["vin", car.vin],
+            ["firstRegistration", car.firstRegistration ? formatDate(car.firstRegistration) : null],
+            ["costCenter", car.costCenter],
+            ["location", car.location],
+          ].map(([key, value]) => (
+            <div key={key} className="flex flex-col">
+              <dt className="text-xs tracking-wider uppercase">{tc(key!)}</dt>
+              <dd className="text-foreground truncate" data-testid={`car-${key}`}>
+                {value ?? "—"}
+              </dd>
+            </div>
+          ))}
+        </dl>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-5">
         <div className="aspect-[3/2] sm:col-span-3 sm:aspect-auto">
-          <CarPhoto carId={car.id} carName={car.name} photoUpdatedAt={car.photoUpdatedAt} editable={canManage} />
+          <CarPhoto carId={car.id} plate={car.licencePlate} photoUpdatedAt={car.photoUpdatedAt} editable={canManage} />
         </div>
         <div className="grid grid-cols-2 gap-3 sm:col-span-2 sm:grid-cols-1">
           <StatTile
