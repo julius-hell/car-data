@@ -29,10 +29,12 @@ export function CarPhoto({
   carId,
   carName,
   photoUpdatedAt,
+  editable,
 }: {
   carId: string;
   carName: string;
   photoUpdatedAt: Date | null;
+  editable: boolean;
 }) {
   const t = useTranslations("Photo");
   const router = useRouter();
@@ -81,34 +83,36 @@ export function CarPhoto({
           </div>
         )}
 
-        <div className="absolute bottom-3 left-3 flex flex-wrap items-center gap-2">
-          <input
-            id={inputId}
-            type="file"
-            accept="image/*"
-            className="sr-only"
-            aria-label={photoUpdatedAt ? t("change") : t("add")}
-            onChange={(event) => {
-              upload(event.target.files?.[0]);
-              event.target.value = "";
-            }}
-          />
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            disabled={uploading}
-            className="bg-background/85 backdrop-blur dark:bg-background/85"
-            onClick={() => document.getElementById(inputId)?.click()}
-          >
-            {uploading ? t("uploading") : photoUpdatedAt ? t("change") : t("add")}
-          </Button>
-          {photoUpdatedAt && (
-            <form action={removeCarPhoto.bind(null, carId)}>
-              <RemoveButton />
-            </form>
-          )}
-        </div>
+        {editable && (
+          <div className="absolute bottom-3 left-3 flex flex-wrap items-center gap-2">
+            <input
+              id={inputId}
+              type="file"
+              accept="image/*"
+              className="sr-only"
+              aria-label={photoUpdatedAt ? t("change") : t("add")}
+              onChange={(event) => {
+                upload(event.target.files?.[0]);
+                event.target.value = "";
+              }}
+            />
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={uploading}
+              className="bg-background/85 backdrop-blur dark:bg-background/85"
+              onClick={() => document.getElementById(inputId)?.click()}
+            >
+              {uploading ? t("uploading") : photoUpdatedAt ? t("change") : t("add")}
+            </Button>
+            {photoUpdatedAt && (
+              <form action={removeCarPhoto.bind(null, carId)}>
+                <RemoveButton />
+              </form>
+            )}
+          </div>
+        )}
       </div>
 
       {error && (

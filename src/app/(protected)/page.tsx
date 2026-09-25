@@ -8,5 +8,5 @@ export default async function Home() {
   if (user.isOperator) redirect("/operator");
   const actor = await getActor();
   if (!actor) redirect("/no-organization");
-  redirect("/cars");
+  redirect(actor.role === "driver" ? "/my-cars" : "/cars");
 }

@@ -58,3 +58,30 @@ export async function setupOrganization(page: Page, browser: Browser, options?: 
   await expect(page).toHaveURL("/cars");
   return organization;
 }
+
+export type Role = "admin" | "driver" | "viewer";
+
+// An admin invites someone on the team page; returns the copyable link.
+export async function inviteMember(adminPage: Page, account: Account, role: Role) {
+  await adminPage.goto("/team");
+  await adminPage.getByLabel("Name", { exact: true }).fill(account.name);
+  await adminPage.getByLabel("Email", { exact: true }).fill(account.email);
+  await adminPage.getByLabel("Role", { exact: true }).selectOption(role);
+  await adminPage.getByRole("button", { name: "Create invitation" }).click();
+  await expect(adminPage.getByTestId("invite-member-success")).toBeVisible();
+  const invitation = adminPage.getByTestId("invitation").filter({ hasText: account.email });
+  return invitation.getByTestId("invitation-link").inputValue();
+}
+
+// Invites a new member and signs them in on a fresh browser context.
+export async function addMember(browser: Browser, adminPage: Page, role: Role, account = newAccount(role)) {
+  const link = await inviteMember(adminPage, account, role);
+  const context = await browser.newContext();
+  const page = await context.newPage();
+  await acceptInvitation(page, link, account.password);
+  return { page, context, account };
+}
+
+export function memberRow(adminPage: Page, email: string) {
+  return adminPage.locator(`[data-testid="member"][data-email="${email}"]`);
+}

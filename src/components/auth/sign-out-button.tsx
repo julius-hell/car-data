@@ -1,29 +1,14 @@
-"use client";
-
-import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
-import { useState } from "react";
-import { authClient } from "@/lib/auth-client";
+import { getTranslations } from "next-intl/server";
 import { Button } from "@/components/ui/button";
 
-export function SignOutButton({ redirectTo = "/login" }: { redirectTo?: string }) {
-  const t = useTranslations("Header");
-  const router = useRouter();
-  const [pending, setPending] = useState(false);
-
+export async function SignOutButton({ redirectTo = "/login" }: { redirectTo?: string }) {
+  const t = await getTranslations("Header");
   return (
-    <Button
-      type="button"
-      variant="outline"
-      disabled={pending}
-      onClick={async () => {
-        setPending(true);
-        await authClient.signOut();
-        router.push(redirectTo);
-        router.refresh();
-      }}
-    >
-      {t("signOut")}
-    </Button>
+    <form action="/sign-out" method="post">
+      <input type="hidden" name="next" value={redirectTo} />
+      <Button type="submit" variant="outline">
+        {t("signOut")}
+      </Button>
+    </form>
   );
 }

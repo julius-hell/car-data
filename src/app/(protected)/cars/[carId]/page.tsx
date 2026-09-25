@@ -39,6 +39,9 @@ export default async function CarPage(props: PageProps<"/cars/[carId]">) {
   const [{ carId }, searchParams] = await Promise.all([props.params, props.searchParams]);
   const car = can(actor, "viewFleet") ? await findCar(actor, carId) : undefined;
   if (!car) notFound();
+  const canManage = can(actor, "manageFleet");
+  const canAddEntry = can(actor, "addEntry");
+  const canDeleteEntry = can(actor, "deleteEntry");
   const focusForm = searchParams.log === "1";
   const [entries, t, ts, format] = await Promise.all([
     listEntries(car.id),
@@ -87,7 +90,7 @@ export default async function CarPage(props: PageProps<"/cars/[carId]">) {
 
       <div className="grid gap-4 sm:grid-cols-5">
         <div className="aspect-[3/2] sm:col-span-3 sm:aspect-auto">
-          <CarPhoto carId={car.id} carName={car.name} photoUpdatedAt={car.photoUpdatedAt} />
+          <CarPhoto carId={car.id} carName={car.name} photoUpdatedAt={car.photoUpdatedAt} editable={canManage} />
         </div>
         <div className="grid grid-cols-2 gap-3 sm:col-span-2 sm:grid-cols-1">
           <StatTile
@@ -159,10 +162,7 @@ export default async function CarPage(props: PageProps<"/cars/[carId]">) {
         <MonthlyChart months={months} unit="km" />
       </section>
 
-      <AddEntryForm
-        carId={car.id}
-        autoFocus={focusForm}
-      />
+      {canAddEntry && <AddEntryForm carId={car.id} autoFocus={focusForm} />}
 
       <section className="flex min-w-0 flex-col gap-3">
         <h2 className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
@@ -178,7 +178,7 @@ export default async function CarPage(props: PageProps<"/cars/[carId]">) {
                   <TableHead className="w-32 pl-4">{t("date")}</TableHead>
                   <TableHead className="w-32 text-right">{t("odometer")}</TableHead>
                   <TableHead>{t("note")}</TableHead>
-                  <TableHead className="w-12" />
+                  {canDeleteEntry && <TableHead className="w-12" />}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -189,10 +189,11 @@ export default async function CarPage(props: PageProps<"/cars/[carId]">) {
                     </TableCell>
                     <TableCell className="text-right font-mono whitespace-nowrap tabular-nums">
                       {format.number(entry.odometer)}{" "}
-                      <span className="text-muted-foreground font-sans">{"km"}</span>
+                      <span className="text-muted-foreground font-sans">km</span>
                     </TableCell>
                     <TableCell className="text-muted-foreground truncate">{entry.note}</TableCell>
-                    <TableCell className="py-1 pr-2">
+                    {canDeleteEntry && (
+                      <TableCell className="py-1 pr-2">
                       <DeleteEntryButton
                         entryId={entry.id}
                         label={t("deleteReading", {
@@ -200,7 +201,8 @@ export default async function CarPage(props: PageProps<"/cars/[carId]">) {
                           date: formatDate(entry.recordedAt),
                         })}
                       />
-                    </TableCell>
+                      </TableCell>
+                    )}
                   </TableRow>
                 ))}
               </TableBody>

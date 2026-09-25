@@ -14,7 +14,7 @@ export default async function ProtectedLayout({
     <>
       <AppHeader
         userName={user.name}
-        context={user.isOperator ? { kind: "operator" } : actor ? { kind: "member", organizationName: actor.organizationName } : null}
+        context={user.isOperator ? { kind: "operator" } : actor ? { kind: "member", organizationName: actor.organizationName, role: actor.role } : null}
       />
       {children}
     </>

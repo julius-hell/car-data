@@ -17,6 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function CarsPage() {
   const actor = await requireActor();
   if (!can(actor, "viewFleet")) notFound();
+  const canManage = can(actor, "manageFleet");
   const [cars, t, format] = await Promise.all([
     listCarsWithLatestReading(actor),
     getTranslations("Cars"),
@@ -32,7 +33,7 @@ export default async function CarsPage() {
           </p>
           <h1 className="text-2xl font-semibold tracking-tight">{t("heading")}</h1>
         </div>
-        <AddCarDialog />
+        {canManage && <AddCarDialog />}
       </div>
 
       {cars.length === 0 ? (
@@ -88,7 +89,7 @@ export default async function CarsPage() {
                     </span>
                   </span>
                 </Link>
-                <DeleteCarButton carId={car.id} carName={car.name} />
+                {canManage && <DeleteCarButton carId={car.id} carName={car.name} />}
               </li>
             );
           })}

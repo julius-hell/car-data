@@ -2,7 +2,11 @@
 
 import { useTranslations } from "next-intl";
 import { useActionState } from "react";
-import { acceptInvitation, type AcceptInvitationState } from "@/app/invite/[invitationId]/actions";
+import {
+  acceptInvitation,
+  acceptInvitationWithAccount,
+  type AcceptInvitationState,
+} from "@/app/invite/[invitationId]/actions";
 import { FormMessage } from "@/components/form-message";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,32 +16,45 @@ export function AcceptInvitationForm({
   invitationId,
   name,
   email,
+  hasAccount,
 }: {
   invitationId: string;
   name: string;
   email: string;
+  hasAccount: boolean;
 }) {
   const t = useTranslations("Invite");
   const tAuth = useTranslations("Auth");
   const [state, action, pending] = useActionState<AcceptInvitationState, FormData>(
-    acceptInvitation.bind(null, invitationId),
+    (hasAccount ? acceptInvitationWithAccount : acceptInvitation).bind(null, invitationId),
     { status: "idle" },
   );
 
   return (
     <form action={action} className="flex flex-col gap-3" noValidate>
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="name">{tAuth("name")}</Label>
-        <Input id="name" name="name" defaultValue={name} maxLength={64} autoComplete="name" />
-      </div>
+      {hasAccount ? (
+        <p className="text-muted-foreground text-sm" data-testid="invite-existing-account">
+          {t("existingAccount")}
+        </p>
+      ) : (
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="name">{tAuth("name")}</Label>
+          <Input id="name" name="name" defaultValue={name} maxLength={64} autoComplete="name" />
+        </div>
+      )}
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="email">{tAuth("email")}</Label>
         <Input id="email" value={email} readOnly autoComplete="username" />
       </div>
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="password">{tAuth("password")}</Label>
-        <Input id="password" name="password" type="password" autoComplete="new-password" />
-        <p className="text-muted-foreground text-xs">{tAuth("passwordHint")}</p>
+        <Input
+          id="password"
+          name="password"
+          type="password"
+          autoComplete={hasAccount ? "current-password" : "new-password"}
+        />
+        {!hasAccount && <p className="text-muted-foreground text-xs">{tAuth("passwordHint")}</p>}
       </div>
       {state.status === "error" && (
         <FormMessage kind="error" testId="invite-error">

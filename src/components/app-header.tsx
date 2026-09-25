@@ -8,11 +8,28 @@ import { authClient } from "@/lib/auth-client";
 import { BrandMark, Wordmark } from "@/components/brand";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { Button } from "@/components/ui/button";
+import type { Role } from "@/lib/roles";
 
 export type HeaderContext =
   | { kind: "operator" }
-  | { kind: "member"; organizationName: string }
+  | { kind: "member"; organizationName: string; role: Role }
   | null;
+
+function navItems(context: HeaderContext) {
+  if (!context) return [];
+  if (context.kind === "operator") return [{ href: "/operator", key: "organizations" }] as const;
+  switch (context.role) {
+    case "admin":
+      return [
+        { href: "/cars", key: "cars" },
+        { href: "/team", key: "team" },
+      ] as const;
+    case "viewer":
+      return [{ href: "/cars", key: "cars" }] as const;
+    case "driver":
+      return [{ href: "/my-cars", key: "myCars" }] as const;
+  }
+}
 
 export function AppHeader({ userName, context }: { userName: string; context: HeaderContext }) {
   const t = useTranslations("Header");
@@ -42,6 +59,17 @@ export function AppHeader({ userName, context }: { userName: string; context: He
               {context.kind === "operator" ? t("operator") : context.organizationName}
             </span>
           )}
+          <nav aria-label={t("navigation")} className="flex items-center gap-1">
+            {navItems(context).map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="text-muted-foreground hover:text-foreground rounded-md px-2 py-1 text-sm transition-colors"
+              >
+                {t(`nav.${item.key}`)}
+              </Link>
+            ))}
+          </nav>
         </div>
         <div className="flex min-w-0 items-center gap-2">
           <Link

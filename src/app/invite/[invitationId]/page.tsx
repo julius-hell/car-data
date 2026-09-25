@@ -4,7 +4,8 @@ import { AcceptInvitationForm } from "@/components/accept-invitation-form";
 import { AuthShell } from "@/components/auth/auth-shell";
 import { SignOutButton } from "@/components/auth/sign-out-button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { findInvitationWithOrganization, invitationState } from "@/lib/organizations";
+import { findUserByEmail } from "@/lib/accounts";
+import { findInvitationWithOrganization, invitationBlocker, invitationState } from "@/lib/organizations";
 import { getSession } from "@/lib/session";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -21,15 +22,22 @@ export default async function InvitePage(props: PageProps<"/invite/[invitationId
     getTranslations("Invitations"),
   ]);
   const state = found ? invitationState(found.invitation) : null;
+  const blocked = found && state === "pending" ? await invitationBlocker(found.invitation.email) : null;
 
-  if (!found || state !== "pending" || found.organization.status !== "active") {
+  if (!found || state !== "pending" || found.organization.status !== "active" || blocked) {
     return (
       <AuthShell>
         <Card data-testid="invite-unavailable" className="w-full max-w-sm shadow-sm">
           <CardHeader>
             <CardTitle>{t("unavailableTitle")}</CardTitle>
             <CardDescription>
-              {state === "expired" ? t("expired") : state === "accepted" ? t("used") : t("unavailable")}
+              {state === "expired"
+                ? t("expired")
+                : state === "accepted"
+                  ? t("used")
+                  : blocked
+                    ? t("taken")
+                    : t("unavailable")}
             </CardDescription>
           </CardHeader>
         </Card>
@@ -38,6 +46,7 @@ export default async function InvitePage(props: PageProps<"/invite/[invitationId
   }
 
   const { invitation, organization } = found;
+  const hasAccount = Boolean(await findUserByEmail(invitation.email));
   return (
     <AuthShell>
       <Card className="w-full max-w-sm shadow-sm">
@@ -54,7 +63,12 @@ export default async function InvitePage(props: PageProps<"/invite/[invitationId
               <SignOutButton redirectTo={`/invite/${invitation.id}`} />
             </div>
           ) : (
-            <AcceptInvitationForm invitationId={invitation.id} name={invitation.name} email={invitation.email} />
+            <AcceptInvitationForm
+              invitationId={invitation.id}
+              name={invitation.name}
+              email={invitation.email}
+              hasAccount={hasAccount}
+            />
           )}
         </CardContent>
       </Card>

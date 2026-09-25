@@ -2,7 +2,7 @@ import { randomBytes, randomUUID } from "node:crypto";
 import { and, asc, count, desc, eq, sql } from "drizzle-orm";
 import { findUserByEmail, normalizeEmail } from "@/lib/accounts";
 import { db } from "@/lib/db";
-import { car, invitation, member, organization, user } from "@/lib/db/schema";
+import { car, invitation, member, organization, session, user } from "@/lib/db/schema";
 import type { Role } from "@/lib/actor";
 
 export const ORGANIZATION_NAME_MAX_LENGTH = 100;
@@ -85,15 +85,6 @@ export async function findInvitationWithOrganization(id: string) {
     .innerJoin(organization, eq(organization.id, invitation.organizationId))
     .where(eq(invitation.id, id));
   return row;
-}
-
-// Whether an email may be invited: every person belongs to exactly one
-// organization, so an address that already has a membership is refused.
-export async function emailHasMembership(email: string) {
-  const existing = await findUserByEmail(email);
-  if (!existing) return false;
-  const membership = await db.query.member.findFirst({ where: eq(member.userId, existing.id) });
-  return Boolean(membership);
 }
 
 export async function createInvitation({
@@ -186,4 +177,98 @@ export async function addMember(organizationId: string, userId: string, role: Ro
 
 export async function markInvitationAccepted(invitationId: string) {
   await db.update(invitation).set({ status: "accepted" }).where(eq(invitation.id, invitationId));
+}
+
+export type InviteBlocker = "member" | "operator";
+
+// Why an email can't be invited, if it can't: every person belongs to exactly
+// one organization, and operators never belong to any.
+export async function invitationBlocker(email: string): Promise<InviteBlocker | null> {
+  const existing = await findUserByEmail(email);
+  if (!existing) return null;
+  if (existing.isOperator) return "operator";
+  const membership = await db.query.member.findFirst({ where: eq(member.userId, existing.id) });
+  return membership ? "member" : null;
+}
+
+export async function hasOpenInvitation(organizationId: string, email: string) {
+  const rows = await db.query.invitation.findMany({
+    where: and(
+      eq(invitation.organizationId, organizationId),
+      eq(invitation.email, normalizeEmail(email)),
+      eq(invitation.status, "pending"),
+    ),
+  });
+  return rows.some((row) => invitationState(row) === "pending");
+}
+
+export async function listMembers(organizationId: string) {
+  return db
+    .select({
+      userId: user.id,
+      name: user.name,
+      email: user.email,
+      emailVerified: user.emailVerified,
+      role: member.role,
+      joinedAt: member.createdAt,
+    })
+    .from(member)
+    .innerJoin(user, eq(user.id, member.userId))
+    .where(eq(member.organizationId, organizationId))
+    .orderBy(asc(user.name));
+}
+
+export async function findMember(organizationId: string, userId: string) {
+  if (typeof userId !== "string" || userId.length > 64) return undefined;
+  return db.query.member.findFirst({
+    where: and(eq(member.organizationId, organizationId), eq(member.userId, userId)),
+  });
+}
+
+export type MemberChangeResult = "ok" | "notFound" | "lastAdmin";
+
+// Changes a member's role, refusing to leave the organization without an admin.
+// Runs in a transaction that locks the organization's admin rows so two
+// admins demoting each other at once can't both succeed.
+export async function changeMemberRole(
+  organizationId: string,
+  userId: string,
+  role: Role,
+): Promise<MemberChangeResult> {
+  return db.transaction(async (tx) => {
+    const admins = await tx
+      .select({ userId: member.userId })
+      .from(member)
+      .where(and(eq(member.organizationId, organizationId), eq(member.role, "admin")))
+      .for("update");
+    const target = await tx.query.member.findFirst({
+      where: and(eq(member.organizationId, organizationId), eq(member.userId, userId)),
+    });
+    if (!target) return "notFound";
+    if (target.role === "admin" && role !== "admin" && admins.length <= 1) return "lastAdmin";
+    await tx.update(member).set({ role }).where(eq(member.id, target.id));
+    return "ok";
+  });
+}
+
+export async function removeMember(organizationId: string, userId: string): Promise<MemberChangeResult> {
+  return db.transaction(async (tx) => {
+    const admins = await tx
+      .select({ userId: member.userId })
+      .from(member)
+      .where(and(eq(member.organizationId, organizationId), eq(member.role, "admin")))
+      .for("update");
+    const target = await tx.query.member.findFirst({
+      where: and(eq(member.organizationId, organizationId), eq(member.userId, userId)),
+    });
+    if (!target) return "notFound";
+    if (target.role === "admin" && admins.length <= 1) return "lastAdmin";
+    await tx.delete(member).where(eq(member.id, target.id));
+    await tx.delete(session).where(eq(session.userId, userId));
+    return "ok";
+  });
+}
+
+export async function renameOrganization(organizationId: string, name: string) {
+  await db.update(organization).set({ name }).where(eq(organization.id, organizationId));
 }

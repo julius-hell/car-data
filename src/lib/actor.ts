@@ -9,12 +9,9 @@ import { getSession } from "@/lib/session";
 // reads or writes organization data starts from an actor, so every query is
 // scoped to the actor's organization.
 
-export const ROLES = ["admin", "driver", "viewer"] as const;
-export type Role = (typeof ROLES)[number];
+import type { Role } from "@/lib/roles";
 
-export function isRole(value: unknown): value is Role {
-  return typeof value === "string" && (ROLES as readonly string[]).includes(value);
-}
+export { isRole, ROLES, type Role } from "@/lib/roles";
 
 export type Actor = {
   userId: string;

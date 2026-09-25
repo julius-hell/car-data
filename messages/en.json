@@ -7,7 +7,14 @@
     "signOut": "Sign out",
     "language": "Language",
     "settingsLabel": "Settings for {name}",
-    "operator": "Operator"
+    "operator": "Operator",
+    "navigation": "Main",
+    "nav": {
+      "organizations": "Organizations",
+      "cars": "Cars",
+      "team": "Team",
+      "myCars": "My cars"
+    }
   },
   "Auth": {
     "title": "Sign in",
@@ -188,11 +195,63 @@
     "errorName": "Enter your name.",
     "passwordTooShort": "The password must be at least 8 characters long.",
     "passwordTooLong": "The password is too long.",
-    "errorEmailTaken": "An account with this email already exists."
+    "taken": "This email already belongs to an organization or an operator.",
+    "existingAccount": "You already have an account with this email. Enter your password to join.",
+    "errorWrongPassword": "The password is incorrect.",
+    "errorTaken": "This email can't join another organization."
   },
   "NoOrganization": {
     "title": "No organization",
     "heading": "You're not part of an organization",
     "description": "Your account doesn't belong to an organization. Ask an admin of your company for an invitation."
+  },
+  "Team": {
+    "title": "Team",
+    "eyebrow": "Organization",
+    "heading": "Team",
+    "organization": "Organization",
+    "organizationName": "Organization name",
+    "rename": "Rename",
+    "renamed": "Saved.",
+    "errorOrganizationName": "Enter a name of up to 100 characters.",
+    "inviteTitle": "Invite someone",
+    "inviteDescription": "Admins manage everything, drivers log mileage for their cars, viewers see the fleet read-only.",
+    "name": "Name",
+    "email": "Email",
+    "role": "Role",
+    "invite": "Create invitation",
+    "inviting": "Creating…",
+    "invited": "Invitation for {name} created. Copy the link below and send it to them.",
+    "errorName": "Enter a name.",
+    "errorEmail": "Enter a valid email address.",
+    "errorRole": "Pick a role.",
+    "errorMember": "This email already belongs to a member of an organization.",
+    "errorOperator": "This email belongs to a platform operator and can't join an organization.",
+    "errorPending": "There's already an open invitation for this email.",
+    "invitations": "Open invitations",
+    "members": "Members",
+    "you": "you",
+    "verified": "email verified",
+    "unverified": "email not verified",
+    "currentCars": "Drives {cars}",
+    "roleOf": "Role of {name}",
+    "saveRole": "Save",
+    "roleSaved": "Role saved.",
+    "resetLink": "Password reset link",
+    "resetLinkLabel": "Create a password reset link for {name}",
+    "resetLinkField": "Password reset link for {name}",
+    "resetLinkHint": "Works once, for 24 hours. Send it to them directly.",
+    "remove": "Remove",
+    "removeTitle": "Remove {name}?",
+    "removeDescription": "They lose access immediately and are signed out everywhere. Their mileage entries stay.",
+    "cancel": "Cancel",
+    "errorLastAdmin": "The organization needs at least one admin.",
+    "errorGone": "This member no longer exists."
+  },
+  "MyCars": {
+    "title": "My cars",
+    "heading": "My cars",
+    "emptyTitle": "No cars assigned yet",
+    "emptyDescription": "Once an admin assigns a car to you, it shows up here."
   }
 }

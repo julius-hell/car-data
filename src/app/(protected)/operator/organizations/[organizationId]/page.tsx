@@ -4,9 +4,14 @@ import { notFound } from "next/navigation";
 import { ArrowLeftIcon } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { InvitationList } from "@/components/invitation-list";
+import { ResetLinkButton } from "@/components/reset-link-button";
 import { requireOperator } from "@/lib/actor";
 import { findOrganization, listAdmins, listInvitations } from "@/lib/organizations";
-import { reissueOrganizationInvitation, revokeOrganizationInvitation } from "../../actions";
+import {
+  createAdminResetLink,
+  reissueOrganizationInvitation,
+  revokeOrganizationInvitation,
+} from "../../actions";
 
 export async function generateMetadata(
   props: PageProps<"/operator/organizations/[organizationId]">,
@@ -55,9 +60,19 @@ export default async function OperatorOrganizationPage(
         ) : (
           <ul className="flex flex-col gap-2" data-testid="organization-admins">
             {admins.map((admin) => (
-              <li key={admin.userId} className="bg-card rounded-xl border p-3 text-sm shadow-xs">
-                <span className="font-medium">{admin.name}</span>{" "}
-                <span className="text-muted-foreground">{admin.email}</span>
+              <li
+                key={admin.userId}
+                data-testid="organization-admin"
+                className="bg-card flex flex-col gap-2 rounded-xl border p-3 text-sm shadow-xs"
+              >
+                <p>
+                  <span className="font-medium">{admin.name}</span>{" "}
+                  <span className="text-muted-foreground">{admin.email}</span>
+                </p>
+                <ResetLinkButton
+                  action={createAdminResetLink.bind(null, organization.id, admin.userId)}
+                  name={admin.name}
+                />
               </li>
             ))}
           </ul>
