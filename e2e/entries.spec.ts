@@ -1,7 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 import { addCar } from "./helpers/cars";
 import { displayDate } from "./helpers/format";
-import { enableVirtualPasskeys, signUp } from "./helpers/passkey";
+import { signUp } from "./helpers/auth";
 
 const rows = (page: Page) => page.getByTestId("entries").locator("tbody tr");
 
@@ -17,8 +17,7 @@ async function addReading(
 }
 
 test.beforeEach(async ({ page }) => {
-  await enableVirtualPasskeys(page);
-  await signUp(page, `Logger ${Date.now()}-${Math.random()}`);
+  await signUp(page);
   const carId = await addCar(page, "Logbook");
   await page.goto(`/cars/${carId}`);
 });

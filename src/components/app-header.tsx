@@ -28,7 +28,13 @@ export function AppHeader({ userName }: { userName: string }) {
           <Wordmark className="text-lg" />
         </Link>
         <div className="flex min-w-0 items-center gap-2">
-          <span className="text-muted-foreground min-w-0 truncate text-sm">{userName}</span>
+          <Link
+            href="/settings"
+            className="text-muted-foreground hover:text-foreground min-w-0 truncate text-sm transition-colors"
+            aria-label={t("settingsLabel", { name: userName })}
+          >
+            {userName}
+          </Link>
           <LocaleSwitcher />
           <Button
             type="button"

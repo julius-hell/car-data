@@ -1,29 +1,44 @@
 {
   "Meta": {
     "appName": "Car Data",
-    "description": "Track the mileage of your cars over time."
+    "description": "Deadlines, contracts and mileage for your company cars."
   },
   "Header": {
     "signOut": "Sign out",
-    "language": "Language"
+    "language": "Language",
+    "settingsLabel": "Settings for {name}"
   },
   "Auth": {
     "title": "Sign in",
-    "tagline": "Every reading on your odometer, kept for good.",
-    "footer": "No passwords. Your passkey stays on your device and is the only thing that can open this account.",
+    "tagline": "Your fleet's deadlines, contracts and mileage in one place.",
     "signInTitle": "Sign in",
-    "signInDescription": "Use the passkey saved on this device.",
-    "autofillPlaceholder": "Your saved passkeys appear here",
-    "autofillLabel": "Passkey autofill",
-    "signInButton": "Sign in with passkey",
-    "waiting": "Waiting for passkey…",
-    "divider": "New here",
+    "signInDescription": "Use your work email and password.",
+    "email": "Email",
+    "password": "Password",
+    "signInButton": "Sign in",
+    "signingIn": "Signing in…",
+    "noAccount": "No account yet?",
+    "signUpLink": "Create one",
     "signUpTitle": "Create account",
-    "signUpDescription": "Pick a name, then register a passkey. No password needed.",
+    "signUpDescription": "Enter your name, email and a password.",
     "name": "Name",
-    "signUpButton": "Create account with passkey",
-    "ceremonyFailed": "The passkey prompt was cancelled or failed. Please try again.",
-    "nameRequired": "Enter a name to create your account."
+    "signUpButton": "Create account",
+    "creating": "Creating…",
+    "haveAccount": "Already have an account?",
+    "signInLink": "Sign in",
+    "passwordHint": "At least 8 characters.",
+    "nameRequired": "Enter your name.",
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "changePassword": "Change password",
+    "saving": "Saving…",
+    "passwordChanged": "Password changed. Other devices have been signed out.",
+    "errorInvalidCredentials": "Email or password is incorrect.",
+    "errorPasswordTooShort": "The password must be at least 8 characters long.",
+    "errorPasswordTooLong": "The password is too long.",
+    "errorEmailTaken": "An account with this email already exists.",
+    "errorWrongCurrentPassword": "The current password is incorrect.",
+    "errorGeneric": "Something went wrong. Please try again."
   },
   "Cars": {
     "title": "Cars",
@@ -110,5 +125,10 @@
     "atCurrentRate": "at the current rate",
     "monthlyTitle": "Distance per month",
     "monthlyEmpty": "Two readings in different months start this chart."
+  },
+  "Settings": {
+    "title": "Settings",
+    "heading": "Settings",
+    "password": "Password"
   }
 }

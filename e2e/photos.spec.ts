@@ -1,7 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 import sharp from "sharp";
 import { addCar, deleteCar } from "./helpers/cars";
-import { enableVirtualPasskeys, signUp } from "./helpers/passkey";
+import { signUp } from "./helpers/auth";
 
 async function testImage(color: { r: number; g: number; b: number }) {
   return sharp({ create: { width: 640, height: 480, channels: 3, background: color } })
@@ -18,8 +18,7 @@ async function photoSrc(page: Page) {
 }
 
 test.beforeEach(async ({ page }) => {
-  await enableVirtualPasskeys(page);
-  await signUp(page, `Snapper ${Date.now()}-${Math.random()}`);
+  await signUp(page);
 });
 
 test("add, replace and remove a car photo", async ({ page }) => {
@@ -79,8 +78,7 @@ test("photos are private to their owner", async ({ page, browser }) => {
 
   const otherContext = await browser.newContext();
   const otherPage = await otherContext.newPage();
-  await enableVirtualPasskeys(otherPage);
-  await signUp(otherPage, `Peeker ${Date.now()}`);
+  await signUp(otherPage);
   expect((await otherContext.request.get(`/cars/${carId}/photo`)).status()).toBe(404);
   await otherContext.close();
 

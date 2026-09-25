@@ -1,10 +1,9 @@
 import { expect, test } from "@playwright/test";
 import { addCar } from "./helpers/cars";
-import { enableVirtualPasskeys, signUp } from "./helpers/passkey";
+import { signUp } from "./helpers/auth";
 
 test.beforeEach(async ({ page }) => {
-  await enableVirtualPasskeys(page);
-  await signUp(page, `Driver ${Date.now()}-${Math.random()}`);
+  await signUp(page);
 });
 
 test("a new user is prompted to add their first car", async ({ page }) => {
@@ -49,8 +48,7 @@ test("another user's car is not found", async ({ page, browser }) => {
 
   const otherContext = await browser.newContext();
   const otherPage = await otherContext.newPage();
-  await enableVirtualPasskeys(otherPage);
-  await signUp(otherPage, `Intruder ${Date.now()}`);
+  await signUp(otherPage);
 
   const response = await otherPage.goto(`/cars/${carId}`);
   expect(response?.status()).toBe(404);

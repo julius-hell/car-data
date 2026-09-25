@@ -1,19 +1,18 @@
 import { expect, test } from "@playwright/test";
 import { addCar } from "./helpers/cars";
-import { enableVirtualPasskeys, signUp } from "./helpers/passkey";
+import { signUp } from "./helpers/auth";
 
 test("the browser language picks the locale", async ({ browser }) => {
   const german = await browser.newContext({ locale: "de-DE" });
   const page = await german.newPage();
   await page.goto("/login");
   await expect(page.locator("html")).toHaveAttribute("lang", "de");
-  await expect(page.getByRole("button", { name: "Mit Passkey anmelden" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Anmelden", exact: true })).toBeVisible();
   await german.close();
 });
 
 test("switching to German translates the app and formats numbers and dates", async ({ page }) => {
-  await enableVirtualPasskeys(page);
-  await signUp(page, `Sprecher ${Date.now()}`);
+  await signUp(page);
   const carId = await addCar(page, "Golf");
   await page.goto(`/cars/${carId}`);
   await page.getByLabel(/Odometer/).fill("12345");

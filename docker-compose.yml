@@ -34,8 +34,6 @@ services:
       DATABASE_URL: postgres://${POSTGRES_USER:-cardata}:${POSTGRES_PASSWORD:-cardata}@postgres:5432/${POSTGRES_DB:-cardata}
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?set BETTER_AUTH_SECRET in .env}
       BETTER_AUTH_URL: ${BETTER_AUTH_URL:-http://localhost:3000}
-      PASSKEY_RP_ID: ${PASSKEY_RP_ID:-localhost}
-      PASSKEY_RP_NAME: ${PASSKEY_RP_NAME:-Car Data}
       BETTER_AUTH_RATE_LIMIT: ${BETTER_AUTH_RATE_LIMIT:-on}
       PHOTO_DIR: /data/photos
     volumes:

@@ -1,7 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 import { addCar } from "./helpers/cars";
 import { displayDate } from "./helpers/format";
-import { enableVirtualPasskeys, signUp } from "./helpers/passkey";
+import { signUp } from "./helpers/auth";
 
 const dots = (page: Page) =>
   page.getByTestId("mileage-chart").locator("circle.recharts-line-dot");
@@ -16,8 +16,7 @@ async function addReading(page: Page, odometer: number, date: string) {
 }
 
 test.beforeEach(async ({ page }) => {
-  await enableVirtualPasskeys(page);
-  await signUp(page, `Plotter ${Date.now()}-${Math.random()}`);
+  await signUp(page);
   const carId = await addCar(page, "Plotted");
   await page.goto(`/cars/${carId}`);
 });

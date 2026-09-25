@@ -2,22 +2,20 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { AuthShell } from "@/components/auth/auth-shell";
-import { SignInForm } from "@/components/auth/sign-in-form";
-import { safeNextPath } from "@/lib/next-path";
+import { SignUpForm } from "@/components/auth/sign-up-form";
 import { getSession } from "@/lib/session";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("Auth");
-  return { title: t("title") };
+  return { title: t("signUpTitle") };
 }
 
-export default async function LoginPage(props: PageProps<"/login">) {
-  const next = safeNextPath((await props.searchParams).next) ?? "/";
-  if (await getSession()) redirect(next);
+export default async function SignUpPage() {
+  if (await getSession()) redirect("/");
 
   return (
     <AuthShell>
-      <SignInForm next={next} signUpHref="/signup" />
+      <SignUpForm />
     </AuthShell>
   );
 }
