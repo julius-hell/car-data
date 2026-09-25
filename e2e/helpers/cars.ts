@@ -7,6 +7,10 @@ export type CarDetails = {
   firstRegistration?: string;
   costCenter?: string;
   location?: string;
+  nextHu?: string;
+  nextUvv?: string;
+  nextService?: string;
+  nextServiceKm?: string;
 };
 
 async function openAddCarDialog(page: Page) {
@@ -30,6 +34,10 @@ export async function fillCarForm(page: Page, plate: string | null, details: Car
     ["First registration", details.firstRegistration],
     ["Cost center", details.costCenter],
     ["Location", details.location],
+    ["Next HU/AU (month)", details.nextHu],
+    ["Next UVV inspection", details.nextUvv],
+    ["Next service", details.nextService],
+    ["Next service at km", details.nextServiceKm],
   ];
   for (const [label, value] of fields) {
     if (value !== undefined) await dialog.getByLabel(label, { exact: true }).fill(value);

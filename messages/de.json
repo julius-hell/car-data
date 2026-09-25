@@ -113,7 +113,14 @@
     "errorFirstRegistration": "Gib ein gültiges Datum der Erstzulassung ein.",
     "errorTooLong": "Marke, Modell, Kostenstelle und Standort dürfen höchstens 64 Zeichen haben.",
     "drivers": "Gefahren von {names}",
-    "noDrivers": "Niemand zugewiesen"
+    "noDrivers": "Niemand zugewiesen",
+    "nextDueTitle": "Nächste Fälligkeiten",
+    "nextDueHint": "HU/AU, UVV-Prüfung und Inspektion werden für jedes neue Fahrzeug verfolgt. Lass ein Feld leer, wenn du es noch nicht weißt; bei Fahrzeugen unter drei Jahren wird die erste HU aus der Erstzulassung berechnet.",
+    "nextHu": "Nächste HU/AU (Monat)",
+    "nextUvv": "Nächste UVV-Prüfung",
+    "nextService": "Nächste Inspektion",
+    "nextServiceKm": "Nächste Inspektion bei km",
+    "errorDue": "Prüfe die Fälligkeiten und die Kilometer der Inspektion."
   },
   "Car": {
     "allCars": "Alle Autos",
@@ -369,5 +376,52 @@
     "errorUntil": "Das Enddatum muss am oder nach dem Startdatum liegen.",
     "errorOverlap": "Diese Person ist dem Fahrzeug in diesem Zeitraum bereits zugewiesen.",
     "errorBeforeStart": "Das Enddatum darf nicht vor dem Beginn der Zuweisung liegen."
+  },
+  "Due": {
+    "level": {
+      "ok": "OK",
+      "soon": "Bald fällig",
+      "overdue": "Überfällig",
+      "missing": "Fälligkeit fehlt"
+    },
+    "dueMonth": "Fällig {month}",
+    "dueDate": "Fällig am {date}",
+    "daysLeft": "{count, plural, one {noch # Tag} other {noch # Tage}}",
+    "daysOverdue": "{count, plural, one {# Tag überfällig} other {# Tage überfällig}}",
+    "atOdometer": "bei {odometer} km",
+    "kmToGo": "noch {km} km",
+    "kmOverdue": "{km} km überfällig",
+    "estimated": "≈ {date}",
+    "noDueDate": "Keine Fälligkeit hinterlegt"
+  },
+  "Intervals": {
+    "title": "Prüfungen & Fristen",
+    "none": "Für dieses Fahrzeug werden keine Fristen verfolgt.",
+    "types": {
+      "hu": "HU/AU",
+      "uvv_inspection": "UVV-Prüfung",
+      "service": "Inspektion",
+      "licence_check": "Führerscheinkontrolle",
+      "uvv_instruction": "UVV-Unterweisung"
+    },
+    "everyMonths": "alle {months, plural, one {Monat} other {# Monate}}",
+    "everyMonthsOrKm": "alle {months, plural, one {Monat} other {# Monate}} oder {km, number} km, je nachdem, was zuerst eintritt",
+    "edit": "Bearbeiten",
+    "editLabel": "{name} bearbeiten",
+    "editDescription": "Lege fest, wann es als Nächstes fällig ist. Lass den Zeitraum leer, um den Standard des Typs zu verwenden.",
+    "nextDueMonth": "Nächste Fälligkeit (Monat)",
+    "nextDueDate": "Nächste Fälligkeit",
+    "nextDueOdometer": "Nächste Fälligkeit bei km",
+    "periodMonths": "Zeitraum in Monaten",
+    "periodKm": "Zeitraum in km",
+    "periodHint": "Mit dem Zeitraum wird nach einer Erledigung die nächste Fälligkeit berechnet.",
+    "save": "Speichern",
+    "stop": "Nicht mehr verfolgen",
+    "stopLabel": "{name} nicht mehr verfolgen",
+    "track": "Verfolgen",
+    "trackLabel": "Frist zum Verfolgen",
+    "errorDue": "Gib eine gültige Fälligkeit ein.",
+    "errorOdometer": "Gib den Kilometerstand als ganze Zahl ein.",
+    "errorPeriod": "Zeiträume müssen ganze Zahlen über null sein."
   }
 }

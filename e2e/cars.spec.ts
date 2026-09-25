@@ -60,7 +60,7 @@ test("invalid details are rejected", async ({ page }) => {
 test("admins edit a car's details", async ({ page }) => {
   const carId = await addCar(page, "HH-ED 1");
   await page.goto(`/cars/${carId}`);
-  await page.getByRole("button", { name: "Edit" }).click();
+  await page.getByRole("button", { name: "Edit", exact: true }).click();
   await fillCarForm(page, "HH-ED 2", { model: "Polo", location: "Hamburg" });
   await page.getByRole("dialog").getByRole("button", { name: "Save" }).click();
   await expect(page.getByRole("dialog")).toBeHidden();

@@ -113,7 +113,14 @@
     "errorFirstRegistration": "Enter a valid first registration date.",
     "errorTooLong": "Keep make, model, cost center and location under 64 characters.",
     "drivers": "Driven by {names}",
-    "noDrivers": "No driver assigned"
+    "noDrivers": "No driver assigned",
+    "nextDueTitle": "Next due",
+    "nextDueHint": "HU/AU, UVV inspection and service are tracked for every new car. Leave a field empty if you don't know it yet; for cars under three years old the first HU is filled in from the first registration.",
+    "nextHu": "Next HU/AU (month)",
+    "nextUvv": "Next UVV inspection",
+    "nextService": "Next service",
+    "nextServiceKm": "Next service at km",
+    "errorDue": "Check the due dates and the service km."
   },
   "Car": {
     "allCars": "All cars",
@@ -369,5 +376,52 @@
     "errorUntil": "The end date must be on or after the start date.",
     "errorOverlap": "This person already has an assignment for this car in that period.",
     "errorBeforeStart": "The end date can't be before the assignment started."
+  },
+  "Due": {
+    "level": {
+      "ok": "OK",
+      "soon": "Due soon",
+      "overdue": "Overdue",
+      "missing": "Due date missing"
+    },
+    "dueMonth": "Due {month}",
+    "dueDate": "Due {date}",
+    "daysLeft": "{count, plural, one {# day left} other {# days left}}",
+    "daysOverdue": "{count, plural, one {# day overdue} other {# days overdue}}",
+    "atOdometer": "at {odometer} km",
+    "kmToGo": "{km} km to go",
+    "kmOverdue": "{km} km overdue",
+    "estimated": "≈ {date}",
+    "noDueDate": "No due date set"
+  },
+  "Intervals": {
+    "title": "Intervals",
+    "none": "No intervals are tracked for this car.",
+    "types": {
+      "hu": "HU/AU",
+      "uvv_inspection": "UVV inspection",
+      "service": "Service",
+      "licence_check": "Licence check",
+      "uvv_instruction": "UVV instruction"
+    },
+    "everyMonths": "every {months, plural, one {month} other {# months}}",
+    "everyMonthsOrKm": "every {months, plural, one {month} other {# months}} or {km, number} km, whichever comes first",
+    "edit": "Edit",
+    "editLabel": "Edit {name}",
+    "editDescription": "Set when it is next due. Leave the period empty to use the interval type's default.",
+    "nextDueMonth": "Next due (month)",
+    "nextDueDate": "Next due",
+    "nextDueOdometer": "Next due at km",
+    "periodMonths": "Period in months",
+    "periodKm": "Period in km",
+    "periodHint": "The period is used to compute the next due date after a completion.",
+    "save": "Save",
+    "stop": "Stop tracking",
+    "stopLabel": "Stop tracking {name}",
+    "track": "Track",
+    "trackLabel": "Interval to track",
+    "errorDue": "Enter a valid due date.",
+    "errorOdometer": "Enter the due odometer as a whole number.",
+    "errorPeriod": "Periods must be whole numbers above zero."
   }
 }

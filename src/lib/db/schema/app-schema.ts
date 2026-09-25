@@ -4,6 +4,7 @@ import {
   integer,
   pgEnum,
   pgTable,
+  boolean,
   text,
   timestamp,
   uniqueIndex,
@@ -86,3 +87,70 @@ export const assignment = pgTable(
 );
 
 export type Assignment = typeof assignment.$inferSelect;
+
+export const builtInIntervalEnum = pgEnum("built_in_interval", [
+  "hu",
+  "uvv_inspection",
+  "service",
+  "licence_check",
+  "uvv_instruction",
+]);
+export const intervalSubjectEnum = pgEnum("interval_subject", ["car", "driver"]);
+export const duePrecisionEnum = pgEnum("due_precision", ["month", "day"]);
+
+// A kind of recurring obligation. Each organization gets the built-in types
+// and may add its own.
+export const intervalType = pgTable(
+  "interval_type",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    organizationId: text("organization_id")
+      .notNull()
+      .references(() => organization.id, { onDelete: "cascade" }),
+    builtIn: builtInIntervalEnum("built_in"),
+    // Custom types only; built-in names come from the translations.
+    name: text("name"),
+    subject: intervalSubjectEnum("subject").notNull(),
+    periodMonths: integer("period_months").notNull(),
+    periodKm: integer("period_km"),
+    precision: duePrecisionEnum("precision").default("day").notNull(),
+    dueSoonDays: integer("due_soon_days").default(30).notNull(),
+    dueSoonKm: integer("due_soon_km"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [
+    index("interval_type_organization_id_idx").on(table.organizationId),
+    uniqueIndex("interval_type_built_in_unique").on(table.organizationId, table.builtIn),
+  ],
+);
+
+// One interval type tracked for one car or one driver.
+export const interval = pgTable(
+  "interval",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    intervalTypeId: uuid("interval_type_id")
+      .notNull()
+      .references(() => intervalType.id, { onDelete: "cascade" }),
+    carId: uuid("car_id").references(() => car.id, { onDelete: "cascade" }),
+    userId: text("user_id").references(() => user.id, { onDelete: "cascade" }),
+    // Overrides of the type's period for this car.
+    periodMonths: integer("period_months"),
+    periodKm: integer("period_km"),
+    // For month precision, the first day of the due month.
+    nextDueOn: date("next_due_on"),
+    nextDueOdometer: integer("next_due_odometer"),
+    active: boolean("active").default(true).notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [
+    uniqueIndex("interval_type_car_unique").on(table.intervalTypeId, table.carId),
+    uniqueIndex("interval_type_user_unique").on(table.intervalTypeId, table.userId),
+    index("interval_car_id_idx").on(table.carId),
+    index("interval_user_id_idx").on(table.userId),
+  ],
+);
+
+export type IntervalType = typeof intervalType.$inferSelect;
+export type Interval = typeof interval.$inferSelect;
+export type BuiltInInterval = NonNullable<IntervalType["builtIn"]>;

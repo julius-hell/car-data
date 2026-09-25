@@ -2,6 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { AddEntryForm } from "@/components/add-entry-form";
 import { CarPhoto } from "@/components/car-photo";
 import { EntriesTable } from "@/components/entries-table";
+import { CarIntervals } from "@/components/intervals/car-intervals";
 import type { Actor } from "@/lib/actor";
 import type { Car } from "@/lib/db/schema";
 import { listEntries } from "@/lib/entries";
@@ -14,6 +15,7 @@ export async function DriverCarView({ actor, car, focusForm }: { actor: Actor; c
   return (
     <>
       <AddEntryForm carId={car.id} autoFocus={focusForm} />
+      <CarIntervals car={car} organizationId={actor.organizationId} canManage={false} />
       <div className="aspect-[3/2]">
         <CarPhoto carId={car.id} plate={car.licencePlate} photoUpdatedAt={car.photoUpdatedAt} editable={false} />
       </div>

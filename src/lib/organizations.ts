@@ -4,6 +4,7 @@ import { findUserByEmail, normalizeEmail } from "@/lib/accounts";
 import { db } from "@/lib/db";
 import { car, invitation, member, organization, session, user } from "@/lib/db/schema";
 import type { Role } from "@/lib/actor";
+import { ensureBuiltInTypes } from "@/lib/intervals";
 
 export const ORGANIZATION_NAME_MAX_LENGTH = 100;
 export const INVITATION_TTL_MS = 7 * 24 * 60 * 60 * 1000;
@@ -129,6 +130,7 @@ export async function createOrganizationWithAdminInvitation({
 }) {
   const id = randomUUID();
   await db.insert(organization).values({ id, name, slug: slugify(name) });
+  await ensureBuiltInTypes(id);
   const created = await createInvitation({
     organizationId: id,
     inviterId: operatorId,

@@ -113,6 +113,32 @@ export function CarDialog({ car }: { car?: Values & { id: string } }) {
               maxLength={64}
             />
           </div>
+          {!car && (
+            <fieldset className="flex flex-col gap-3 border-t pt-4">
+              <legend className="text-muted-foreground mb-1 text-xs font-medium tracking-wider uppercase">
+                {t("nextDueTitle")}
+              </legend>
+              <p className="text-muted-foreground text-xs">{t("nextDueHint")}</p>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="add-car-next-hu">{t("nextHu")}</Label>
+                  <Input id="add-car-next-hu" name="nextHu" type="month" />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="add-car-next-uvv">{t("nextUvv")}</Label>
+                  <Input id="add-car-next-uvv" name="nextUvv" type="date" />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="add-car-next-service">{t("nextService")}</Label>
+                  <Input id="add-car-next-service" name="nextService" type="date" />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="add-car-next-service-km">{t("nextServiceKm")}</Label>
+                  <Input id="add-car-next-service-km" name="nextServiceKm" type="number" inputMode="numeric" min={0} />
+                </div>
+              </div>
+            </fieldset>
+          )}
           {state.status === "error" && (
             <FormMessage kind="error" testId="car-error">
               {t(state.message)}

@@ -18,3 +18,14 @@ export function inMonths(months: number, from = today()) {
   date.setUTCMonth(date.getUTCMonth() + months);
   return date.toISOString().slice(0, 10);
 }
+
+export function monthOf(isoDate: string) {
+  return isoDate.slice(0, 7);
+}
+
+// How the app writes a due month for English readers, e.g. "March 2027".
+export function displayMonth(isoDate: string) {
+  return new Intl.DateTimeFormat("en", { month: "long", year: "numeric", timeZone: "UTC" }).format(
+    new Date(`${isoDate.slice(0, 7)}-01T00:00:00Z`),
+  );
+}

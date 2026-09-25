@@ -16,11 +16,13 @@ import {
 import { db } from "@/lib/db";
 import { car } from "@/lib/db/schema";
 import { deleteCarPhoto } from "@/lib/photos";
+import { defaultFirstHu, trackDefaultIntervals } from "@/lib/intervals";
+import { parseDueDate } from "@/lib/interval-form";
 
 export type CarFormState =
   | { status: "idle" }
   | { status: "saved"; carId: string }
-  | { status: "error"; message: CarDetailsError | "errorPlateTaken" };
+  | { status: "error"; message: CarDetailsError | "errorPlateTaken" | "errorDue" };
 
 function isUniqueViolation(error: unknown) {
   return typeof error === "object" && error !== null && "cause" in error
@@ -39,12 +41,26 @@ export async function createCar(_previous: CarFormState, formData: FormData): Pr
   const parsed = parseCarDetails(formData);
   if ("error" in parsed) return { status: "error", message: parsed.error };
   if (await plateTaken(actor, parsed.details.licencePlate)) return { status: "error", message: "errorPlateTaken" };
+  const hu = parseDueDate(formData.get("nextHu"), "month");
+  const uvv = parseDueDate(formData.get("nextUvv"), "day");
+  const service = parseDueDate(formData.get("nextService"), "day");
+  const serviceKmText = String(formData.get("nextServiceKm") ?? "").trim();
+  const serviceKm = serviceKmText === "" ? null : Number(serviceKmText);
+  if ("error" in hu || "error" in uvv || "error" in service) return { status: "error", message: "errorDue" };
+  if (serviceKm !== null && (!Number.isInteger(serviceKm) || serviceKm < 0)) {
+    return { status: "error", message: "errorDue" };
+  }
 
   try {
     const [created] = await db
       .insert(car)
       .values({ organizationId: actor.organizationId, ...parsed.details })
       .returning({ id: car.id });
+    await trackDefaultIntervals(actor.organizationId, created.id, {
+      hu: { nextDueOn: hu.value ?? defaultFirstHu(parsed.details.firstRegistration) },
+      uvv_inspection: { nextDueOn: uvv.value },
+      service: { nextDueOn: service.value, nextDueOdometer: serviceKm },
+    });
     revalidatePath("/cars");
     return { status: "saved", carId: created.id };
   } catch (error) {

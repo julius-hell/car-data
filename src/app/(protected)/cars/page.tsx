@@ -11,6 +11,8 @@ import { Label } from "@/components/ui/label";
 import { can, requirePermission } from "@/lib/actor";
 import { currentDriversByCar } from "@/lib/assignments";
 import { countRetired, fleetFilterOptions, listFleet } from "@/lib/cars";
+import { worstLevelByCar } from "@/lib/intervals";
+import { DueBadge } from "@/components/due-badge";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("Cars");
@@ -32,7 +34,10 @@ export default async function CarsPage(props: PageProps<"/cars">) {
     getFormatter(),
   ]);
   const filtered = Boolean(filter.location || filter.costCenter);
-  const drivers = await currentDriversByCar(cars.map((c) => c.id));
+  const [drivers, levels] = await Promise.all([
+    currentDriversByCar(cars.map((c) => c.id)),
+    worstLevelByCar(actor.organizationId, cars.map((c) => c.id)),
+  ]);
 
   return (
     <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 px-4 py-8">
@@ -106,6 +111,7 @@ export default async function CarsPage(props: PageProps<"/cars">) {
                     <span className="text-muted-foreground truncate text-sm">
                       {car.make} {car.model}
                     </span>
+                    {levels.has(car.id) && <DueBadge level={levels.get(car.id)!} testId="car-level" />}
                   </span>
                   {(car.location || car.costCenter) && (
                     <span className="text-muted-foreground truncate text-xs" data-testid="car-org-details">
