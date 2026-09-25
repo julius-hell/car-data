@@ -86,6 +86,11 @@ export async function readCarPhoto(carId: string, variant: PhotoVariant) {
   return bytes;
 }
 
+// Removes everything stored on disk for a car.
+export async function deleteCarFiles(carId: string) {
+  await deleteCarPhoto(carId);
+}
+
 export async function deleteCarPhoto(carId: string) {
   await rm(/* turbopackIgnore: true */ carDir(carId), { recursive: true, force: true });
 }

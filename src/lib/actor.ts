@@ -47,7 +47,8 @@ export function assertCan(actor: Actor, permission: Permission) {
   if (!can(actor, permission)) throw new Error("Not allowed.");
 }
 
-export const getActor = cache(async (): Promise<Actor | null> => {
+// The signed-in user's membership, whatever the organization's status.
+export const getMembership = cache(async (): Promise<Actor | null> => {
   const session = await getSession();
   if (!session) return null;
   const [row] = await db
@@ -67,6 +68,13 @@ export const getActor = cache(async (): Promise<Actor | null> => {
   };
 });
 
+// The actor for anything that touches organization data: members of a
+// deactivated organization get nothing.
+export const getActor = cache(async (): Promise<Actor | null> => {
+  const membership = await getMembership();
+  return membership?.organizationStatus === "active" ? membership : null;
+});
+
 // For pages inside an organization. Signed-out visitors go to sign-in,
 // operators see nothing of any organization, and users without a
 // membership get a page explaining why.
@@ -74,9 +82,10 @@ export async function requireActor(): Promise<Actor> {
   const session = await getSession();
   if (!session) redirect("/login");
   if (session.user.isOperator) notFound();
-  const actor = await getActor();
-  if (!actor) redirect("/no-organization");
-  return actor;
+  const membership = await getMembership();
+  if (!membership) redirect("/no-organization");
+  if (membership.organizationStatus !== "active") redirect("/deactivated");
+  return membership;
 }
 
 export async function requirePermission(permission: Permission): Promise<Actor> {

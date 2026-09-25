@@ -1,5 +1,5 @@
 import { AppHeader } from "@/components/app-header";
-import { getActor } from "@/lib/actor";
+import { getMembership } from "@/lib/actor";
 import { requireSession } from "@/lib/session";
 
 export default async function ProtectedLayout({
@@ -8,7 +8,8 @@ export default async function ProtectedLayout({
   children: React.ReactNode;
 }) {
   const { user } = await requireSession();
-  const actor = user.isOperator ? null : await getActor();
+  const membership = user.isOperator ? null : await getMembership();
+  const actor = membership?.organizationStatus === "active" ? membership : null;
 
   return (
     <>

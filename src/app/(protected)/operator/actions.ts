@@ -6,6 +6,7 @@ import { createSetPasswordToken, isEmail, NAME_MAX_LENGTH, normalizeEmail } from
 import { requireOperator } from "@/lib/actor";
 import { appUrl } from "@/lib/app-url";
 import { sendInvitationEmail } from "@/lib/invitation-mail";
+import { deleteCarFiles } from "@/lib/photos";
 import { getLocale } from "next-intl/server";
 import {
   cancelInvitation,
@@ -15,6 +16,8 @@ import {
   invitationBlocker,
   ORGANIZATION_NAME_MAX_LENGTH,
   reissueInvitation,
+  deleteOrganization,
+  setOrganizationStatus,
 } from "@/lib/organizations";
 
 export type CreateOrganizationState =
@@ -70,4 +73,35 @@ export async function createAdminResetLink(organizationId: string, userId: strin
   if (!target || target.role !== "admin") return { status: "error" };
   const token = await createSetPasswordToken(target.userId);
   return { status: "created", link: appUrl(`/set-password?token=${token}`) };
+}
+
+export async function deactivateOrganization(organizationId: string) {
+  await requireOperator();
+  await setOrganizationStatus(organizationId, "deactivated");
+  revalidatePath("/operator", "layout");
+}
+
+export async function reactivateOrganization(organizationId: string) {
+  await requireOperator();
+  await setOrganizationStatus(organizationId, "active");
+  revalidatePath("/operator", "layout");
+}
+
+export type DeleteOrganizationState = { status: "idle" } | { status: "error" };
+
+// Permanent; the operator types the organization's name to confirm.
+export async function deleteOrganizationAction(
+  organizationId: string,
+  _previous: DeleteOrganizationState,
+  formData: FormData,
+): Promise<DeleteOrganizationState> {
+  await requireOperator();
+  const organization = await findOrganization(organizationId);
+  if (!organization) redirect("/operator");
+  if (String(formData.get("confirmName") ?? "").trim() !== organization.name) return { status: "error" };
+
+  const carIds = await deleteOrganization(organization.id);
+  await Promise.all(carIds.map((carId) => deleteCarFiles(carId)));
+  revalidatePath("/operator");
+  redirect("/operator");
 }

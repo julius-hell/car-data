@@ -5,10 +5,14 @@ import { ArrowLeftIcon } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { InvitationList } from "@/components/invitation-list";
 import { ResetLinkButton } from "@/components/reset-link-button";
+import { DeleteOrganizationForm } from "@/components/operator/delete-organization-form";
+import { Button } from "@/components/ui/button";
 import { requireOperator } from "@/lib/actor";
 import { findOrganization, listAdmins, listInvitations } from "@/lib/organizations";
 import {
   createAdminResetLink,
+  deactivateOrganization,
+  reactivateOrganization,
   reissueOrganizationInvitation,
   revokeOrganizationInvitation,
 } from "../../actions";
@@ -50,7 +54,21 @@ export default async function OperatorOrganizationPage(
           <span data-testid="organization-status" className="text-muted-foreground text-sm">
             {t(`statusValue.${organization.status}`)}
           </span>
+          <form
+            action={(organization.status === "active" ? deactivateOrganization : reactivateOrganization).bind(
+              null,
+              organization.id,
+            )}
+            className="ml-auto"
+          >
+            <Button type="submit" variant="outline" size="sm">
+              {organization.status === "active" ? t("deactivate") : t("reactivate")}
+            </Button>
+          </form>
         </div>
+        {organization.status === "deactivated" && (
+          <p className="text-muted-foreground text-sm">{t("deactivatedHint")}</p>
+        )}
       </div>
 
       <section className="flex flex-col gap-3">
@@ -88,6 +106,14 @@ export default async function OperatorOrganizationPage(
           revokeAction={revokeOrganizationInvitation.bind(null, organization.id)}
           reissueAction={reissueOrganizationInvitation.bind(null, organization.id)}
         />
+      </section>
+
+      <section className="border-destructive/40 flex flex-col gap-3 rounded-xl border p-4 sm:p-5">
+        <div>
+          <h2 className="text-destructive font-semibold">{t("deleteTitle")}</h2>
+          <p className="text-muted-foreground text-sm">{t("deleteDescription")}</p>
+        </div>
+        <DeleteOrganizationForm organizationId={organization.id} name={organization.name} />
       </section>
     </main>
   );

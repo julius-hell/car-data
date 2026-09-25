@@ -215,7 +215,15 @@
     "allOrganizations": "All organizations",
     "admins": "Admins",
     "noAdmins": "No admin has joined yet.",
-    "invitations": "Open invitations"
+    "invitations": "Open invitations",
+    "deactivate": "Deactivate",
+    "reactivate": "Reactivate",
+    "deactivatedHint": "Members can sign in but see only a notice. Nothing has been deleted.",
+    "deleteTitle": "Delete organization",
+    "deleteDescription": "Permanently deletes the organization with its cars, entries, files, invitations and its members' accounts. This can't be undone.",
+    "deleteConfirmLabel": "Type “{name}” to confirm",
+    "deleteConfirmMismatch": "The name doesn't match.",
+    "deletePermanently": "Delete permanently"
   },
   "Invitations": {
     "none": "No open invitations.",
@@ -323,5 +331,10 @@
     "verifyBody": "Please confirm that this email address belongs to you, so password resets and notifications can reach you.",
     "verifyAction": "Confirm email address",
     "verifyFooter": "If you don't have an account with us, ignore this email."
+  },
+  "Deactivated": {
+    "title": "Organization deactivated",
+    "heading": "{organization} is deactivated",
+    "description": "Your organization's access has been paused. Contact your company's fleet manager or the platform operator."
   }
 }

@@ -215,7 +215,15 @@
     "allOrganizations": "Alle Organisationen",
     "admins": "Admins",
     "noAdmins": "Noch ist kein Admin beigetreten.",
-    "invitations": "Offene Einladungen"
+    "invitations": "Offene Einladungen",
+    "deactivate": "Deaktivieren",
+    "reactivate": "Reaktivieren",
+    "deactivatedHint": "Mitglieder können sich anmelden, sehen aber nur einen Hinweis. Es wurde nichts gelöscht.",
+    "deleteTitle": "Organisation löschen",
+    "deleteDescription": "Löscht die Organisation dauerhaft mit Fahrzeugen, Kilometerständen, Dateien, Einladungen und den Konten ihrer Mitglieder. Das lässt sich nicht rückgängig machen.",
+    "deleteConfirmLabel": "Gib „{name}“ zur Bestätigung ein",
+    "deleteConfirmMismatch": "Der Name stimmt nicht überein.",
+    "deletePermanently": "Endgültig löschen"
   },
   "Invitations": {
     "none": "Keine offenen Einladungen.",
@@ -323,5 +331,10 @@
     "verifyBody": "Bitte bestätige, dass diese E-Mail-Adresse dir gehört, damit dich Links zum Zurücksetzen und Benachrichtigungen erreichen.",
     "verifyAction": "E-Mail-Adresse bestätigen",
     "verifyFooter": "Wenn du kein Konto bei uns hast, ignoriere diese E-Mail."
+  },
+  "Deactivated": {
+    "title": "Organisation deaktiviert",
+    "heading": "{organization} ist deaktiviert",
+    "description": "Der Zugang deiner Organisation ist pausiert. Wende dich an das Fuhrparkmanagement deines Unternehmens oder den Plattform-Betreiber."
   }
 }
