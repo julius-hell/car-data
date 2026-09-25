@@ -2,18 +2,10 @@ import { getFormatter, getTranslations } from "next-intl/server";
 import { AddEntryForm } from "@/components/add-entry-form";
 import { CarAssignments } from "@/components/assignments/car-assignments";
 import { CarPhoto } from "@/components/car-photo";
-import { DeleteEntryButton } from "@/components/delete-entry-button";
+import { EntriesTable } from "@/components/entries-table";
 import { MileageChart } from "@/components/mileage-chart";
 import { MonthlyChart } from "@/components/monthly-chart";
 import { StatTile } from "@/components/stat-tile";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { can, type Actor } from "@/lib/actor";
 import { isoDateToDate } from "@/lib/dates";
 import type { Car } from "@/lib/db/schema";
@@ -27,7 +19,6 @@ const DAY_MS = 86_400_000;
 export async function FleetCarView({ actor, car, focusForm }: { actor: Actor; car: Car; focusForm: boolean }) {
   const canManage = can(actor, "manageFleet");
   const canAddEntry = can(actor, "addEntry");
-  const canDeleteEntry = can(actor, "deleteEntry");
   const [entries, t, ts, format] = await Promise.all([
     listEntries(car.id),
     getTranslations("Car"),
@@ -141,52 +132,7 @@ export async function FleetCarView({ actor, car, focusForm }: { actor: Actor; ca
 
       {canAddEntry && <AddEntryForm carId={car.id} autoFocus={focusForm} />}
 
-      <section className="flex min-w-0 flex-col gap-3">
-        <h2 className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
-          {t("readings")}
-        </h2>
-        {entries.length === 0 ? (
-          <p className="text-muted-foreground text-sm">{t("noReadings")}</p>
-        ) : (
-          <div className="bg-card overflow-hidden rounded-xl border shadow-xs">
-            <Table data-testid="entries" className="table-fixed">
-              <TableHeader>
-                <TableRow className="hover:bg-transparent">
-                  <TableHead className="w-32 pl-4">{t("date")}</TableHead>
-                  <TableHead className="w-32 text-right">{t("odometer")}</TableHead>
-                  <TableHead>{t("note")}</TableHead>
-                  {canDeleteEntry && <TableHead className="w-12" />}
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {entries.map((entry) => (
-                  <TableRow key={entry.id}>
-                    <TableCell className="pl-4 whitespace-nowrap tabular-nums">
-                      <time dateTime={entry.recordedAt}>{formatDate(entry.recordedAt)}</time>
-                    </TableCell>
-                    <TableCell className="text-right font-mono whitespace-nowrap tabular-nums">
-                      {format.number(entry.odometer)}{" "}
-                      <span className="text-muted-foreground font-sans">km</span>
-                    </TableCell>
-                    <TableCell className="text-muted-foreground truncate">{entry.note}</TableCell>
-                    {canDeleteEntry && (
-                      <TableCell className="py-1 pr-2">
-                      <DeleteEntryButton
-                        entryId={entry.id}
-                        label={t("deleteReading", {
-                          odometer: format.number(entry.odometer),
-                          date: formatDate(entry.recordedAt),
-                        })}
-                      />
-                      </TableCell>
-                    )}
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        )}
-      </section>
+      <EntriesTable actor={actor} entries={entries} showRecordedBy title={t("readings")} />
 
       <CarAssignments carId={car.id} organizationId={actor.organizationId} canManage={canManage} />
     </>

@@ -133,7 +133,10 @@
     "note": "Note",
     "deleteReading": "Delete reading {odometer} on {date}",
     "notFound": "Not found",
-    "myCars": "My cars"
+    "myCars": "My cars",
+    "recordedBy": "Recorded by",
+    "editReading": "Edit reading {odometer} on {date}",
+    "myReadings": "My readings"
   },
   "Entry": {
     "title": "Log a reading",
@@ -148,7 +151,10 @@
     "errorCarGone": "This car no longer exists.",
     "errorOdometer": "Enter the odometer as a whole number.",
     "errorDate": "Enter a valid date.",
-    "errorNote": "Keep the note under {max} characters."
+    "errorNote": "Keep the note under {max} characters.",
+    "editTitle": "Edit reading",
+    "save": "Save",
+    "errorGone": "You can no longer change this reading."
   },
   "Photo": {
     "add": "Add photo",

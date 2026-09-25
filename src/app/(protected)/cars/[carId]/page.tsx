@@ -27,7 +27,7 @@ export default async function CarPage(props: PageProps<"/cars/[carId]">) {
       {can(actor, "viewFleet") ? (
         <FleetCarView actor={actor} car={car} focusForm={focusForm} />
       ) : (
-        <DriverCarView actor={actor} car={car} />
+        <DriverCarView actor={actor} car={car} focusForm={focusForm} />
       )}
     </main>
   );

@@ -1,20 +1,17 @@
 "use server";
 
-import { and, eq, inArray } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { assertCan, requireActor } from "@/lib/actor";
-import { findCar, isCarId } from "@/lib/cars";
+import { findCar } from "@/lib/cars";
 import { db } from "@/lib/db";
-import { car, mileageEntry } from "@/lib/db/schema";
-import { latestOdometer } from "@/lib/entries";
-
-const NOTE_MAX_LENGTH = 200;
-const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
+import { mileageEntry } from "@/lib/db/schema";
+import { findModifiableEntry, latestOdometer, parseEntry, type EntryError } from "@/lib/entries";
 
 export type AddEntryState =
   | { status: "idle" }
   | { status: "saved" }
-  | { status: "error"; message: "errorCarGone" | "errorOdometer" | "errorDate" | "errorNote" }
+  | { status: "error"; message: "errorCarGone" | EntryError }
   | { status: "lower"; odometer: number; latest: number };
 
 export async function addMileageEntry(
@@ -24,55 +21,51 @@ export async function addMileageEntry(
 ): Promise<AddEntryState> {
   const actor = await requireActor();
   assertCan(actor, "addEntry");
-  const owned = await findCar(actor, carId);
-  if (!owned) return { status: "error", message: "errorCarGone" };
+  // Drivers only find the cars they are assigned to.
+  const found = await findCar(actor, carId);
+  if (!found) return { status: "error", message: "errorCarGone" };
 
-  const odometer = Number(formData.get("odometer"));
-  const recordedAt = String(formData.get("recordedAt") ?? "");
-  const note = String(formData.get("note") ?? "").trim();
-  const confirmLower = formData.get("confirmLower") === "1";
+  const parsed = parseEntry(formData);
+  if ("error" in parsed) return { status: "error", message: parsed.error };
+  const { entry } = parsed;
 
-  if (!Number.isInteger(odometer) || odometer < 0) {
-    return { status: "error", message: "errorOdometer" };
-  }
-  if (!ISO_DATE.test(recordedAt) || Number.isNaN(Date.parse(recordedAt))) {
-    return { status: "error", message: "errorDate" };
-  }
-  if (note.length > NOTE_MAX_LENGTH) {
-    return { status: "error", message: "errorNote" };
-  }
-
-  const latest = await latestOdometer(owned.id);
-  if (latest !== null && odometer < latest && !confirmLower) {
-    return { status: "lower", odometer, latest };
+  const latest = await latestOdometer(found.id);
+  if (latest !== null && entry.odometer < latest && formData.get("confirmLower") !== "1") {
+    return { status: "lower", odometer: entry.odometer, latest };
   }
 
   await db.insert(mileageEntry).values({
-    carId: owned.id,
-    odometer,
-    recordedAt,
-    note: note || null,
+    carId: found.id,
+    ...entry,
+    recordedBy: actor.userId,
+    recordedByName: actor.name,
   });
-  revalidatePath(`/cars/${owned.id}`);
+  revalidatePath(`/cars/${found.id}`);
+  return { status: "saved" };
+}
+
+export type EditEntryState = { status: "idle" } | { status: "saved" } | { status: "error"; message: "errorGone" | EntryError };
+
+export async function updateMileageEntry(
+  entryId: string,
+  _previous: EditEntryState,
+  formData: FormData,
+): Promise<EditEntryState> {
+  const actor = await requireActor();
+  const existing = await findModifiableEntry(actor, entryId);
+  if (!existing) return { status: "error", message: "errorGone" };
+  const parsed = parseEntry(formData);
+  if ("error" in parsed) return { status: "error", message: parsed.error };
+
+  await db.update(mileageEntry).set(parsed.entry).where(eq(mileageEntry.id, existing.id));
+  revalidatePath(`/cars/${existing.carId}`);
   return { status: "saved" };
 }
 
 export async function deleteMileageEntry(entryId: string) {
   const actor = await requireActor();
-  assertCan(actor, "deleteEntry");
-  if (!isCarId(entryId)) throw new Error("Invalid entry.");
-
-  const [deleted] = await db
-    .delete(mileageEntry)
-    .where(
-      and(
-        eq(mileageEntry.id, entryId),
-        inArray(
-          mileageEntry.carId,
-          db.select({ id: car.id }).from(car).where(eq(car.organizationId, actor.organizationId)),
-        ),
-      ),
-    )
-    .returning({ carId: mileageEntry.carId });
-  if (deleted) revalidatePath(`/cars/${deleted.carId}`);
+  const existing = await findModifiableEntry(actor, entryId);
+  if (!existing) throw new Error("Invalid entry.");
+  await db.delete(mileageEntry).where(eq(mileageEntry.id, existing.id));
+  revalidatePath(`/cars/${existing.carId}`);
 }

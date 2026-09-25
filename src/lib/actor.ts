@@ -23,18 +23,14 @@ export type Actor = {
   organizationStatus: "active" | "deactivated";
 };
 
-export type Permission =
-  | "viewFleet"
-  | "manageFleet"
-  | "addEntry"
-  | "deleteEntry"
-  | "manageMembers"
-  | "manageOrganization";
+export type Permission = "viewFleet" | "manageFleet" | "addEntry" | "manageMembers" | "manageOrganization";
 
+// Role-wide grants. Drivers' access is further limited to the cars they are
+// currently assigned to (see findCar) and to their own entries (see entries).
 const GRANTS: Record<Role, readonly Permission[]> = {
-  admin: ["viewFleet", "manageFleet", "addEntry", "deleteEntry", "manageMembers", "manageOrganization"],
+  admin: ["viewFleet", "manageFleet", "addEntry", "manageMembers", "manageOrganization"],
   viewer: ["viewFleet"],
-  driver: [],
+  driver: ["addEntry"],
 };
 
 export function can(actor: Actor, permission: Permission) {

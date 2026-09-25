@@ -50,6 +50,9 @@ export const mileageEntry = pgTable(
     odometer: integer("odometer").notNull(),
     recordedAt: date("recorded_at").notNull(),
     note: text("note"),
+    // Who recorded it; the name is kept so it survives the account.
+    recordedBy: text("recorded_by").references(() => user.id, { onDelete: "set null" }),
+    recordedByName: text("recorded_by_name"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },
   (table) => [index("mileage_entry_car_id_idx").on(table.carId)],

@@ -133,7 +133,10 @@
     "note": "Notiz",
     "deleteReading": "Eintrag {odometer} vom {date} löschen",
     "notFound": "Nicht gefunden",
-    "myCars": "Meine Fahrzeuge"
+    "myCars": "Meine Fahrzeuge",
+    "recordedBy": "Erfasst von",
+    "editReading": "Eintrag {odometer} vom {date} bearbeiten",
+    "myReadings": "Meine Einträge"
   },
   "Entry": {
     "title": "Stand eintragen",
@@ -148,7 +151,10 @@
     "errorCarGone": "Dieses Auto gibt es nicht mehr.",
     "errorOdometer": "Gib den Kilometerstand als ganze Zahl ein.",
     "errorDate": "Gib ein gültiges Datum ein.",
-    "errorNote": "Die Notiz darf höchstens {max} Zeichen lang sein."
+    "errorNote": "Die Notiz darf höchstens {max} Zeichen lang sein.",
+    "editTitle": "Eintrag bearbeiten",
+    "save": "Speichern",
+    "errorGone": "Diesen Eintrag kannst du nicht mehr ändern."
   },
   "Photo": {
     "add": "Foto hinzufügen",
