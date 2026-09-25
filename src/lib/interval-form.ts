@@ -3,6 +3,11 @@ import type { DuePrecision } from "@/lib/due";
 const MONTH = /^\d{4}-\d{2}$/;
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 
+export type IntervalFormState =
+  | { status: "idle" }
+  | { status: "saved" }
+  | { status: "error"; message: "errorDue" | "errorOdometer" | "errorPeriod" };
+
 function optionalInt(value: FormDataEntryValue | null) {
   const text = String(value ?? "").trim();
   if (text === "") return { value: null };

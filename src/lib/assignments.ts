@@ -1,6 +1,7 @@
 import { and, asc, desc, eq, gte, inArray, isNull, lte, or } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { assignment, car, member, user } from "@/lib/db/schema";
+import { ensureDriverIntervals } from "@/lib/intervals";
 import { addDaysIso, todayIso } from "@/lib/today";
 
 export function currentOn(day: string) {
@@ -116,6 +117,7 @@ export async function assign(
   });
   if (overlapping) return "overlap";
   await db.insert(assignment).values({ carId, userId, startsOn, endsOn });
+  await ensureDriverIntervals(organizationId, userId);
   return "ok";
 }
 

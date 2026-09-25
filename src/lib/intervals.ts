@@ -192,3 +192,37 @@ export async function worstLevelByCar(organizationId: string, carIds: string[]) 
   }
   return result;
 }
+
+// Driver checks exist for everyone who drives a company car; they are
+// created with the first assignment and start without a due date.
+export async function ensureDriverIntervals(organizationId: string, userId: string) {
+  const types = (await listIntervalTypes(organizationId)).filter((type) => type.subject === "driver");
+  if (types.length === 0) return;
+  await db
+    .insert(interval)
+    .values(types.map((type) => ({ intervalTypeId: type.id, userId })))
+    .onConflictDoNothing();
+}
+
+export async function listDriverIntervals(organizationId: string, userId: string) {
+  return db
+    .select({ interval, type: intervalType })
+    .from(interval)
+    .innerJoin(intervalType, eq(intervalType.id, interval.intervalTypeId))
+    .where(
+      and(eq(interval.userId, userId), eq(intervalType.organizationId, organizationId), eq(interval.active, true)),
+    )
+    .orderBy(asc(intervalType.createdAt));
+}
+
+export async function findDriverInterval(organizationId: string, userId: string, intervalId: string) {
+  if (!/^[0-9a-f-]{36}$/i.test(intervalId)) return undefined;
+  const [row] = await db
+    .select({ interval, type: intervalType })
+    .from(interval)
+    .innerJoin(intervalType, eq(intervalType.id, interval.intervalTypeId))
+    .where(
+      and(eq(interval.id, intervalId), eq(interval.userId, userId), eq(intervalType.organizationId, organizationId)),
+    );
+  return row;
+}

@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useActionState, useState } from "react";
-import { updateCarInterval, type IntervalFormState } from "@/app/(protected)/cars/[carId]/interval-actions";
+import type { IntervalFormState } from "@/lib/interval-form";
 import { FormMessage } from "@/components/form-message";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,10 +19,10 @@ import { Label } from "@/components/ui/label";
 import type { DuePrecision } from "@/lib/due";
 
 export function IntervalEditDialog({
-  carId,
+  action,
   interval,
 }: {
-  carId: string;
+  action: (previous: IntervalFormState, formData: FormData) => Promise<IntervalFormState>;
   interval: {
     id: string;
     name: string;
@@ -38,8 +38,8 @@ export function IntervalEditDialog({
 }) {
   const t = useTranslations("Intervals");
   const [open, setOpen] = useState(false);
-  const [state, action, pending] = useActionState<IntervalFormState, FormData>(
-    updateCarInterval.bind(null, carId, interval.id),
+  const [state, formAction, pending] = useActionState<IntervalFormState, FormData>(
+    action,
     { status: "idle" },
   );
   const [seen, setSeen] = useState(state);
@@ -55,7 +55,7 @@ export function IntervalEditDialog({
         {t("edit")}
       </DialogTrigger>
       <DialogContent>
-        <form action={action} className="flex flex-col gap-4" noValidate>
+        <form action={formAction} className="flex flex-col gap-4" noValidate>
           <DialogHeader>
             <DialogTitle>{interval.name}</DialogTitle>
             <DialogDescription>{t("editDescription")}</DialogDescription>

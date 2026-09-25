@@ -7,7 +7,7 @@ import { findCar } from "@/lib/cars";
 import { db } from "@/lib/db";
 import { interval, intervalType } from "@/lib/db/schema";
 import { findCarInterval, trackCarInterval } from "@/lib/intervals";
-import { parseDueFields } from "@/lib/interval-form";
+import { parseDueFields, type IntervalFormState } from "@/lib/interval-form";
 
 async function requireManagedCar(carId: string) {
   const actor = await requireActor();
@@ -16,11 +16,6 @@ async function requireManagedCar(carId: string) {
   if (!found) throw new Error("Invalid car.");
   return { actor, car: found };
 }
-
-export type IntervalFormState =
-  | { status: "idle" }
-  | { status: "saved" }
-  | { status: "error"; message: "errorDue" | "errorOdometer" | "errorPeriod" };
 
 // Sets the next due date/odometer and this car's period overrides directly.
 export async function updateCarInterval(

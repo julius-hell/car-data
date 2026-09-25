@@ -324,13 +324,15 @@
     "currentCarsTitle": "Aktuelle Fahrzeuge",
     "noCurrentCars": "Derzeit kein Fahrzeug zugewiesen.",
     "pastCarsTitle": "Frühere und künftige Fahrzeuge",
-    "noPastCars": "Keine."
+    "noPastCars": "Keine.",
+    "driverChecksTitle": "Fahrerprüfungen"
   },
   "MyCars": {
     "title": "Meine Fahrzeuge",
     "heading": "Meine Fahrzeuge",
     "emptyTitle": "Noch keine Fahrzeuge zugewiesen",
-    "emptyDescription": "Sobald dir ein Admin ein Fahrzeug zuweist, erscheint es hier."
+    "emptyDescription": "Sobald dir ein Admin ein Fahrzeug zuweist, erscheint es hier.",
+    "myChecks": "Meine Prüfungen"
   },
   "Email": {
     "greeting": "Hallo {name},",
@@ -422,7 +424,8 @@
     "trackLabel": "Frist zum Verfolgen",
     "errorDue": "Gib eine gültige Fälligkeit ein.",
     "errorOdometer": "Gib den Kilometerstand als ganze Zahl ein.",
-    "errorPeriod": "Zeiträume müssen ganze Zahlen über null sein."
+    "errorPeriod": "Zeiträume müssen ganze Zahlen über null sein.",
+    "noDriverChecks": "Noch keine Fahrerprüfungen. Sie beginnen mit der ersten Fahrzeugzuweisung."
   },
   "Completions": {
     "record": "Erledigung erfassen",

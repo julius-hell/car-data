@@ -4,7 +4,11 @@ import {
   recordCompletionAction,
   updateCompletionAction,
 } from "@/app/(protected)/cars/[carId]/completion-actions";
-import { startTrackingInterval, stopTrackingInterval } from "@/app/(protected)/cars/[carId]/interval-actions";
+import {
+  startTrackingInterval,
+  stopTrackingInterval,
+  updateCarInterval,
+} from "@/app/(protected)/cars/[carId]/interval-actions";
 import { CompletionDialog } from "@/components/completions/completion-dialog";
 import { CompletionHistory } from "@/components/completions/completion-history";
 import { DueBadge } from "@/components/due-badge";
@@ -115,7 +119,7 @@ export async function CarIntervals({
                       triggerAriaLabel={tc("recordLabel", { name })}
                     />
                     <IntervalEditDialog
-                      carId={car.id}
+                      action={updateCarInterval.bind(null, car.id, entry.interval.id)}
                       interval={{
                         id: entry.interval.id,
                         name,

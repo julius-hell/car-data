@@ -324,13 +324,15 @@
     "currentCarsTitle": "Current cars",
     "noCurrentCars": "No car assigned right now.",
     "pastCarsTitle": "Past and upcoming cars",
-    "noPastCars": "None."
+    "noPastCars": "None.",
+    "driverChecksTitle": "Driver checks"
   },
   "MyCars": {
     "title": "My cars",
     "heading": "My cars",
     "emptyTitle": "No cars assigned yet",
-    "emptyDescription": "Once an admin assigns a car to you, it shows up here."
+    "emptyDescription": "Once an admin assigns a car to you, it shows up here.",
+    "myChecks": "My checks"
   },
   "Email": {
     "greeting": "Hello {name},",
@@ -422,7 +424,8 @@
     "trackLabel": "Interval to track",
     "errorDue": "Enter a valid due date.",
     "errorOdometer": "Enter the due odometer as a whole number.",
-    "errorPeriod": "Periods must be whole numbers above zero."
+    "errorPeriod": "Periods must be whole numbers above zero.",
+    "noDriverChecks": "No driver checks yet. They start with the first car assignment."
   },
   "Completions": {
     "record": "Record completion",

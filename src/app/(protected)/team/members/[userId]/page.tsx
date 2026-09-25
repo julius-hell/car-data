@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeftIcon } from "lucide-react";
 import { getFormatter, getTranslations } from "next-intl/server";
+import { DriverChecks } from "@/components/intervals/driver-checks";
 import { requirePermission } from "@/lib/actor";
 import { listMemberAssignments } from "@/lib/assignments";
 import { isoDateToDate } from "@/lib/dates";
@@ -57,6 +58,11 @@ export default async function MemberPage(props: PageProps<"/team/members/[userId
           </p>
         </div>
       </div>
+
+      <section className="bg-card flex flex-col gap-3 rounded-xl border p-4 shadow-xs sm:p-5">
+        <h2 className="text-muted-foreground text-xs font-medium tracking-wider uppercase">{t("driverChecksTitle")}</h2>
+        <DriverChecks organizationId={actor.organizationId} userId={member.userId} manage />
+      </section>
 
       <section className="flex flex-col gap-3">
         <h2 className="text-muted-foreground text-xs font-medium tracking-wider uppercase">{t("currentCarsTitle")}</h2>

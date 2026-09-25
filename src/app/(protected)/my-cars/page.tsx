@@ -3,6 +3,8 @@ import Link from "next/link";
 import { CarIcon } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { CarThumb } from "@/components/car-thumb";
+import { DriverChecks } from "@/components/intervals/driver-checks";
+import { listDriverIntervals } from "@/lib/intervals";
 import { requireActor } from "@/lib/actor";
 import { currentCarsOf } from "@/lib/assignments";
 
@@ -14,7 +16,11 @@ export async function generateMetadata(): Promise<Metadata> {
 // A driver's home: the cars currently assigned to them.
 export default async function MyCarsPage() {
   const actor = await requireActor();
-  const [cars, t] = await Promise.all([currentCarsOf(actor.userId), getTranslations("MyCars")]);
+  const [cars, checks, t] = await Promise.all([
+    currentCarsOf(actor.userId),
+    listDriverIntervals(actor.organizationId, actor.userId),
+    getTranslations("MyCars"),
+  ]);
 
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-4 py-8">
@@ -51,6 +57,12 @@ export default async function MyCarsPage() {
             </li>
           ))}
         </ul>
+      )}
+      {checks.length > 0 && (
+        <section className="bg-card flex flex-col gap-3 rounded-xl border p-4 shadow-xs sm:p-5">
+          <h2 className="text-muted-foreground text-xs font-medium tracking-wider uppercase">{t("myChecks")}</h2>
+          <DriverChecks organizationId={actor.organizationId} userId={actor.userId} manage={false} />
+        </section>
       )}
     </main>
   );
