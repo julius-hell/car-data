@@ -68,3 +68,21 @@ export async function deleteCar(page: Page, plate: string) {
   await expect(dialog).toBeHidden();
   await expect(page.getByTestId("fleet-car").filter({ hasText: plate })).toBeHidden();
 }
+
+// Assigns a member to a car from the car page (admin view).
+export async function assignDriver(
+  page: Page,
+  carId: string,
+  name: string,
+  { from, until }: { from?: string; until?: string } = {},
+) {
+  await page.goto(`/cars/${carId}`);
+  await page.getByLabel("Driver", { exact: true }).selectOption({ label: name });
+  if (from) await page.getByLabel("From", { exact: true }).fill(from);
+  if (until) await page.getByLabel("Until (optional)").fill(until);
+  const before = await page.getByTestId("current-assignment").count();
+  await page.getByRole("button", { name: "Assign" }).click();
+  if (!from || from <= new Date().toISOString().slice(0, 10)) {
+    await expect(page.getByTestId("current-assignment")).toHaveCount(before + 1);
+  }
+}

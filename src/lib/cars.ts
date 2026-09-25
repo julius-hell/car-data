@@ -1,5 +1,6 @@
 import { and, asc, desc, eq, inArray, isNotNull, isNull, sql } from "drizzle-orm";
-import type { Actor } from "@/lib/actor";
+import { can, type Actor } from "@/lib/actor";
+import { hasCurrentAssignment } from "@/lib/assignments";
 import { db } from "@/lib/db";
 import { car, mileageEntry, RETIREMENT_REASONS, type RetirementReason } from "@/lib/db/schema";
 
@@ -93,12 +94,17 @@ export async function listCars(actor: Actor) {
   });
 }
 
-// A car the actor may see, or undefined — callers answer "not found" either way.
+// A car the actor may see, or undefined — callers answer "not found" either
+// way. Admins and viewers see the whole fleet; drivers only the cars they
+// are currently assigned to.
 export async function findCar(actor: Actor, carId: string) {
   if (!isCarId(carId)) return undefined;
-  return db.query.car.findFirst({
+  const found = await db.query.car.findFirst({
     where: and(eq(car.id, carId), eq(car.organizationId, actor.organizationId)),
   });
+  if (!found) return undefined;
+  if (can(actor, "viewFleet")) return found;
+  return (await hasCurrentAssignment(actor.userId, found.id)) ? found : undefined;
 }
 
 export type FleetFilter = { location?: string; costCenter?: string; retired?: boolean };

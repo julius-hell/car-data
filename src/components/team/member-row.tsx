@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useActionState, useState, useTransition } from "react";
 import {
@@ -56,7 +57,9 @@ export function MemberRow({ member }: { member: MemberRowData }) {
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="font-medium">
-            {member.name}
+            <Link href={`/team/members/${member.userId}`} className="underline-offset-4 hover:underline">
+              {member.name}
+            </Link>
             {member.isSelf && <span className="text-muted-foreground font-normal"> · {t("you")}</span>}
           </p>
           <p className="text-muted-foreground truncate text-sm">

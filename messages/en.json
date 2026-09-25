@@ -111,7 +111,9 @@
     "errorModel": "Enter the model.",
     "errorVin": "A VIN has 17 letters and digits (no I, O or Q).",
     "errorFirstRegistration": "Enter a valid first registration date.",
-    "errorTooLong": "Keep make, model, cost center and location under 64 characters."
+    "errorTooLong": "Keep make, model, cost center and location under 64 characters.",
+    "drivers": "Driven by {names}",
+    "noDrivers": "No driver assigned"
   },
   "Car": {
     "allCars": "All cars",
@@ -130,7 +132,8 @@
     "odometer": "Odometer",
     "note": "Note",
     "deleteReading": "Delete reading {odometer} on {date}",
-    "notFound": "Not found"
+    "notFound": "Not found",
+    "myCars": "My cars"
   },
   "Entry": {
     "title": "Log a reading",
@@ -304,7 +307,11 @@
     "removeDescription": "They lose access immediately and are signed out everywhere. Their mileage entries stay.",
     "cancel": "Cancel",
     "errorLastAdmin": "The organization needs at least one admin.",
-    "errorGone": "This member no longer exists."
+    "errorGone": "This member no longer exists.",
+    "currentCarsTitle": "Current cars",
+    "noCurrentCars": "No car assigned right now.",
+    "pastCarsTitle": "Past and upcoming cars",
+    "noPastCars": "None."
   },
   "MyCars": {
     "title": "My cars",
@@ -336,5 +343,25 @@
     "title": "Organization deactivated",
     "heading": "{organization} is deactivated",
     "description": "Your organization's access has been paused. Contact your company's fleet manager or the platform operator."
+  },
+  "Assignments": {
+    "title": "Drivers",
+    "noCurrent": "Nobody is assigned to this car right now.",
+    "nobodyToAssign": "Invite drivers on the team page to assign them.",
+    "driver": "Driver",
+    "from": "From",
+    "untilOptional": "Until (optional)",
+    "assign": "Assign",
+    "since": "since {from}",
+    "fromUntil": "{from} – {until}",
+    "history": "History",
+    "upcoming": "upcoming",
+    "endOn": "End date for {name}",
+    "end": "End",
+    "errorMember": "Only admins and drivers of the organization can be assigned.",
+    "errorDate": "Enter a valid date.",
+    "errorUntil": "The end date must be on or after the start date.",
+    "errorOverlap": "This person already has an assignment for this car in that period.",
+    "errorBeforeStart": "The end date can't be before the assignment started."
   }
 }

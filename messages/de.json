@@ -111,7 +111,9 @@
     "errorModel": "Gib das Modell ein.",
     "errorVin": "Eine FIN hat 17 Buchstaben und Ziffern (ohne I, O und Q).",
     "errorFirstRegistration": "Gib ein gültiges Datum der Erstzulassung ein.",
-    "errorTooLong": "Marke, Modell, Kostenstelle und Standort dürfen höchstens 64 Zeichen haben."
+    "errorTooLong": "Marke, Modell, Kostenstelle und Standort dürfen höchstens 64 Zeichen haben.",
+    "drivers": "Gefahren von {names}",
+    "noDrivers": "Niemand zugewiesen"
   },
   "Car": {
     "allCars": "Alle Autos",
@@ -130,7 +132,8 @@
     "odometer": "Kilometerstand",
     "note": "Notiz",
     "deleteReading": "Eintrag {odometer} vom {date} löschen",
-    "notFound": "Nicht gefunden"
+    "notFound": "Nicht gefunden",
+    "myCars": "Meine Fahrzeuge"
   },
   "Entry": {
     "title": "Stand eintragen",
@@ -304,7 +307,11 @@
     "removeDescription": "Der Zugang endet sofort und alle Sitzungen werden beendet. Kilometerstände bleiben erhalten.",
     "cancel": "Abbrechen",
     "errorLastAdmin": "Die Organisation braucht mindestens einen Admin.",
-    "errorGone": "Dieses Mitglied gibt es nicht mehr."
+    "errorGone": "Dieses Mitglied gibt es nicht mehr.",
+    "currentCarsTitle": "Aktuelle Fahrzeuge",
+    "noCurrentCars": "Derzeit kein Fahrzeug zugewiesen.",
+    "pastCarsTitle": "Frühere und künftige Fahrzeuge",
+    "noPastCars": "Keine."
   },
   "MyCars": {
     "title": "Meine Fahrzeuge",
@@ -336,5 +343,25 @@
     "title": "Organisation deaktiviert",
     "heading": "{organization} ist deaktiviert",
     "description": "Der Zugang deiner Organisation ist pausiert. Wende dich an das Fuhrparkmanagement deines Unternehmens oder den Plattform-Betreiber."
+  },
+  "Assignments": {
+    "title": "Fahrer:innen",
+    "noCurrent": "Diesem Fahrzeug ist derzeit niemand zugewiesen.",
+    "nobodyToAssign": "Lade Fahrer:innen auf der Team-Seite ein, um sie zuzuweisen.",
+    "driver": "Fahrer:in",
+    "from": "Ab",
+    "untilOptional": "Bis (optional)",
+    "assign": "Zuweisen",
+    "since": "seit {from}",
+    "fromUntil": "{from} – {until}",
+    "history": "Verlauf",
+    "upcoming": "geplant",
+    "endOn": "Enddatum für {name}",
+    "end": "Beenden",
+    "errorMember": "Nur Admins und Fahrer:innen der Organisation können zugewiesen werden.",
+    "errorDate": "Gib ein gültiges Datum ein.",
+    "errorUntil": "Das Enddatum muss am oder nach dem Startdatum liegen.",
+    "errorOverlap": "Diese Person ist dem Fahrzeug in diesem Zeitraum bereits zugewiesen.",
+    "errorBeforeStart": "Das Enddatum darf nicht vor dem Beginn der Zuweisung liegen."
   }
 }

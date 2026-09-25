@@ -9,7 +9,7 @@ import {
   uniqueIndex,
   uuid,
 } from "drizzle-orm/pg-core";
-import { organization } from "./auth-schema.ts";
+import { organization, user } from "./auth-schema.ts";
 
 export const retirementReasonEnum = pgEnum("retirement_reason", ["sold", "returned", "scrapped", "other"]);
 
@@ -59,3 +59,27 @@ export type Car = typeof car.$inferSelect;
 export type RetirementReason = NonNullable<Car["retirementReason"]>;
 export const RETIREMENT_REASONS = retirementReasonEnum.enumValues;
 export type MileageEntry = typeof mileageEntry.$inferSelect;
+
+// Who drives which car when. Several people can drive one car at once; an
+// assignment is current from startsOn up to and including endsOn.
+export const assignment = pgTable(
+  "assignment",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    carId: uuid("car_id")
+      .notNull()
+      .references(() => car.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    startsOn: date("starts_on").notNull(),
+    endsOn: date("ends_on"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [
+    index("assignment_car_id_idx").on(table.carId),
+    index("assignment_user_id_idx").on(table.userId),
+  ],
+);
+
+export type Assignment = typeof assignment.$inferSelect;

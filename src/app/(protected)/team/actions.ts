@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { createSetPasswordToken, isEmail, NAME_MAX_LENGTH, normalizeEmail } from "@/lib/accounts";
 import { assertCan, isRole, requireActor } from "@/lib/actor";
 import { appUrl } from "@/lib/app-url";
+import { endAssignmentsOf } from "@/lib/assignments";
 import { sendInvitationEmail } from "@/lib/invitation-mail";
 import { getLocale } from "next-intl/server";
 import {
@@ -94,6 +95,7 @@ export async function removeMemberAction(userId: string): Promise<MemberActionSt
   const result = await removeMember(actor.organizationId, userId);
   if (result === "lastAdmin") return { status: "error", message: "errorLastAdmin" };
   if (result === "notFound") return { status: "error", message: "errorGone" };
+  await endAssignmentsOf(actor.organizationId, userId);
   revalidatePath("/team");
   if (userId === actor.userId) redirect("/login");
   return { status: "saved" };

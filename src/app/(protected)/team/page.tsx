@@ -5,6 +5,7 @@ import { InviteMemberForm } from "@/components/team/invite-member-form";
 import { MemberRow } from "@/components/team/member-row";
 import { RenameOrganizationForm } from "@/components/team/rename-organization-form";
 import { requirePermission } from "@/lib/actor";
+import { currentPlatesByUser } from "@/lib/assignments";
 import { listInvitations, listMembers } from "@/lib/organizations";
 import { reissueMemberInvitation, revokeMemberInvitation } from "./actions";
 
@@ -15,9 +16,10 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function TeamPage() {
   const actor = await requirePermission("manageMembers");
-  const [members, invitations, t] = await Promise.all([
+  const [members, invitations, plates, t] = await Promise.all([
     listMembers(actor.organizationId),
     listInvitations(actor.organizationId),
+    currentPlatesByUser(actor.organizationId),
     getTranslations("Team"),
   ]);
 
@@ -56,7 +58,11 @@ export default async function TeamPage() {
           {members.map((member) => (
             <MemberRow
               key={member.userId}
-              member={{ ...member, isSelf: member.userId === actor.userId, cars: [] }}
+              member={{
+                ...member,
+                isSelf: member.userId === actor.userId,
+                cars: plates.get(member.userId) ?? [],
+              }}
             />
           ))}
         </ul>

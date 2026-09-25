@@ -9,6 +9,7 @@ import { NativeSelect } from "@/components/native-select";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { can, requirePermission } from "@/lib/actor";
+import { currentDriversByCar } from "@/lib/assignments";
 import { countRetired, fleetFilterOptions, listFleet } from "@/lib/cars";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -31,6 +32,7 @@ export default async function CarsPage(props: PageProps<"/cars">) {
     getFormatter(),
   ]);
   const filtered = Boolean(filter.location || filter.costCenter);
+  const drivers = await currentDriversByCar(cars.map((c) => c.id));
 
   return (
     <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 px-4 py-8">
@@ -110,6 +112,11 @@ export default async function CarsPage(props: PageProps<"/cars">) {
                       {[car.location, car.costCenter].filter(Boolean).join(" · ")}
                     </span>
                   )}
+                  <span className="text-muted-foreground text-sm" data-testid="car-drivers">
+                    {drivers.get(car.id)?.length
+                      ? t("drivers", { names: drivers.get(car.id)!.join(", ") })
+                      : t("noDrivers")}
+                  </span>
                   <span className="text-muted-foreground text-sm">
                     {car.latest
                       ? t("latest", {
