@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { ChangePasswordForm } from "@/components/auth/change-password-form";
+import { LocaleSwitcher } from "@/components/locale-switcher";
 import { requireSession } from "@/lib/session";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -20,6 +21,15 @@ export default async function SettingsPage() {
           {user.name} · {user.email}
         </p>
       </div>
+      <section className="bg-card flex flex-col gap-3 rounded-xl border p-4 shadow-xs sm:p-5">
+        <h2 className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
+          {t("language")}
+        </h2>
+        <p className="text-muted-foreground text-sm">{t("languageDescription")}</p>
+        <div>
+          <LocaleSwitcher />
+        </div>
+      </section>
       <section className="bg-card flex flex-col gap-4 rounded-xl border p-4 shadow-xs sm:p-5">
         <h2 className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
           {t("password")}

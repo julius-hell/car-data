@@ -22,6 +22,10 @@ docker compose exec app node scripts/create-operator.mjs --email ops@example.com
 
 The operator signs in, creates an organization per business and hands its first admin the invitation link. Admins then manage their own organization.
 
+### Email
+
+Email is optional. Set `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD` and `SMTP_FROM` (see `.env.example`) to email invitations, password resets and address verification. Without SMTP everything still works: invitations and password-reset links are copied by admins (or, for an organization's admins, by the operator) and handed over directly.
+
 **Upgrading from the personal mileage tracker:** the fleet manager starts from a fresh database. Its migration history was replaced by a new baseline, so remove the old database first (`docker compose down -v` deletes the `pgdata` volume) and re-enter your cars.
 
 Serve any hostname other than `localhost` over HTTPS through a reverse proxy (Caddy, Traefik, nginx) in front of the app, with `BETTER_AUTH_URL` set to the public URL. The proxy should forward `Host` (or `X-Forwarded-Host`) and `X-Forwarded-For` unchanged and set `Strict-Transport-Security`; the app sets the other security headers itself.
@@ -34,6 +38,7 @@ Set `POSTGRES_PASSWORD` to something other than the example value before exposin
 cp .env.example .env
 pnpm install
 docker compose up -d postgres
+docker compose --profile dev up -d mailpit   # optional: catches email, UI on http://localhost:8025
 pnpm db:migrate
 pnpm dev
 ```
@@ -58,8 +63,10 @@ pnpm db:migrate    # applies pending migrations to DATABASE_URL
 ```sh
 pnpm typecheck
 pnpm lint
-pnpm test:e2e      # Playwright; builds and serves a production build on :3100, needs Postgres up
+pnpm test:e2e      # Playwright; builds and serves a production build on :3100 and :3101
 ```
+
+The suite needs Postgres and Mailpit (`docker compose --profile dev up -d postgres mailpit`). It serves the build twice: on :3100 with email going to Mailpit, and on :3101 without SMTP for the copy-the-link fallback.
 
 The suite runs against a production build. To run it against the docker compose app instead,
 start the stack with auth rate limiting off (all tests share one IP) and point

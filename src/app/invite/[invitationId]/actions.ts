@@ -10,6 +10,12 @@ import {
   verifyUserPassword,
 } from "@/lib/accounts";
 import { auth } from "@/lib/auth";
+import { db } from "@/lib/db";
+import { user } from "@/lib/db/schema";
+import { isValidProof } from "@/lib/invitation-mail";
+import { isEmailEnabled } from "@/lib/mail";
+import { eq } from "drizzle-orm";
+import { getLocale } from "next-intl/server";
 import type { Role } from "@/lib/roles";
 import {
   addMember,
@@ -42,11 +48,19 @@ async function openInvitation(invitationId: string) {
 
 async function join(
   invitation: { id: string; organizationId: string; email: string; role: Role },
-  userId: string,
+  account: { id: string; emailVerified: boolean },
   password: string,
+  proof: FormDataEntryValue | null,
 ): Promise<never> {
-  await addMember(invitation.organizationId, userId, invitation.role);
+  await addMember(invitation.organizationId, account.id, invitation.role);
   await markInvitationAccepted(invitation.id);
+  // The emailed link proves the invitee reads this mailbox; a copied link
+  // doesn't, so they get a verification email instead.
+  if (isValidProof(invitation, proof)) {
+    await db.update(user).set({ emailVerified: true }).where(eq(user.id, account.id));
+  } else if (!account.emailVerified && isEmailEnabled()) {
+    await auth.api.sendVerificationEmail({ body: { email: invitation.email, callbackURL: "/" } });
+  }
   await auth.api.signInEmail({ body: { email: invitation.email, password }, headers: await headers() });
   redirect("/");
 }
@@ -68,7 +82,8 @@ export async function acceptInvitation(
   if (await findUserByEmail(invitation.email)) return { status: "error", message: "errorTaken" };
 
   const created = await createUserWithPassword({ name, email: invitation.email, password });
-  return join(invitation, created.id, password);
+  await db.update(user).set({ locale: await getLocale() }).where(eq(user.id, created.id));
+  return join(invitation, created, password, formData.get("proof"));
 }
 
 // Someone who had an account before (e.g. removed from an organization)
@@ -88,5 +103,5 @@ export async function acceptInvitationWithAccount(
   if (!(await verifyUserPassword(existing.id, password))) {
     return { status: "error", message: "errorWrongPassword" };
   }
-  return join(invitation, existing.id, password);
+  return join(invitation, existing, password, formData.get("proof"));
 }

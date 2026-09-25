@@ -41,7 +41,15 @@
     "setPasswordDescription": "Choose the password you'll sign in with.",
     "setPassword": "Set password",
     "errorInvalidLink": "This link is invalid or has expired. Ask for a new one.",
-    "passwordSetNotice": "Your password is set. Sign in with it now."
+    "passwordSetNotice": "Your password is set. Sign in with it now.",
+    "forgotTitle": "Reset your password",
+    "forgotDescription": "Enter your email. If it has a verified account, we'll send you a link.",
+    "sendResetLink": "Send reset link",
+    "sending": "Sending…",
+    "resetRequested": "If an account with a verified email exists for this address, a reset link is on its way.",
+    "backToSignIn": "Back to sign-in",
+    "forgotLink": "Forgot your password?",
+    "forgotHint": "Forgot your password? Ask an admin of your organization for a reset link."
   },
   "Cars": {
     "title": "Cars",
@@ -132,7 +140,9 @@
   "Settings": {
     "title": "Settings",
     "heading": "Settings",
-    "password": "Password"
+    "password": "Password",
+    "language": "Language",
+    "languageDescription": "Used for the app and for emails we send you."
   },
   "Common": {
     "copy": "Copy",
@@ -253,5 +263,25 @@
     "heading": "My cars",
     "emptyTitle": "No cars assigned yet",
     "emptyDescription": "Once an admin assigns a car to you, it shows up here."
+  },
+  "Email": {
+    "greeting": "Hello {name},",
+    "role": {
+      "admin": "admin",
+      "driver": "driver",
+      "viewer": "viewer"
+    },
+    "invitationSubject": "Your invitation to {organization}",
+    "invitationBody": "You've been invited to join {organization} as {role}. Open the link to choose your password. It is valid for 7 days.",
+    "invitationAction": "Accept invitation",
+    "invitationFooter": "If you didn't expect this invitation, you can ignore this email.",
+    "resetSubject": "Reset your password",
+    "resetBody": "Someone asked to reset the password for your account. The link works once and expires in an hour.",
+    "resetAction": "Choose a new password",
+    "resetFooter": "If you didn't ask for this, ignore this email; your password stays unchanged.",
+    "verifySubject": "Confirm your email address",
+    "verifyBody": "Please confirm that this email address belongs to you, so password resets and notifications can reach you.",
+    "verifyAction": "Confirm email address",
+    "verifyFooter": "If you don't have an account with us, ignore this email."
   }
 }

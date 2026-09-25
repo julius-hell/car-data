@@ -14,7 +14,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function InvitePage(props: PageProps<"/invite/[invitationId]">) {
-  const { invitationId } = await props.params;
+  const [{ invitationId }, searchParams] = await Promise.all([props.params, props.searchParams]);
+  const proof = typeof searchParams.proof === "string" ? searchParams.proof : null;
   const [found, session, t, tRoles] = await Promise.all([
     findInvitationWithOrganization(invitationId),
     getSession(),
@@ -60,7 +61,7 @@ export default async function InvitePage(props: PageProps<"/invite/[invitationId
           {session ? (
             <div className="flex flex-col gap-3 text-sm">
               <p>{t("signedInAs", { email: session.user.email })}</p>
-              <SignOutButton redirectTo={`/invite/${invitation.id}`} />
+              <SignOutButton redirectTo={`/invite/${invitation.id}${proof ? `?proof=${encodeURIComponent(proof)}` : ""}`} />
             </div>
           ) : (
             <AcceptInvitationForm
@@ -68,6 +69,7 @@ export default async function InvitePage(props: PageProps<"/invite/[invitationId
               name={invitation.name}
               email={invitation.email}
               hasAccount={hasAccount}
+              proof={proof}
             />
           )}
         </CardContent>

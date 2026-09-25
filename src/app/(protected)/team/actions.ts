@@ -5,6 +5,8 @@ import { redirect } from "next/navigation";
 import { createSetPasswordToken, isEmail, NAME_MAX_LENGTH, normalizeEmail } from "@/lib/accounts";
 import { assertCan, isRole, requireActor } from "@/lib/actor";
 import { appUrl } from "@/lib/app-url";
+import { sendInvitationEmail } from "@/lib/invitation-mail";
+import { getLocale } from "next-intl/server";
 import {
   cancelInvitation,
   changeMemberRole,
@@ -44,7 +46,14 @@ export async function inviteMember(_previous: InviteState, formData: FormData): 
   if (blocker) return { status: "error", message: blocker === "operator" ? "errorOperator" : "errorMember" };
   if (await hasOpenInvitation(actor.organizationId, email)) return { status: "error", message: "errorPending" };
 
-  await createInvitation({ organizationId: actor.organizationId, inviterId: actor.userId, name, email, role });
+  const created = await createInvitation({
+    organizationId: actor.organizationId,
+    inviterId: actor.userId,
+    name,
+    email,
+    role,
+  });
+  await sendInvitationEmail(created, actor.organizationName, await getLocale());
   revalidatePath("/team");
   return { status: "invited", name };
 }
@@ -57,7 +66,8 @@ export async function revokeMemberInvitation(invitationId: string) {
 
 export async function reissueMemberInvitation(invitationId: string) {
   const actor = await requireAdmin();
-  await reissueInvitation(actor.organizationId, invitationId, actor.userId);
+  const reissued = await reissueInvitation(actor.organizationId, invitationId, actor.userId);
+  if (reissued) await sendInvitationEmail(reissued, actor.organizationName, await getLocale());
   revalidatePath("/team");
 }
 

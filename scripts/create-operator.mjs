@@ -5,7 +5,8 @@
 //   pnpm operator:create --email ops@example.com --name "Ops"
 //   docker compose exec app node scripts/create-operator.mjs --email ... --name ...
 //
-// Plain JavaScript with only `pg`, so it also runs inside the production image.
+// Plain JavaScript with only `pg` (and `nodemailer` when SMTP is configured),
+// so it also runs inside the production image.
 import { randomBytes, randomUUID } from "node:crypto";
 import { parseArgs } from "node:util";
 import pg from "pg";
@@ -56,7 +57,25 @@ try {
     [randomUUID(), `reset-password:${token}`, userId, new Date(Date.now() + LINK_TTL_MS)],
   );
   await client.query("commit");
-  console.log(`Set the operator password within 24 hours:\n${new URL(`/set-password?token=${token}`, baseUrl)}`);
+  const link = new URL(`/set-password?token=${token}`, baseUrl).toString();
+  if (process.env.SMTP_HOST && process.env.SMTP_FROM) {
+    const { default: nodemailer } = await import("nodemailer");
+    await nodemailer
+      .createTransport({
+        host: process.env.SMTP_HOST,
+        port: Number(process.env.SMTP_PORT ?? 587),
+        secure: process.env.SMTP_SECURE === "true",
+        auth: process.env.SMTP_USER ? { user: process.env.SMTP_USER, pass: process.env.SMTP_PASSWORD ?? "" } : undefined,
+      })
+      .sendMail({
+        from: process.env.SMTP_FROM,
+        to: email,
+        subject: "Set your operator password",
+        text: `Set your operator password within 24 hours:\n\n${link}`,
+      });
+    console.log(`Emailed the link to ${email}.`);
+  }
+  console.log(`Set the operator password within 24 hours:\n${link}`);
 } catch (error) {
   await client.query("rollback");
   throw error;

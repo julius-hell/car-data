@@ -17,11 +17,13 @@ export function AcceptInvitationForm({
   name,
   email,
   hasAccount,
+  proof,
 }: {
   invitationId: string;
   name: string;
   email: string;
   hasAccount: boolean;
+  proof: string | null;
 }) {
   const t = useTranslations("Invite");
   const tAuth = useTranslations("Auth");
@@ -32,6 +34,7 @@ export function AcceptInvitationForm({
 
   return (
     <form action={action} className="flex flex-col gap-3" noValidate>
+      {proof && <input type="hidden" name="proof" value={proof} />}
       {hasAccount ? (
         <p className="text-muted-foreground text-sm" data-testid="invite-existing-account">
           {t("existingAccount")}

@@ -4,6 +4,8 @@ import { getTranslations } from "next-intl/server";
 import { AuthShell } from "@/components/auth/auth-shell";
 import { SignInForm } from "@/components/auth/sign-in-form";
 import { FormMessage } from "@/components/form-message";
+import { isEmailEnabled } from "@/lib/mail";
+import Link from "next/link";
 import { safeNextPath } from "@/lib/next-path";
 import { getSession } from "@/lib/session";
 
@@ -27,6 +29,18 @@ export default async function LoginPage(props: PageProps<"/login">) {
           </FormMessage>
         )}
         <SignInForm next={next} />
+        {isEmailEnabled() ? (
+          <Link
+            href="/forgot-password"
+            className="text-primary text-center text-sm underline-offset-4 hover:underline"
+          >
+            {t("forgotLink")}
+          </Link>
+        ) : (
+          <p data-testid="forgot-hint" className="text-muted-foreground text-center text-sm">
+            {t("forgotHint")}
+          </p>
+        )}
       </div>
     </AuthShell>
   );

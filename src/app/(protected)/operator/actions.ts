@@ -5,9 +5,12 @@ import { redirect } from "next/navigation";
 import { createSetPasswordToken, isEmail, NAME_MAX_LENGTH, normalizeEmail } from "@/lib/accounts";
 import { requireOperator } from "@/lib/actor";
 import { appUrl } from "@/lib/app-url";
+import { sendInvitationEmail } from "@/lib/invitation-mail";
+import { getLocale } from "next-intl/server";
 import {
   cancelInvitation,
   findMember,
+  findOrganization,
   createOrganizationWithAdminInvitation,
   invitationBlocker,
   ORGANIZATION_NAME_MAX_LENGTH,
@@ -32,12 +35,13 @@ export async function createOrganization(
   if (!isEmail(adminEmail)) return { status: "error", message: "errorEmail" };
   if (await invitationBlocker(adminEmail)) return { status: "error", message: "errorEmailTaken" };
 
-  const { organizationId } = await createOrganizationWithAdminInvitation({
+  const { organizationId, invitation } = await createOrganizationWithAdminInvitation({
     name,
     adminName,
     adminEmail,
     operatorId: operator.id,
   });
+  await sendInvitationEmail(invitation, name, await getLocale());
   revalidatePath("/operator");
   redirect(`/operator/organizations/${organizationId}`);
 }
@@ -50,7 +54,9 @@ export async function revokeOrganizationInvitation(organizationId: string, invit
 
 export async function reissueOrganizationInvitation(organizationId: string, invitationId: string) {
   const operator = await requireOperator();
-  await reissueInvitation(organizationId, invitationId, operator.id);
+  const reissued = await reissueInvitation(organizationId, invitationId, operator.id);
+  const organization = await findOrganization(organizationId);
+  if (reissued && organization) await sendInvitationEmail(reissued, organization.name, await getLocale());
   revalidatePath(`/operator/organizations/${organizationId}`);
 }
 

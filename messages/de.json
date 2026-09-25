@@ -41,7 +41,15 @@
     "setPasswordDescription": "Wähle das Passwort, mit dem du dich anmeldest.",
     "setPassword": "Passwort festlegen",
     "errorInvalidLink": "Dieser Link ist ungültig oder abgelaufen. Fordere einen neuen an.",
-    "passwordSetNotice": "Dein Passwort ist festgelegt. Melde dich jetzt damit an."
+    "passwordSetNotice": "Dein Passwort ist festgelegt. Melde dich jetzt damit an.",
+    "forgotTitle": "Passwort zurücksetzen",
+    "forgotDescription": "Gib deine E-Mail-Adresse ein. Gehört sie zu einem bestätigten Konto, schicken wir dir einen Link.",
+    "sendResetLink": "Link senden",
+    "sending": "Wird gesendet…",
+    "resetRequested": "Falls es für diese Adresse ein Konto mit bestätigter E-Mail gibt, ist ein Link unterwegs.",
+    "backToSignIn": "Zurück zur Anmeldung",
+    "forgotLink": "Passwort vergessen?",
+    "forgotHint": "Passwort vergessen? Bitte einen Admin deiner Organisation um einen Link zum Zurücksetzen."
   },
   "Cars": {
     "title": "Autos",
@@ -132,7 +140,9 @@
   "Settings": {
     "title": "Einstellungen",
     "heading": "Einstellungen",
-    "password": "Passwort"
+    "password": "Passwort",
+    "language": "Sprache",
+    "languageDescription": "Gilt für die App und für E-Mails, die wir dir schicken."
   },
   "Common": {
     "copy": "Kopieren",
@@ -253,5 +263,25 @@
     "heading": "Meine Fahrzeuge",
     "emptyTitle": "Noch keine Fahrzeuge zugewiesen",
     "emptyDescription": "Sobald dir ein Admin ein Fahrzeug zuweist, erscheint es hier."
+  },
+  "Email": {
+    "greeting": "Hallo {name},",
+    "role": {
+      "admin": "Admin",
+      "driver": "Fahrer:in",
+      "viewer": "Leser:in"
+    },
+    "invitationSubject": "Deine Einladung zu {organization}",
+    "invitationBody": "Du wurdest eingeladen, {organization} als {role} beizutreten. Öffne den Link, um dein Passwort festzulegen. Er ist 7 Tage gültig.",
+    "invitationAction": "Einladung annehmen",
+    "invitationFooter": "Wenn du diese Einladung nicht erwartet hast, kannst du diese E-Mail ignorieren.",
+    "resetSubject": "Passwort zurücksetzen",
+    "resetBody": "Jemand möchte das Passwort deines Kontos zurücksetzen. Der Link funktioniert einmal und läuft nach einer Stunde ab.",
+    "resetAction": "Neues Passwort wählen",
+    "resetFooter": "Wenn du das nicht angefordert hast, ignoriere diese E-Mail; dein Passwort bleibt unverändert.",
+    "verifySubject": "Bestätige deine E-Mail-Adresse",
+    "verifyBody": "Bitte bestätige, dass diese E-Mail-Adresse dir gehört, damit dich Links zum Zurücksetzen und Benachrichtigungen erreichen.",
+    "verifyAction": "E-Mail-Adresse bestätigen",
+    "verifyFooter": "Wenn du kein Konto bei uns hast, ignoriere diese E-Mail."
   }
 }

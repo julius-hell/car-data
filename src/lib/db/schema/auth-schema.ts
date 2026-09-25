@@ -16,6 +16,8 @@ export const user = pgTable("user", {
   image: text("image"),
   // Platform operators run the deployment; they are never organization members.
   isOperator: boolean("is_operator").default(false).notNull(),
+  // Language for emails and, when no cookie is set, for the UI.
+  locale: text("locale"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()
