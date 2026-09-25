@@ -1,9 +1,7 @@
 {
   "Meta": {
     "appName": "Car Data",
-    "description": "Track the mileage of your cars over time.",
-    "logShortcut": "Log reading",
-    "logShortcutDescription": "Add today's odometer reading to your default car"
+    "description": "Track the mileage of your cars over time."
   },
   "Header": {
     "signOut": "Sign out",
@@ -34,11 +32,8 @@
     "addCar": "Add car",
     "emptyTitle": "Add your first car",
     "emptyDescription": "Log its odometer readings and watch the mileage grow.",
-    "default": "Default",
     "latest": "{odometer} {unit} · {count, plural, one {# reading} other {# readings}}",
     "noReadings": "No readings yet · {unit}",
-    "setDefault": "Set default",
-    "setDefaultLabel": "Set {name} as default",
     "saving": "Saving…",
     "deleteLabel": "Delete {name}",
     "deleteTitle": "Delete {name}?",
@@ -47,19 +42,13 @@
     "delete": "Delete",
     "deleting": "Deleting…",
     "dialogTitle": "Add a car",
-    "dialogDescription": "Give it a name and pick the unit its odometer uses.",
+    "dialogDescription": "Give it a name.",
     "name": "Name",
     "namePlaceholder": "e.g. Honda Civic",
-    "unit": "Unit",
-    "adding": "Adding…",
-    "logReading": "Log reading",
-    "reminderSoon": "Due soon",
-    "reminderOverdue": "Overdue"
+    "adding": "Adding…"
   },
   "Car": {
     "allCars": "All cars",
-    "odometerIn": "Odometer in <u>{unit}</u>",
-    "defaultCar": "default car",
     "latestReading": "Latest reading",
     "noReadingsYet": "No readings yet",
     "sincePrevious": "Since previous",
@@ -112,19 +101,6 @@
     "description": "There is nothing at this address.",
     "back": "Back to your cars"
   },
-  "Offline": {
-    "title": "Offline",
-    "heading": "You are offline",
-    "description": "Car Data needs a connection to load your readings. Try again once you are back online."
-  },
-  "Scan": {
-    "button": "Scan odometer",
-    "scanning": "Reading photo… {percent}%",
-    "recognized": "Read {value} {unit} from the photo — check it before saving.",
-    "orMaybe": "or",
-    "nothingFound": "Couldn't find a mileage in that photo. Try again closer to the display, or type it in.",
-    "failed": "The scanner couldn't start. Type the reading in instead."
-  },
   "Stats": {
     "thisYear": "This year",
     "perDay": "Per day",
@@ -134,37 +110,5 @@
     "atCurrentRate": "at the current rate",
     "monthlyTitle": "Distance per month",
     "monthlyEmpty": "Two readings in different months start this chart."
-  },
-  "Reminders": {
-    "heading": "Reminders",
-    "add": "Add reminder",
-    "addTitle": "Add a reminder",
-    "editTitle": "Edit reminder",
-    "dialogDescription": "Give it a name and a distance target, a date target, or both.",
-    "title": "Title",
-    "titlePlaceholder": "e.g. Service",
-    "targetOdometer": "At odometer ({unit})",
-    "targetDate": "By date",
-    "save": "Save",
-    "saving": "Saving…",
-    "empty": "No reminders. Add one for the next service or inspection.",
-    "atOdometer": "at {value} {unit}",
-    "byDate": "by {date}",
-    "toGo": "{value} {unit} to go",
-    "reached": "target reached",
-    "estimated": "≈ {date}",
-    "daysLeft": "{count, plural, one {# day left} other {# days left}}",
-    "daysOver": "{count, plural, one {# day overdue} other {# days overdue}}",
-    "soon": "Due soon",
-    "overdue": "Overdue",
-    "done": "Done",
-    "doneLabel": "Mark {title} as done",
-    "editLabel": "Edit {title}",
-    "deleteLabel": "Delete reminder {title}",
-    "completed": "{count, plural, one {# completed} other {# completed}}",
-    "errorTitle": "Give the reminder a title.",
-    "errorTarget": "Set a distance target, a date target, or both.",
-    "errorOdometer": "Enter the target odometer as a whole number.",
-    "errorDate": "Enter a valid date."
   }
 }

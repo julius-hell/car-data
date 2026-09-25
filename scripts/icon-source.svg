@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="0" fill="#2a78d6"/>
-  <!-- rising odometer line -->
-  <polyline points="96,352 192,296 288,240 416,160" fill="none" stroke="#ffffff" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="96" cy="352" r="26" fill="#ffffff"/>
-  <circle cx="192" cy="296" r="26" fill="#ffffff"/>
-  <circle cx="288" cy="240" r="26" fill="#ffffff"/>
-  <circle cx="416" cy="160" r="26" fill="#ffffff"/>
-</svg>

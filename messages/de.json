@@ -1,9 +1,7 @@
 {
   "Meta": {
     "appName": "Car Data",
-    "description": "Behalte den Kilometerstand deiner Autos im Blick.",
-    "logShortcut": "Stand eintragen",
-    "logShortcutDescription": "Heutigen Kilometerstand für dein Standardauto eintragen"
+    "description": "Behalte den Kilometerstand deiner Autos im Blick."
   },
   "Header": {
     "signOut": "Abmelden",
@@ -34,11 +32,8 @@
     "addCar": "Auto hinzufügen",
     "emptyTitle": "Füge dein erstes Auto hinzu",
     "emptyDescription": "Trage Kilometerstände ein und sieh zu, wie die Laufleistung wächst.",
-    "default": "Standard",
     "latest": "{odometer} {unit} · {count, plural, one {# Eintrag} other {# Einträge}}",
     "noReadings": "Noch keine Einträge · {unit}",
-    "setDefault": "Als Standard",
-    "setDefaultLabel": "{name} als Standard festlegen",
     "saving": "Speichern…",
     "deleteLabel": "{name} löschen",
     "deleteTitle": "{name} löschen?",
@@ -47,19 +42,13 @@
     "delete": "Löschen",
     "deleting": "Löschen…",
     "dialogTitle": "Auto hinzufügen",
-    "dialogDescription": "Gib ihm einen Namen und wähle die Einheit des Tachos.",
+    "dialogDescription": "Gib ihm einen Namen.",
     "name": "Name",
     "namePlaceholder": "z. B. Honda Civic",
-    "unit": "Einheit",
-    "adding": "Hinzufügen…",
-    "logReading": "Stand eintragen",
-    "reminderSoon": "Bald fällig",
-    "reminderOverdue": "Überfällig"
+    "adding": "Hinzufügen…"
   },
   "Car": {
     "allCars": "Alle Autos",
-    "odometerIn": "Kilometerstand in <u>{unit}</u>",
-    "defaultCar": "Standardauto",
     "latestReading": "Letzter Stand",
     "noReadingsYet": "Noch keine Einträge",
     "sincePrevious": "Seit dem vorherigen",
@@ -112,19 +101,6 @@
     "description": "Unter dieser Adresse gibt es nichts.",
     "back": "Zurück zu deinen Autos"
   },
-  "Offline": {
-    "title": "Offline",
-    "heading": "Du bist offline",
-    "description": "Car Data braucht eine Verbindung, um deine Einträge zu laden. Versuche es erneut, sobald du wieder online bist."
-  },
-  "Scan": {
-    "button": "Tacho scannen",
-    "scanning": "Foto wird gelesen… {percent}%",
-    "recognized": "{value} {unit} aus dem Foto gelesen – prüfe den Wert vor dem Speichern.",
-    "orMaybe": "oder",
-    "nothingFound": "Im Foto wurde kein Kilometerstand gefunden. Versuche es näher am Display oder tippe ihn ein.",
-    "failed": "Der Scanner konnte nicht starten. Tippe den Stand stattdessen ein."
-  },
   "Stats": {
     "thisYear": "Dieses Jahr",
     "perDay": "Pro Tag",
@@ -134,37 +110,5 @@
     "atCurrentRate": "beim aktuellen Tempo",
     "monthlyTitle": "Strecke pro Monat",
     "monthlyEmpty": "Zwei Einträge in verschiedenen Monaten starten dieses Diagramm."
-  },
-  "Reminders": {
-    "heading": "Erinnerungen",
-    "add": "Erinnerung hinzufügen",
-    "addTitle": "Erinnerung hinzufügen",
-    "editTitle": "Erinnerung bearbeiten",
-    "dialogDescription": "Gib ihr einen Namen und ein Kilometer-Ziel, ein Datum oder beides.",
-    "title": "Titel",
-    "titlePlaceholder": "z. B. Inspektion",
-    "targetOdometer": "Bei Kilometerstand ({unit})",
-    "targetDate": "Bis Datum",
-    "save": "Speichern",
-    "saving": "Speichern…",
-    "empty": "Keine Erinnerungen. Lege eine für die nächste Inspektion oder den TÜV an.",
-    "atOdometer": "bei {value} {unit}",
-    "byDate": "bis {date}",
-    "toGo": "noch {value} {unit}",
-    "reached": "Ziel erreicht",
-    "estimated": "≈ {date}",
-    "daysLeft": "{count, plural, one {noch # Tag} other {noch # Tage}}",
-    "daysOver": "{count, plural, one {# Tag überfällig} other {# Tage überfällig}}",
-    "soon": "Bald fällig",
-    "overdue": "Überfällig",
-    "done": "Erledigt",
-    "doneLabel": "{title} als erledigt markieren",
-    "editLabel": "{title} bearbeiten",
-    "deleteLabel": "Erinnerung {title} löschen",
-    "completed": "{count, plural, one {# erledigt} other {# erledigt}}",
-    "errorTitle": "Gib der Erinnerung einen Titel.",
-    "errorTarget": "Lege ein Kilometer-Ziel, ein Datum oder beides fest.",
-    "errorOdometer": "Gib den Ziel-Kilometerstand als ganze Zahl ein.",
-    "errorDate": "Gib ein gültiges Datum ein."
   }
 }

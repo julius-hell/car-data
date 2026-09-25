@@ -16,7 +16,6 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { UNITS } from "@/lib/db/schema";
 
 function SubmitButton() {
   const t = useTranslations("Cars");
@@ -56,21 +55,6 @@ export function AddCarDialog() {
               autoFocus
               required
             />
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="car-unit">{t("unit")}</Label>
-            <select
-              id="car-unit"
-              name="unit"
-              defaultValue="km"
-              className="border-input bg-background h-9 rounded-md border px-3 text-sm shadow-xs"
-            >
-              {UNITS.map((unit) => (
-                <option key={unit} value={unit}>
-                  {unit}
-                </option>
-              ))}
-            </select>
           </div>
           <DialogFooter>
             <SubmitButton />

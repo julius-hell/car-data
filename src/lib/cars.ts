@@ -1,6 +1,6 @@
 import { and, asc, desc, eq, inArray, sql } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { car, mileageEntry, userPreference } from "@/lib/db/schema";
+import { car, mileageEntry } from "@/lib/db/schema";
 
 const UUID_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -21,23 +21,6 @@ export async function findOwnedCar(userId: string, carId: string) {
   return db.query.car.findFirst({
     where: and(eq(car.id, carId), eq(car.userId, userId)),
   });
-}
-
-export async function getDefaultCarId(userId: string) {
-  const preference = await db.query.userPreference.findFirst({
-    where: eq(userPreference.userId, userId),
-  });
-  return preference?.defaultCarId ?? null;
-}
-
-export async function setDefaultCarId(userId: string, carId: string) {
-  await db
-    .insert(userPreference)
-    .values({ userId, defaultCarId: carId })
-    .onConflictDoUpdate({
-      target: userPreference.userId,
-      set: { defaultCarId: carId },
-    });
 }
 
 export async function listCarsWithLatestReading(userId: string) {

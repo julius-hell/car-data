@@ -12,23 +12,20 @@ test("a new user is prompted to add their first car", async ({ page }) => {
   await expect(page.getByText("Add your first car")).toBeVisible();
 });
 
-test("add cars with the default and an explicit unit", async ({ page }) => {
+test("added cars are listed with readings in km", async ({ page }) => {
   await addCar(page, "Civic");
-  await addCar(page, "Mustang", "mi");
+  await addCar(page, "Mustang");
 
-  const civic = page.getByRole("listitem").filter({ hasText: "Civic" });
-  const mustang = page.getByRole("listitem").filter({ hasText: "Mustang" });
-  await expect(civic).toContainText("km");
-  await expect(mustang).toContainText("mi");
+  await expect(page.getByRole("listitem").filter({ hasText: "Civic" })).toContainText("km");
+  await expect(page.getByRole("listitem").filter({ hasText: "Mustang" })).toContainText("km");
   await expect(page.getByText("Add your first car")).toBeHidden();
 });
 
-test("the car page shows the car's name and unit", async ({ page }) => {
-  const carId = await addCar(page, "Golf", "mi");
+test("the car page shows the car's name", async ({ page }) => {
+  const carId = await addCar(page, "Golf");
   await page.getByRole("link", { name: /Golf/ }).click();
   await expect(page).toHaveURL(`/cars/${carId}`);
   await expect(page.getByRole("heading", { name: "Golf" })).toBeVisible();
-  await expect(page.getByTestId("car-unit")).toHaveText("mi");
 });
 
 test("deleting a car asks for confirmation first", async ({ page }) => {

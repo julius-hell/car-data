@@ -8,7 +8,6 @@ import { CarPhoto } from "@/components/car-photo";
 import { DeleteEntryButton } from "@/components/delete-entry-button";
 import { MileageChart } from "@/components/mileage-chart";
 import { MonthlyChart } from "@/components/monthly-chart";
-import { ReminderList } from "@/components/reminder-list";
 import { StatTile } from "@/components/stat-tile";
 import {
   Table,
@@ -18,10 +17,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { findOwnedCar, getDefaultCarId } from "@/lib/cars";
+import { findOwnedCar } from "@/lib/cars";
 import { isoDateToDate } from "@/lib/dates";
 import { listEntries } from "@/lib/entries";
-import { listReminders } from "@/lib/reminders";
 import { mileageStats, monthlyDistances } from "@/lib/stats";
 import { requireSession } from "@/lib/session";
 
@@ -42,10 +40,8 @@ export default async function CarPage(props: PageProps<"/cars/[carId]">) {
   const car = await findOwnedCar(user.id, carId);
   if (!car) notFound();
   const focusForm = searchParams.log === "1";
-  const [entries, reminders, defaultCarId, t, ts, format] = await Promise.all([
+  const [entries, t, ts, format] = await Promise.all([
     listEntries(car.id),
-    listReminders(car.id),
-    getDefaultCarId(user.id),
     getTranslations("Car"),
     getTranslations("Stats"),
     getFormatter(),
@@ -86,13 +82,6 @@ export default async function CarPage(props: PageProps<"/cars/[carId]">) {
         </Link>
         <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
           <h1 className="text-3xl font-semibold tracking-tight">{car.name}</h1>
-          <p className="text-muted-foreground text-sm">
-            {t.rich("odometerIn", {
-              unit: car.unit,
-              u: (chunks) => <span data-testid="car-unit">{chunks}</span>,
-            })}
-            {car.id === defaultCarId && ` · ${t("defaultCar")}`}
-          </p>
         </div>
       </div>
 
@@ -104,7 +93,7 @@ export default async function CarPage(props: PageProps<"/cars/[carId]">) {
           <StatTile
             label={t("latestReading")}
             value={latest ? format.number(latest.odometer) : "—"}
-            unit={latest ? car.unit : undefined}
+            unit={latest ? "km" : undefined}
             detail={latest ? formatDate(latest.recordedAt) : t("noReadingsYet")}
           />
           <StatTile
@@ -114,7 +103,7 @@ export default async function CarPage(props: PageProps<"/cars/[carId]">) {
                 ? `${distance >= 0 ? "+" : ""}${format.number(distance)}`
                 : "—"
             }
-            unit={distance !== null ? car.unit : undefined}
+            unit={distance !== null ? "km" : undefined}
             detail={days !== null ? t("overDays", { count: days }) : t("needsTwo")}
           />
           <StatTile
@@ -130,21 +119,21 @@ export default async function CarPage(props: PageProps<"/cars/[carId]">) {
         <StatTile
           label={ts("thisYear")}
           value={stats.thisYear !== null ? format.number(stats.thisYear) : "—"}
-          unit={stats.thisYear !== null ? car.unit : undefined}
+          unit={stats.thisYear !== null ? "km" : undefined}
           detail={stats.thisYear !== null ? String(now.getUTCFullYear()) : ts("needsTwo")}
           testId="stat-this-year"
         />
         <StatTile
           label={ts("perDay")}
           value={stats.perDay !== null ? format.number(stats.perDay, { maximumFractionDigits: 1 }) : "—"}
-          unit={stats.perDay !== null ? car.unit : undefined}
+          unit={stats.perDay !== null ? "km" : undefined}
           detail={stats.perDay !== null ? ts("onAverage", { count: rateDays }) : ts("needsTwo")}
           testId="stat-per-day"
         />
         <StatTile
           label={ts("projectedPerYear")}
           value={stats.projectedPerYear !== null ? format.number(stats.projectedPerYear) : "—"}
-          unit={stats.projectedPerYear !== null ? car.unit : undefined}
+          unit={stats.projectedPerYear !== null ? "km" : undefined}
           detail={stats.projectedPerYear !== null ? ts("atCurrentRate") : ts("needsTwo")}
           className="col-span-2 sm:col-span-1"
           testId="stat-projected"
@@ -156,7 +145,7 @@ export default async function CarPage(props: PageProps<"/cars/[carId]">) {
           {t("chartTitle")}
         </h2>
         <MileageChart
-          unit={car.unit}
+          unit="km"
           points={[...entries]
             .reverse()
             .map(({ recordedAt, odometer }) => ({ recordedAt, odometer }))}
@@ -167,23 +156,12 @@ export default async function CarPage(props: PageProps<"/cars/[carId]">) {
         <h2 className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
           {ts("monthlyTitle")}
         </h2>
-        <MonthlyChart months={months} unit={car.unit} />
+        <MonthlyChart months={months} unit="km" />
       </section>
 
       <AddEntryForm
         carId={car.id}
-        unit={car.unit}
-        latest={latest?.odometer ?? null}
         autoFocus={focusForm}
-      />
-
-      <ReminderList
-        carId={car.id}
-        unit={car.unit}
-        reminders={reminders}
-        latestOdometer={latest?.odometer ?? null}
-        perDay={stats.perDay}
-        now={now}
       />
 
       <section className="flex min-w-0 flex-col gap-3">
@@ -211,7 +189,7 @@ export default async function CarPage(props: PageProps<"/cars/[carId]">) {
                     </TableCell>
                     <TableCell className="text-right font-mono whitespace-nowrap tabular-nums">
                       {format.number(entry.odometer)}{" "}
-                      <span className="text-muted-foreground font-sans">{car.unit}</span>
+                      <span className="text-muted-foreground font-sans">{"km"}</span>
                     </TableCell>
                     <TableCell className="text-muted-foreground truncate">{entry.note}</TableCell>
                     <TableCell className="py-1 pr-2">

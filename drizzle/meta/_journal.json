@@ -43,6 +43,13 @@
       "when": 1789930863268,
       "tag": "0005_flowery_lilith",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1790362415424,
+      "tag": "0006_hard_marvex",
+      "breakpoints": true
     }
   ]
 }

@@ -2,15 +2,12 @@ import {
   date,
   index,
   integer,
-  pgEnum,
   pgTable,
   text,
   timestamp,
   uuid,
 } from "drizzle-orm/pg-core";
 import { user } from "./auth-schema.ts";
-
-export const unitEnum = pgEnum("unit", ["km", "mi"]);
 
 export const car = pgTable(
   "car",
@@ -20,7 +17,6 @@ export const car = pgTable(
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
     name: text("name").notNull(),
-    unit: unitEnum("unit").notNull().default("km"),
     photoContentType: text("photo_content_type"),
     photoUpdatedAt: timestamp("photo_updated_at"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -43,33 +39,5 @@ export const mileageEntry = pgTable(
   (table) => [index("mileage_entry_car_id_idx").on(table.carId)],
 );
 
-export const reminder = pgTable(
-  "reminder",
-  {
-    id: uuid("id").primaryKey().defaultRandom(),
-    carId: uuid("car_id")
-      .notNull()
-      .references(() => car.id, { onDelete: "cascade" }),
-    title: text("title").notNull(),
-    targetOdometer: integer("target_odometer"),
-    targetDate: date("target_date"),
-    doneAt: timestamp("done_at"),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-  },
-  (table) => [index("reminder_car_id_idx").on(table.carId)],
-);
-
-export const userPreference = pgTable("user_preference", {
-  userId: text("user_id")
-    .primaryKey()
-    .references(() => user.id, { onDelete: "cascade" }),
-  defaultCarId: uuid("default_car_id").references(() => car.id, {
-    onDelete: "set null",
-  }),
-});
-
 export type Car = typeof car.$inferSelect;
-export type Unit = Car["unit"];
-export const UNITS = unitEnum.enumValues;
 export type MileageEntry = typeof mileageEntry.$inferSelect;
-export type Reminder = typeof reminder.$inferSelect;

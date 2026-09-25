@@ -9,14 +9,6 @@ import { BrandMark, Wordmark } from "@/components/brand";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { Button } from "@/components/ui/button";
 
-// The service worker keeps visited pages for offline use; drop them so a
-// shared device shows nothing of this account after sign-out.
-async function clearOfflineCaches() {
-  if (typeof caches === "undefined") return;
-  const keys = await caches.keys();
-  await Promise.all(keys.map((key) => caches.delete(key)));
-}
-
 export function AppHeader({ userName }: { userName: string }) {
   const t = useTranslations("Header");
   const router = useRouter();
@@ -25,7 +17,6 @@ export function AppHeader({ userName }: { userName: string }) {
   async function signOut() {
     setPending(true);
     await authClient.signOut();
-    await clearOfflineCaches();
     router.push("/login");
   }
 

@@ -1,14 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CarIcon, PlusIcon } from "lucide-react";
+import { CarIcon } from "lucide-react";
 import { getFormatter, getTranslations } from "next-intl/server";
 import { AddCarDialog } from "@/components/add-car-dialog";
 import { DeleteCarButton } from "@/components/delete-car-button";
-import { SetDefaultCarButton } from "@/components/set-default-car-button";
-import { Button } from "@/components/ui/button";
-import { getDefaultCarId, listCarsWithLatestReading } from "@/lib/cars";
+import { listCarsWithLatestReading } from "@/lib/cars";
 import { photoUrl } from "@/lib/photo-url";
-import { openRemindersByCar, reminderStatus, type ReminderLevel } from "@/lib/reminders";
 import { requireSession } from "@/lib/session";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -18,20 +15,11 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function CarsPage() {
   const { user } = await requireSession();
-  const [cars, defaultCarId, t, format] = await Promise.all([
+  const [cars, t, format] = await Promise.all([
     listCarsWithLatestReading(user.id),
-    getDefaultCarId(user.id),
     getTranslations("Cars"),
     getFormatter(),
   ]);
-  const remindersByCar = await openRemindersByCar(cars.map((c) => c.id));
-  const now = new Date();
-  const worstLevel = (carId: string, latestOdometer: number | null): ReminderLevel => {
-    const levels = (remindersByCar.get(carId) ?? []).map(
-      (r) => reminderStatus(r, { latestOdometer, perDay: null, now }).level,
-    );
-    return levels.includes("overdue") ? "overdue" : levels.includes("soon") ? "soon" : "ok";
-  };
 
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-4 py-8">
@@ -42,15 +30,7 @@ export default async function CarsPage() {
           </p>
           <h1 className="text-2xl font-semibold tracking-tight">{t("heading")}</h1>
         </div>
-        <div className="flex items-center gap-2">
-          {defaultCarId && (
-            <Button variant="outline" render={<Link href="/log" />}>
-              <PlusIcon aria-hidden className="size-4" />
-              {t("logReading")}
-            </Button>
-          )}
-          <AddCarDialog />
-        </div>
+        <AddCarDialog />
       </div>
 
       {cars.length === 0 ? (
@@ -66,8 +46,6 @@ export default async function CarsPage() {
       ) : (
         <ul className="flex flex-col gap-3">
           {cars.map((car) => {
-            const isDefault = car.id === defaultCarId;
-            const level = worstLevel(car.id, car.latest?.odometer ?? null);
             return (
               <li
                 key={car.id}
@@ -96,41 +74,19 @@ export default async function CarsPage() {
                   <span className="flex min-w-0 flex-1 flex-col gap-0.5">
                     <span className="flex min-w-0 items-center gap-2">
                       <span className="truncate font-medium">{car.name}</span>
-                      {isDefault && (
-                        <span className="bg-accent text-accent-foreground shrink-0 rounded-full px-2 py-0.5 text-[11px] font-medium tracking-wide uppercase">
-                          {t("default")}
-                        </span>
-                      )}
-                      {level !== "ok" && (
-                        <span
-                          data-testid="reminder-marker"
-                          data-level={level}
-                          className={
-                            "shrink-0 rounded-full px-2 py-0.5 text-[11px] font-medium tracking-wide uppercase " +
-                            (level === "overdue"
-                              ? "bg-destructive/15 text-destructive"
-                              : "bg-amber-500/15 text-amber-700 dark:text-amber-400")
-                          }
-                        >
-                          {level === "overdue" ? t("reminderOverdue") : t("reminderSoon")}
-                        </span>
-                      )}
                     </span>
                     <span className="text-muted-foreground text-sm">
                       {car.latest
                         ? t("latest", {
                             odometer: format.number(car.latest.odometer),
-                            unit: car.unit,
+                            unit: "km",
                             count: car.latest.readings,
                           })
-                        : t("noReadings", { unit: car.unit })}
+                        : t("noReadings", { unit: "km" })}
                     </span>
                   </span>
                 </Link>
-                <div className="flex shrink-0 items-center gap-1">
-                  {!isDefault && <SetDefaultCarButton carId={car.id} carName={car.name} />}
-                  <DeleteCarButton carId={car.id} carName={car.name} />
-                </div>
+                <DeleteCarButton carId={car.id} carName={car.name} />
               </li>
             );
           })}

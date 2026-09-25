@@ -18,7 +18,7 @@ async function addReading(page: Page, odometer: number, date: string) {
 test.beforeEach(async ({ page }) => {
   await enableVirtualPasskeys(page);
   await signUp(page, `Plotter ${Date.now()}-${Math.random()}`);
-  const carId = await addCar(page, "Plotted", "km");
+  const carId = await addCar(page, "Plotted");
   await page.goto(`/cars/${carId}`);
 });
 

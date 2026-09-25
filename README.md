@@ -1,6 +1,8 @@
 # Car Data
 
-Track the mileage of your cars over time. Passkey sign-in, multiple cars per user, a mileage chart, installable as a PWA. Self-hosted with Docker Compose.
+Fleet management for businesses: inspection intervals (HU/AU, UVV, service), driver checks, contracts and mileage for every company car. Self-hosted with Docker Compose.
+
+The app is being rebuilt from a personal mileage tracker into a multi-tenant fleet manager; see the spec in issue #13.
 
 ## Run it
 
@@ -11,7 +13,7 @@ docker compose up
 
 The stack starts Postgres, applies migrations, then serves the app on http://localhost:3000. Postgres data lives in the `pgdata` volume.
 
-Passkeys and the installable PWA need a secure context: `localhost` works as is, any other hostname must be served over HTTPS by a reverse proxy (Caddy, Traefik, nginx) in front of the app, with `BETTER_AUTH_URL` and `PASSKEY_RP_ID` set to match. The proxy should forward `Host` (or `X-Forwarded-Host`) and `X-Forwarded-For` unchanged and set `Strict-Transport-Security`; the app sets the other security headers itself.
+Passkeys need a secure context: `localhost` works as is, any other hostname must be served over HTTPS by a reverse proxy (Caddy, Traefik, nginx) in front of the app, with `BETTER_AUTH_URL` and `PASSKEY_RP_ID` set to match. The proxy should forward `Host` (or `X-Forwarded-Host`) and `X-Forwarded-For` unchanged and set `Strict-Transport-Security`; the app sets the other security headers itself.
 
 Set `POSTGRES_PASSWORD` to something other than the example value before exposing the host to a network. Postgres is only published on `127.0.0.1`.
 
@@ -48,8 +50,7 @@ pnpm lint
 pnpm test:e2e      # Playwright; builds and serves a production build on :3100, needs Postgres up
 ```
 
-The suite runs against a production build because the service worker is
-network-only in development. To run it against the docker compose app instead,
+The suite runs against a production build. To run it against the docker compose app instead,
 start the stack with auth rate limiting off (all tests share one IP) and point
 Playwright at it:
 
@@ -59,35 +60,6 @@ PLAYWRIGHT_BASE_URL=http://localhost:3000 pnpm test:e2e
 ```
 
 First-time Playwright setup: `pnpm exec playwright install chromium`.
-
-### PWA icons
-
-`public/icons/` is generated from `scripts/icon-source.svg`; after changing the
-source run `node scripts/generate-icons.mjs` and commit the PNGs.
-
-## Odometer scanning
-
-"Scan odometer" on the car page runs Tesseract.js in the browser (nothing is
-uploaded). `scripts/prepare-ocr-assets.mjs` stages the worker, WASM core and
-English model into `public/ocr/` before `pnpm dev` and `pnpm build`; the
-folder is git-ignored.
-
-## Migrating mileage from the legacy Firebase app
-
-`scripts/migrate-legacy-mileage.mts` copies the `mileage` subcollection of one
-legacy car (`cars/{id}/mileage`, fields `timestamp` and `value`) into a car in
-this app. Only the readings move; create the car here first and take its id
-from the URL.
-
-```sh
-export GOOGLE_APPLICATION_CREDENTIALS=~/car-stats-service-account.json   # or: gcloud auth application-default login
-pnpm migrate:legacy --legacy dmEz5yySfTldLPtPHWJU --car <new car uuid> --dry-run
-pnpm migrate:legacy --legacy dmEz5yySfTldLPtPHWJU --car <new car uuid>
-```
-
-Timestamps become calendar dates in `--tz` (default `Europe/Berlin`).
-Re-running is safe: readings that already exist with the same date and value
-are skipped.
 
 ## Docs for agents
 

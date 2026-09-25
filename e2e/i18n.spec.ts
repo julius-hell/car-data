@@ -14,7 +14,7 @@ test("the browser language picks the locale", async ({ browser }) => {
 test("switching to German translates the app and formats numbers and dates", async ({ page }) => {
   await enableVirtualPasskeys(page);
   await signUp(page, `Sprecher ${Date.now()}`);
-  const carId = await addCar(page, "Golf", "mi");
+  const carId = await addCar(page, "Golf");
   await page.goto(`/cars/${carId}`);
   await page.getByLabel(/Odometer/).fill("12345");
   await page.getByLabel("Date").fill("2026-08-15");

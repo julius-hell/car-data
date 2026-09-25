@@ -11,7 +11,6 @@ import {
   YAxis,
 } from "recharts";
 import { useFormatter, useTranslations } from "next-intl";
-import type { Unit } from "@/lib/db/schema";
 
 export type MileagePoint = { recordedAt: string; odometer: number };
 
@@ -38,7 +37,7 @@ function niceTicks(min: number, max: number, targetCount = 4) {
   return { ticks, domain: [start, ticks[ticks.length - 1]] as [number, number] };
 }
 
-export function MileageChart({ points, unit }: { points: MileagePoint[]; unit: Unit }) {
+export function MileageChart({ points, unit }: { points: MileagePoint[]; unit: string }) {
   const t = useTranslations("Car");
   const format = useFormatter();
   const shortDate = (date: Date) => format.dateTime(date, { day: "numeric", month: "short" });
