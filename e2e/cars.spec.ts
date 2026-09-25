@@ -10,6 +10,7 @@ const fleetCar = (page: import("@playwright/test").Page, plate: string) =>
   page.locator(`[data-testid="fleet-car"][data-plate="${plate}"]`);
 
 test("a new organization is prompted to add its first car", async ({ page }) => {
+  await page.goto("/cars");
   await expect(page.getByText("Add your first car")).toBeVisible();
 });
 

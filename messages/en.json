@@ -15,7 +15,8 @@
       "team": "Team",
       "myCars": "My cars",
       "intervalTypes": "Intervals",
-      "damage": "Damage"
+      "damage": "Damage",
+      "dashboard": "Dashboard"
     }
   },
   "Auth": {
@@ -617,5 +618,37 @@
     "errorFileTooLarge": "Each photo must be 15 MB or smaller.",
     "errorFileType": "Only photos (JPEG, PNG, WebP, HEIC) can be attached.",
     "errorTooManyFiles": "A report can have at most 10 photos."
+  },
+  "Dashboard": {
+    "title": "Dashboard",
+    "eyebrow": "Fleet",
+    "heading": "What needs attention",
+    "counts": {
+      "overdue": "Overdue",
+      "soon": "Due soon",
+      "missing": "Due date missing"
+    },
+    "kinds": {
+      "carInterval": "Interval",
+      "driverCheck": "Driver check",
+      "contractEnd": "Contract end",
+      "allowance": "Mileage allowance",
+      "damage": "Damage report"
+    },
+    "filterCar": "Car",
+    "filterType": "Type",
+    "filterLocation": "Location",
+    "filterCostCenter": "Cost center",
+    "all": "All",
+    "filter": "Filter",
+    "resetFilter": "Reset",
+    "allClear": "Nothing is overdue or due soon. 🎉",
+    "noMatches": "Nothing matches this filter.",
+    "dueOn": "due {date}",
+    "endsOn": "ends {date}",
+    "reportedOn": "reported {date}",
+    "noDueDate": "no due date set",
+    "projectedOver": "projected {km, number} km over by the end",
+    "allowanceOk": "within the allowance"
   }
 }

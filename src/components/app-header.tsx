@@ -21,6 +21,7 @@ function navItems(context: HeaderContext) {
   switch (context.role) {
     case "admin":
       return [
+        { href: "/dashboard", key: "dashboard" },
         { href: "/cars", key: "cars" },
         { href: "/damage", key: "damage" },
         { href: "/team", key: "team" },
@@ -28,6 +29,7 @@ function navItems(context: HeaderContext) {
       ] as const;
     case "viewer":
       return [
+        { href: "/dashboard", key: "dashboard" },
         { href: "/cars", key: "cars" },
         { href: "/damage", key: "damage" },
       ] as const;
@@ -50,7 +52,7 @@ export function AppHeader({ userName, context }: { userName: string; context: He
 
   return (
     <header className="bg-background/80 sticky top-0 z-10 border-b backdrop-blur">
-      <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-4 px-4 py-3">
+      <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3">
         <div className="flex min-w-0 items-center gap-3">
           <Link href="/" className="flex shrink-0 items-center gap-2.5">
             <BrandMark />
@@ -64,18 +66,21 @@ export function AppHeader({ userName, context }: { userName: string; context: He
               {context.kind === "operator" ? t("operator") : context.organizationName}
             </span>
           )}
-          <nav aria-label={t("navigation")} className="flex items-center gap-1">
-            {navItems(context).map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="text-muted-foreground hover:text-foreground rounded-md px-2 py-1 text-sm transition-colors"
-              >
-                {t(`nav.${item.key}`)}
-              </Link>
-            ))}
-          </nav>
         </div>
+        <nav
+          aria-label={t("navigation")}
+          className="order-last -mx-2 flex w-[calc(100%+1rem)] items-center gap-1 overflow-x-auto sm:order-none sm:mx-0 sm:w-auto sm:flex-1"
+        >
+          {navItems(context).map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="text-muted-foreground hover:text-foreground rounded-md px-2 py-1 text-sm transition-colors"
+            >
+              {t(`nav.${item.key}`)}
+            </Link>
+          ))}
+        </nav>
         <div className="flex min-w-0 items-center gap-2">
           <Link
             href="/settings"

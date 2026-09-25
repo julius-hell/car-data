@@ -22,7 +22,7 @@ test("the first admin's invitation is emailed and verifies their address", async
   expect(pathOf(link)).toContain(new URL(organization.inviteLink).pathname);
 
   await acceptInvitation(page, link);
-  await expect(page).toHaveURL("/cars");
+  await expect(page).toHaveURL("/dashboard");
   await page.goto("/team");
   await expect(memberRow(page, admin.email).getByTestId("email-verified")).toHaveAttribute("data-verified", "true");
   expect(await countEmails(admin.email, "Confirm your email")).toBe(0);
@@ -64,7 +64,7 @@ test("verified members reset a forgotten password by email", async ({ page, brow
   await page.getByLabel("New password").fill("remembered now");
   await page.getByRole("button", { name: "Set password" }).click();
   await signIn(page, { email: admin.email, password: "remembered now" });
-  await expect(page).toHaveURL("/cars");
+  await expect(page).toHaveURL("/dashboard");
 });
 
 test("unverified and unknown addresses get no reset email, and the page doesn't tell", async ({ page, browser }) => {

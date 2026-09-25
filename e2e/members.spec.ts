@@ -92,7 +92,7 @@ test("roles can change, but the last admin stays an admin", async ({ page, brows
   // With two admins, the original one may step down.
   await self.getByTestId("member-role").selectOption("viewer");
   await self.getByRole("button", { name: "Save" }).click();
-  await expect(page).toHaveURL("/cars");
+  await expect(page).toHaveURL("/dashboard");
   expect((await page.goto("/team"))?.status()).toBe(404);
   await driver.context.close();
 });
@@ -123,7 +123,7 @@ test("removed members lose access and can rejoin with their password", async ({ 
   await driver.page.getByRole("button", { name: "Join" }).click();
   await expect(driver.page.getByTestId("invite-error")).toHaveText("The password is incorrect.");
   await acceptInvitation(driver.page, link, driver.account.password);
-  await expect(driver.page).toHaveURL("/cars");
+  await expect(driver.page).toHaveURL("/dashboard");
   await driver.context.close();
 });
 
@@ -170,7 +170,7 @@ test("the operator can issue a reset link for an organization's admin", async ({
   await page.getByLabel("New password").fill("recovered password");
   await page.getByRole("button", { name: "Set password" }).click();
   await signIn(page, { email: admin.email, password: "recovered password" });
-  await expect(page).toHaveURL("/cars");
+  await expect(page).toHaveURL("/dashboard");
 });
 
 test("admins rename their organization", async ({ page, browser }) => {
@@ -191,7 +191,8 @@ test("viewers see the fleet read-only", async ({ page, browser }) => {
 
   const viewer = await addMember(browser, page, "viewer");
   const viewerPage = viewer.page;
-  await expect(viewerPage).toHaveURL("/cars");
+  await expect(viewerPage).toHaveURL("/dashboard");
+  await viewerPage.goto("/cars");
   await expect(viewerPage.getByRole("listitem").filter({ hasText: "Shared" })).toBeVisible();
   await expect(viewerPage.getByRole("button", { name: "Add car" })).toHaveCount(0);
   await expect(viewerPage.getByRole("button", { name: /Delete/ })).toHaveCount(0);

@@ -16,14 +16,14 @@ test("sign out and sign back in with email and password", async ({ page, browser
   await expect(page.getByTestId("header-context")).toHaveText(name);
 
   await page.goto("/login");
-  await expect(page).toHaveURL("/cars");
+  await expect(page).toHaveURL("/dashboard");
 
   await signOut(page);
   await page.goto("/");
   await expect(page).toHaveURL("/login");
 
   await signIn(page, admin);
-  await expect(page).toHaveURL("/cars");
+  await expect(page).toHaveURL("/dashboard");
   await expect(page.getByRole("banner")).toContainText(admin.name);
 });
 
@@ -65,7 +65,7 @@ test("changing the password signs out other sessions", async ({ page, browser })
   const other = await browser.newContext();
   const otherPage = await other.newPage();
   await signIn(otherPage, admin);
-  await expect(otherPage).toHaveURL("/cars");
+  await expect(otherPage).toHaveURL("/dashboard");
 
   await page.goto("/settings");
   await page.getByLabel("Current password").fill("wrong password");
@@ -84,6 +84,6 @@ test("changing the password signs out other sessions", async ({ page, browser })
   await expect(otherPage).toHaveURL(/\/login/);
 
   await signIn(otherPage, { email: admin.email, password: "a brand new password" });
-  await expect(otherPage).toHaveURL("/cars");
+  await expect(otherPage).toHaveURL("/dashboard");
   await other.close();
 });

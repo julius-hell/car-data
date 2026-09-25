@@ -55,7 +55,7 @@ export async function acceptInvitation(page: Page, link: string, password = PASS
 export async function setupOrganization(page: Page, browser: Browser, options?: { name?: string }) {
   const organization = await createOrganization(browser, options);
   await acceptInvitation(page, organization.inviteLink);
-  await expect(page).toHaveURL("/cars");
+  await expect(page).toHaveURL("/dashboard");
   return organization;
 }
 

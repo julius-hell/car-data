@@ -25,7 +25,7 @@ test("the operator creates an organization and its first admin joins", async ({ 
 
   await page.getByLabel("Password").fill(admin.password);
   await page.getByRole("button", { name: "Join" }).click();
-  await expect(page).toHaveURL("/cars");
+  await expect(page).toHaveURL("/dashboard");
   await expect(page.getByTestId("header-context")).toHaveText(organization.name);
   await addCar(page, "Transporter");
 

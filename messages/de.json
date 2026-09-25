@@ -15,7 +15,8 @@
       "team": "Team",
       "myCars": "Meine Fahrzeuge",
       "intervalTypes": "Fristen",
-      "damage": "Schäden"
+      "damage": "Schäden",
+      "dashboard": "Übersicht"
     }
   },
   "Auth": {
@@ -617,5 +618,37 @@
     "errorFileTooLarge": "Jedes Foto darf höchstens 15 MB groß sein.",
     "errorFileType": "Nur Fotos (JPEG, PNG, WebP, HEIC) können angehängt werden.",
     "errorTooManyFiles": "Eine Meldung kann höchstens 10 Fotos haben."
+  },
+  "Dashboard": {
+    "title": "Übersicht",
+    "eyebrow": "Flotte",
+    "heading": "Was ansteht",
+    "counts": {
+      "overdue": "Überfällig",
+      "soon": "Bald fällig",
+      "missing": "Fälligkeit fehlt"
+    },
+    "kinds": {
+      "carInterval": "Frist",
+      "driverCheck": "Fahrerprüfung",
+      "contractEnd": "Vertragsende",
+      "allowance": "Kilometerleistung",
+      "damage": "Schadensmeldung"
+    },
+    "filterCar": "Fahrzeug",
+    "filterType": "Art",
+    "filterLocation": "Standort",
+    "filterCostCenter": "Kostenstelle",
+    "all": "Alle",
+    "filter": "Filtern",
+    "resetFilter": "Zurücksetzen",
+    "allClear": "Nichts ist überfällig oder bald fällig. 🎉",
+    "noMatches": "Nichts passt zu diesem Filter.",
+    "dueOn": "fällig {date}",
+    "endsOn": "endet {date}",
+    "reportedOn": "gemeldet {date}",
+    "noDueDate": "keine Fälligkeit hinterlegt",
+    "projectedOver": "voraussichtlich {km, number} km über der Leistung",
+    "allowanceOk": "innerhalb der Kilometerleistung"
   }
 }

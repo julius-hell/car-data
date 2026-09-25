@@ -10,7 +10,7 @@ export default async function Home() {
   const actor = await getMembership();
   if (!actor) redirect("/no-organization");
   if (actor.organizationStatus !== "active") redirect("/deactivated");
-  if (actor.role !== "driver") redirect("/cars");
+  if (actor.role !== "driver") redirect("/dashboard");
   // Drivers with exactly one car go straight to it.
   const cars = await currentCarsOf(actor.userId);
   redirect(cars.length === 1 ? `/cars/${cars[0].car.id}` : "/my-cars");

@@ -54,7 +54,12 @@ export default async function CarsPage(props: PageProps<"/cars">) {
       </div>
 
       {(options.locations.length > 0 || options.costCenters.length > 0 || filtered) && (
-        <form method="get" className="bg-card flex flex-wrap items-end gap-3 rounded-xl border p-3 shadow-xs">
+        // Keyed by the filter so the selects show it again after client-side navigation.
+        <form
+          method="get"
+          key={JSON.stringify(filter)}
+          className="bg-card flex flex-wrap items-end gap-3 rounded-xl border p-3 shadow-xs"
+        >
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="filter-location">{t("location")}</Label>
             <NativeSelect id="filter-location" name="location" defaultValue={filter.location ?? ""}>
