@@ -42,6 +42,7 @@ export const auth = betterAuth({
     additionalFields: {
       isOperator: { type: "boolean", defaultValue: false, input: false },
       locale: { type: "string", required: false, input: false },
+      digestOptIn: { type: "boolean", defaultValue: true, input: false },
     },
   },
   hooks: {

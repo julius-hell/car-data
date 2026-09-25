@@ -13,6 +13,7 @@ process.env.BETTER_AUTH_URL = baseURL;
 // Shared with the workers so every process derives the same operator email.
 process.env.TEST_RUN_ID ??= String(Date.now());
 process.env.MAILPIT_URL ??= "http://localhost:8025";
+process.env.DIGEST_SECRET ??= "test-digest-secret";
 
 export default defineConfig({
   testDir: "./e2e",
@@ -50,6 +51,7 @@ export default defineConfig({
         SMTP_HOST: "localhost",
         SMTP_PORT: process.env.MAILPIT_SMTP_PORT ?? "1025",
         SMTP_FROM: "Car Data <noreply@example.test>",
+        DIGEST_SECRET: process.env.DIGEST_SECRET,
       },
       reuseExistingServer: true,
       timeout: 240_000,

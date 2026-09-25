@@ -201,7 +201,13 @@
     "heading": "Settings",
     "password": "Password",
     "language": "Language",
-    "languageDescription": "Used for the app and for emails we send you."
+    "languageDescription": "Used for the app and for emails we send you.",
+    "digest": "Weekly digest",
+    "digestOn": "You get an email every Monday listing what is overdue or due soon.",
+    "digestOff": "The weekly digest is turned off.",
+    "digestTurnOn": "Turn on",
+    "digestTurnOff": "Turn off",
+    "digestNeedsVerification": "Confirm your email address to receive it."
   },
   "Common": {
     "copy": "Copy",
@@ -355,7 +361,11 @@
     "verifySubject": "Confirm your email address",
     "verifyBody": "Please confirm that this email address belongs to you, so password resets and notifications can reach you.",
     "verifyAction": "Confirm email address",
-    "verifyFooter": "If you don't have an account with us, ignore this email."
+    "verifyFooter": "If you don't have an account with us, ignore this email.",
+    "digestSubject": "{count, plural, one {# item needs} other {# items need}} attention at {organization}",
+    "digestIntro": "This is what is overdue or due soon at {organization}:",
+    "digestAction": "Open the dashboard",
+    "digestFooter": "You get this digest every Monday as an admin. Turn it off in your settings."
   },
   "Deactivated": {
     "title": "Organization deactivated",

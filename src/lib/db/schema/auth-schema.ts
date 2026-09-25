@@ -18,6 +18,8 @@ export const user = pgTable("user", {
   isOperator: boolean("is_operator").default(false).notNull(),
   // Language for emails and, when no cookie is set, for the UI.
   locale: text("locale"),
+  // Admins get the weekly digest unless they turn it off.
+  digestOptIn: boolean("digest_opt_in").default(true).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()

@@ -16,3 +16,9 @@ test("without email, invitations work through copied links", async ({ page, brow
   await expect(driver.page).toHaveURL("/my-cars");
   await driver.context.close();
 });
+
+test("without email, admins see no digest setting", async ({ page, browser }) => {
+  await setupOrganization(page, browser);
+  await page.goto("/settings");
+  await expect(page.getByTestId("digest-setting")).toHaveCount(0);
+});

@@ -41,6 +41,8 @@ services:
       SMTP_USER: ${SMTP_USER:-}
       SMTP_PASSWORD: ${SMTP_PASSWORD:-}
       SMTP_FROM: ${SMTP_FROM:-}
+      DIGEST_SECRET: ${DIGEST_SECRET:-}
+      APP_TIME_ZONE: ${APP_TIME_ZONE:-Europe/Berlin}
       FILE_DIR: /data/files
     volumes:
       - files:/data/files
@@ -51,6 +53,23 @@ services:
         condition: service_healthy
       migrate:
         condition: service_completed_successfully
+
+  # Triggers the weekly email digest every Monday at 07:00 (in APP_TIME_ZONE).
+  # It does nothing unless SMTP and DIGEST_SECRET are configured.
+  scheduler:
+    image: alpine:3.22
+    environment:
+      TZ: ${APP_TIME_ZONE:-Europe/Berlin}
+      DIGEST_SECRET: ${DIGEST_SECRET:-}
+    command:
+      - sh
+      - -c
+      - |
+        apk add --no-cache curl tzdata > /dev/null
+        echo '0 7 * * 1 curl -fsS -X POST -H "Authorization: Bearer $$DIGEST_SECRET" http://app:3000/api/digest' > /etc/crontabs/root
+        exec crond -f -l 8
+    depends_on:
+      - app
 
   # Catches outgoing email in development and tests; its web UI is on :8025.
   # Start it with `docker compose --profile dev up -d mailpit`.

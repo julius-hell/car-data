@@ -26,6 +26,10 @@ The operator signs in, creates an organization per business and hands its first 
 
 Email is optional. Set `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD` and `SMTP_FROM` (see `.env.example`) to email invitations, password resets and address verification. Without SMTP everything still works: invitations and password-reset links are copied by admins (or, for an organization's admins, by the operator) and handed over directly.
 
+### Weekly digest
+
+With email configured, admins get a weekly digest of everything overdue or due soon. The compose stack's `scheduler` service triggers it every Monday at 07:00 in `APP_TIME_ZONE` by calling `POST /api/digest` with `DIGEST_SECRET` as a bearer token; set `DIGEST_SECRET` (e.g. `openssl rand -hex 32`) to enable it. Admins can turn the digest off in their settings.
+
 **Upgrading from the personal mileage tracker:** the fleet manager starts from a fresh database. Its migration history was replaced by a new baseline, so remove the old database first (`docker compose down -v` deletes the `pgdata` volume) and re-enter your cars.
 
 Serve any hostname other than `localhost` over HTTPS through a reverse proxy (Caddy, Traefik, nginx) in front of the app, with `BETTER_AUTH_URL` set to the public URL. The proxy should forward `Host` (or `X-Forwarded-Host`) and `X-Forwarded-For` unchanged and set `Strict-Transport-Security`; the app sets the other security headers itself.

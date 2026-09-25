@@ -201,7 +201,13 @@
     "heading": "Einstellungen",
     "password": "Passwort",
     "language": "Sprache",
-    "languageDescription": "Gilt für die App und für E-Mails, die wir dir schicken."
+    "languageDescription": "Gilt für die App und für E-Mails, die wir dir schicken.",
+    "digest": "Wöchentliche Übersicht",
+    "digestOn": "Du bekommst jeden Montag eine E-Mail mit allem, was überfällig oder bald fällig ist.",
+    "digestOff": "Die wöchentliche Übersicht ist ausgeschaltet.",
+    "digestTurnOn": "Einschalten",
+    "digestTurnOff": "Ausschalten",
+    "digestNeedsVerification": "Bestätige deine E-Mail-Adresse, um sie zu bekommen."
   },
   "Common": {
     "copy": "Kopieren",
@@ -355,7 +361,11 @@
     "verifySubject": "Bestätige deine E-Mail-Adresse",
     "verifyBody": "Bitte bestätige, dass diese E-Mail-Adresse dir gehört, damit dich Links zum Zurücksetzen und Benachrichtigungen erreichen.",
     "verifyAction": "E-Mail-Adresse bestätigen",
-    "verifyFooter": "Wenn du kein Konto bei uns hast, ignoriere diese E-Mail."
+    "verifyFooter": "Wenn du kein Konto bei uns hast, ignoriere diese E-Mail.",
+    "digestSubject": "{count, plural, one {# Punkt braucht} other {# Punkte brauchen}} Aufmerksamkeit bei {organization}",
+    "digestIntro": "Das ist bei {organization} überfällig oder bald fällig:",
+    "digestAction": "Übersicht öffnen",
+    "digestFooter": "Du bekommst diese Übersicht als Admin jeden Montag. Du kannst sie in deinen Einstellungen ausschalten."
   },
   "Deactivated": {
     "title": "Organisation deaktiviert",
