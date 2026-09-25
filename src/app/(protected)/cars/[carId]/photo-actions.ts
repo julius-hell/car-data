@@ -2,15 +2,16 @@
 
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { findOwnedCar } from "@/lib/cars";
+import { assertCan, requireActor } from "@/lib/actor";
+import { findCar } from "@/lib/cars";
 import { db } from "@/lib/db";
 import { car } from "@/lib/db/schema";
 import { deleteCarPhoto } from "@/lib/photos";
-import { requireSession } from "@/lib/session";
 
 export async function removeCarPhoto(carId: string) {
-  const { user } = await requireSession();
-  const owned = await findOwnedCar(user.id, carId);
+  const actor = await requireActor();
+  assertCan(actor, "manageFleet");
+  const owned = await findCar(actor, carId);
   if (!owned) throw new Error("Invalid car.");
 
   await db

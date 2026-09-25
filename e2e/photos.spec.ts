@@ -1,7 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 import sharp from "sharp";
 import { addCar, deleteCar } from "./helpers/cars";
-import { signUp } from "./helpers/auth";
+import { setupOrganization } from "./helpers/org";
 
 async function testImage(color: { r: number; g: number; b: number }) {
   return sharp({ create: { width: 640, height: 480, channels: 3, background: color } })
@@ -17,8 +17,8 @@ async function photoSrc(page: Page) {
   return (await page.getByTestId("car-photo").getAttribute("src"))!;
 }
 
-test.beforeEach(async ({ page }) => {
-  await signUp(page);
+test.beforeEach(async ({ page, browser }) => {
+  await setupOrganization(page, browser);
 });
 
 test("add, replace and remove a car photo", async ({ page }) => {
@@ -68,7 +68,7 @@ test("a file that is not an image is rejected", async ({ page }) => {
   await expect(page.getByTestId("car-photo-placeholder")).toBeVisible();
 });
 
-test("photos are private to their owner", async ({ page, browser }) => {
+test("photos are private to their organization", async ({ page, browser }) => {
   const carId = await addCar(page, "Private");
   await page.goto(`/cars/${carId}`);
   expect((await page.request.get(`/cars/${carId}/photo`)).status()).toBe(404);
@@ -78,7 +78,7 @@ test("photos are private to their owner", async ({ page, browser }) => {
 
   const otherContext = await browser.newContext();
   const otherPage = await otherContext.newPage();
-  await signUp(otherPage);
+  await setupOrganization(otherPage, browser);
   expect((await otherContext.request.get(`/cars/${carId}/photo`)).status()).toBe(404);
   await otherContext.close();
 

@@ -9,7 +9,12 @@ import { BrandMark, Wordmark } from "@/components/brand";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { Button } from "@/components/ui/button";
 
-export function AppHeader({ userName }: { userName: string }) {
+export type HeaderContext =
+  | { kind: "operator" }
+  | { kind: "member"; organizationName: string }
+  | null;
+
+export function AppHeader({ userName, context }: { userName: string; context: HeaderContext }) {
   const t = useTranslations("Header");
   const router = useRouter();
   const [pending, setPending] = useState(false);
@@ -18,15 +23,26 @@ export function AppHeader({ userName }: { userName: string }) {
     setPending(true);
     await authClient.signOut();
     router.push("/login");
+    router.refresh();
   }
 
   return (
     <header className="bg-background/80 sticky top-0 z-10 border-b backdrop-blur">
-      <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-4 px-4 py-3">
-        <Link href="/" className="flex shrink-0 items-center gap-2.5">
-          <BrandMark />
-          <Wordmark className="text-lg" />
-        </Link>
+      <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-4 px-4 py-3">
+        <div className="flex min-w-0 items-center gap-3">
+          <Link href="/" className="flex shrink-0 items-center gap-2.5">
+            <BrandMark />
+            <Wordmark className="hidden text-lg sm:inline" />
+          </Link>
+          {context && (
+            <span
+              data-testid="header-context"
+              className="bg-muted text-muted-foreground min-w-0 truncate rounded-md px-2 py-0.5 text-xs font-medium"
+            >
+              {context.kind === "operator" ? t("operator") : context.organizationName}
+            </span>
+          )}
+        </div>
         <div className="flex min-w-0 items-center gap-2">
           <Link
             href="/settings"

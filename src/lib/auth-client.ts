@@ -13,9 +13,6 @@ export function authErrorKey(code: string | undefined) {
       return "errorPasswordTooShort";
     case "PASSWORD_TOO_LONG":
       return "errorPasswordTooLong";
-    case "USER_ALREADY_EXISTS":
-    case "USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL":
-      return "errorEmailTaken";
     case "INVALID_PASSWORD":
       return "errorWrongCurrentPassword";
     default:

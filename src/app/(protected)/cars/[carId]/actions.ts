@@ -2,11 +2,11 @@
 
 import { and, eq, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { findOwnedCar, isCarId } from "@/lib/cars";
+import { assertCan, requireActor } from "@/lib/actor";
+import { findCar, isCarId } from "@/lib/cars";
 import { db } from "@/lib/db";
 import { car, mileageEntry } from "@/lib/db/schema";
 import { latestOdometer } from "@/lib/entries";
-import { requireSession } from "@/lib/session";
 
 const NOTE_MAX_LENGTH = 200;
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
@@ -22,8 +22,9 @@ export async function addMileageEntry(
   _previous: AddEntryState,
   formData: FormData,
 ): Promise<AddEntryState> {
-  const { user } = await requireSession();
-  const owned = await findOwnedCar(user.id, carId);
+  const actor = await requireActor();
+  assertCan(actor, "addEntry");
+  const owned = await findCar(actor, carId);
   if (!owned) return { status: "error", message: "errorCarGone" };
 
   const odometer = Number(formData.get("odometer"));
@@ -57,7 +58,8 @@ export async function addMileageEntry(
 }
 
 export async function deleteMileageEntry(entryId: string) {
-  const { user } = await requireSession();
+  const actor = await requireActor();
+  assertCan(actor, "deleteEntry");
   if (!isCarId(entryId)) throw new Error("Invalid entry.");
 
   const [deleted] = await db
@@ -67,7 +69,7 @@ export async function deleteMileageEntry(entryId: string) {
         eq(mileageEntry.id, entryId),
         inArray(
           mileageEntry.carId,
-          db.select({ id: car.id }).from(car).where(eq(car.userId, user.id)),
+          db.select({ id: car.id }).from(car).where(eq(car.organizationId, actor.organizationId)),
         ),
       ),
     )

@@ -1,5 +1,6 @@
 import { and, asc, desc, eq, inArray, sql } from "drizzle-orm";
 import { db } from "@/lib/db";
+import type { Actor } from "@/lib/actor";
 import { car, mileageEntry } from "@/lib/db/schema";
 
 const UUID_PATTERN =
@@ -9,22 +10,23 @@ export function isCarId(value: unknown): value is string {
   return typeof value === "string" && UUID_PATTERN.test(value);
 }
 
-export async function listCars(userId: string) {
+export async function listCars(actor: Actor) {
   return db.query.car.findMany({
-    where: eq(car.userId, userId),
+    where: eq(car.organizationId, actor.organizationId),
     orderBy: [asc(car.createdAt)],
   });
 }
 
-export async function findOwnedCar(userId: string, carId: string) {
+// A car the actor may see, or undefined — callers answer "not found" either way.
+export async function findCar(actor: Actor, carId: string) {
   if (!isCarId(carId)) return undefined;
   return db.query.car.findFirst({
-    where: and(eq(car.id, carId), eq(car.userId, userId)),
+    where: and(eq(car.id, carId), eq(car.organizationId, actor.organizationId)),
   });
 }
 
-export async function listCarsWithLatestReading(userId: string) {
-  const cars = await listCars(userId);
+export async function listCarsWithLatestReading(actor: Actor) {
+  const cars = await listCars(actor);
   if (cars.length === 0) return [];
   const latest = await db
     .selectDistinctOn([mileageEntry.carId], {

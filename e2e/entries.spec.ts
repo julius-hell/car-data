@@ -1,7 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 import { addCar } from "./helpers/cars";
 import { displayDate } from "./helpers/format";
-import { signUp } from "./helpers/auth";
+import { setupOrganization } from "./helpers/org";
 
 const rows = (page: Page) => page.getByTestId("entries").locator("tbody tr");
 
@@ -16,8 +16,8 @@ async function addReading(
   await page.getByRole("button", { name: "Add reading" }).click();
 }
 
-test.beforeEach(async ({ page }) => {
-  await signUp(page);
+test.beforeEach(async ({ page, browser }) => {
+  await setupOrganization(page, browser);
   const carId = await addCar(page, "Logbook");
   await page.goto(`/cars/${carId}`);
 });

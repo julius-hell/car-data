@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
@@ -10,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export function SignInForm({ next = "/", signUpHref }: { next?: string; signUpHref?: string }) {
+export function SignInForm({ next = "/" }: { next?: string }) {
   const t = useTranslations("Auth");
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
@@ -35,7 +34,7 @@ export function SignInForm({ next = "/", signUpHref }: { next?: string; signUpHr
   }
 
   return (
-    <Card className="w-full max-w-sm shadow-sm">
+    <Card className="w-full shadow-sm">
       <CardHeader>
         <CardTitle>{t("signInTitle")}</CardTitle>
         <CardDescription>{t("signInDescription")}</CardDescription>
@@ -64,14 +63,6 @@ export function SignInForm({ next = "/", signUpHref }: { next?: string; signUpHr
           <Button type="submit" disabled={pending} className="w-full">
             {pending ? t("signingIn") : t("signInButton")}
           </Button>
-          {signUpHref && (
-            <p className="text-muted-foreground text-center text-sm">
-              {t("noAccount")}{" "}
-              <Link href={signUpHref} className="text-primary underline-offset-4 hover:underline">
-                {t("signUpLink")}
-              </Link>
-            </p>
-          )}
         </form>
       </CardContent>
     </Card>

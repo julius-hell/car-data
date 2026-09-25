@@ -1,9 +1,9 @@
 import { expect, test } from "@playwright/test";
 import { addCar } from "./helpers/cars";
-import { signUp } from "./helpers/auth";
+import { setupOrganization } from "./helpers/org";
 
-test.beforeEach(async ({ page }) => {
-  await signUp(page);
+test.beforeEach(async ({ page, browser }) => {
+  await setupOrganization(page, browser);
 });
 
 test("a new user is prompted to add their first car", async ({ page }) => {
@@ -43,12 +43,12 @@ test("deleting a car asks for confirmation first", async ({ page }) => {
   await expect(page.getByText("Add your first car")).toBeVisible();
 });
 
-test("another user's car is not found", async ({ page, browser }) => {
+test("another organization's car is not found", async ({ page, browser }) => {
   const carId = await addCar(page, "Secret");
 
   const otherContext = await browser.newContext();
   const otherPage = await otherContext.newPage();
-  await signUp(otherPage);
+  await setupOrganization(otherPage, browser);
 
   const response = await otherPage.goto(`/cars/${carId}`);
   expect(response?.status()).toBe(404);

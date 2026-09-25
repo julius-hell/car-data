@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { addCar } from "./helpers/cars";
-import { signUp } from "./helpers/auth";
+import { setupOrganization } from "./helpers/org";
 
 test("the browser language picks the locale", async ({ browser }) => {
   const german = await browser.newContext({ locale: "de-DE" });
@@ -11,8 +11,8 @@ test("the browser language picks the locale", async ({ browser }) => {
   await german.close();
 });
 
-test("switching to German translates the app and formats numbers and dates", async ({ page }) => {
-  await signUp(page);
+test("switching to German translates the app and formats numbers and dates", async ({ page, browser }) => {
+  await setupOrganization(page, browser);
   const carId = await addCar(page, "Golf");
   await page.goto(`/cars/${carId}`);
   await page.getByLabel(/Odometer/).fill("12345");

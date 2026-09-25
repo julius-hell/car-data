@@ -10,16 +10,6 @@ export function newAccount(prefix = "user"): Account {
   return { name: `${prefix} ${id}`, email: `${prefix.toLowerCase()}-${id}@example.test`, password: PASSWORD };
 }
 
-export async function signUp(page: Page, account: Account = newAccount()) {
-  await page.goto("/signup");
-  await page.getByLabel("Name").fill(account.name);
-  await page.getByLabel("Email").fill(account.email);
-  await page.getByLabel("Password").fill(account.password);
-  await page.getByRole("button", { name: "Create account" }).click();
-  await page.waitForURL("/cars");
-  return account;
-}
-
 export async function signIn(page: Page, { email, password }: Pick<Account, "email" | "password">) {
   await page.goto("/login");
   await page.getByLabel("Email").fill(email);

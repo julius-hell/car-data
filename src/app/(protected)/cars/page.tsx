@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { CarIcon } from "lucide-react";
 import { getFormatter, getTranslations } from "next-intl/server";
 import { AddCarDialog } from "@/components/add-car-dialog";
 import { DeleteCarButton } from "@/components/delete-car-button";
 import { listCarsWithLatestReading } from "@/lib/cars";
 import { photoUrl } from "@/lib/photo-url";
-import { requireSession } from "@/lib/session";
+import { can, requireActor } from "@/lib/actor";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("Cars");
@@ -14,9 +15,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function CarsPage() {
-  const { user } = await requireSession();
+  const actor = await requireActor();
+  if (!can(actor, "viewFleet")) notFound();
   const [cars, t, format] = await Promise.all([
-    listCarsWithLatestReading(user.id),
+    listCarsWithLatestReading(actor),
     getTranslations("Cars"),
     getFormatter(),
   ]);

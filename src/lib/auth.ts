@@ -1,5 +1,6 @@
 import { drizzleAdapter } from "@better-auth/drizzle-adapter";
 import { betterAuth } from "better-auth";
+import { APIError, createAuthMiddleware } from "better-auth/api";
 import { nextCookies } from "better-auth/next-js";
 import { db } from "@/lib/db";
 import * as schema from "@/lib/db/schema";
@@ -15,8 +16,22 @@ export const auth = betterAuth({
   },
   emailAndPassword: {
     enabled: true,
-    autoSignIn: true,
+    // Accounts only come from accepted invitations and the operator CLI.
+    disableSignUp: true,
     revokeSessionsOnPasswordReset: true,
+  },
+  user: {
+    additionalFields: {
+      isOperator: { type: "boolean", defaultValue: false, input: false },
+    },
+  },
+  hooks: {
+    // Organizations, members and invitations live in the organization
+    // plugin's tables but are only written by the app's own server actions,
+    // which enforce one organization per user and the role rules.
+    before: createAuthMiddleware(async (ctx) => {
+      if (ctx.path.startsWith("/organization")) throw new APIError("NOT_FOUND");
+    }),
   },
   plugins: [nextCookies()],
 });

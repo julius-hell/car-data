@@ -17,27 +17,27 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { findOwnedCar } from "@/lib/cars";
+import { can, requireActor } from "@/lib/actor";
+import { findCar } from "@/lib/cars";
 import { isoDateToDate } from "@/lib/dates";
 import { listEntries } from "@/lib/entries";
 import { mileageStats, monthlyDistances } from "@/lib/stats";
-import { requireSession } from "@/lib/session";
 
 const DAY_MS = 86_400_000;
 
 export async function generateMetadata(
   props: PageProps<"/cars/[carId]">,
 ): Promise<Metadata> {
-  const { user } = await requireSession();
+  const actor = await requireActor();
   const { carId } = await props.params;
-  const [car, t] = await Promise.all([findOwnedCar(user.id, carId), getTranslations("Car")]);
+  const [car, t] = await Promise.all([findCar(actor, carId), getTranslations("Car")]);
   return { title: car?.name ?? t("notFound") };
 }
 
 export default async function CarPage(props: PageProps<"/cars/[carId]">) {
-  const { user } = await requireSession();
+  const actor = await requireActor();
   const [{ carId }, searchParams] = await Promise.all([props.params, props.searchParams]);
-  const car = await findOwnedCar(user.id, carId);
+  const car = can(actor, "viewFleet") ? await findCar(actor, carId) : undefined;
   if (!car) notFound();
   const focusForm = searchParams.log === "1";
   const [entries, t, ts, format] = await Promise.all([

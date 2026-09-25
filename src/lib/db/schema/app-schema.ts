@@ -7,21 +7,21 @@ import {
   timestamp,
   uuid,
 } from "drizzle-orm/pg-core";
-import { user } from "./auth-schema.ts";
+import { organization } from "./auth-schema.ts";
 
 export const car = pgTable(
   "car",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    userId: text("user_id")
+    organizationId: text("organization_id")
       .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
+      .references(() => organization.id, { onDelete: "cascade" }),
     name: text("name").notNull(),
     photoContentType: text("photo_content_type"),
     photoUpdatedAt: timestamp("photo_updated_at"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },
-  (table) => [index("car_user_id_idx").on(table.userId)],
+  (table) => [index("car_organization_id_idx").on(table.organizationId)],
 );
 
 export const mileageEntry = pgTable(

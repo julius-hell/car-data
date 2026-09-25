@@ -1,11 +1,13 @@
 import "dotenv/config";
 import { defineConfig, devices } from "@playwright/test";
 
-// Tests run against a production build so service-worker behaviour is real
-// (Serwist is network-only in development). Point PLAYWRIGHT_BASE_URL at an
+// Tests run against a production build. Point PLAYWRIGHT_BASE_URL at an
 // already running server (e.g. the docker compose app on :3000) to reuse it.
 const port = 3100;
 const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? `http://localhost:${port}`;
+process.env.BETTER_AUTH_URL = baseURL;
+// Shared with the workers so every process derives the same operator email.
+process.env.TEST_RUN_ID ??= String(Date.now());
 
 export default defineConfig({
   testDir: "./e2e",
@@ -17,7 +19,15 @@ export default defineConfig({
     baseURL,
     trace: "on-first-retry",
   },
-  projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
+  projects: [
+    // Creates the operator through the real CLI and saves their session.
+    { name: "setup", testMatch: /.*\.setup\.ts/ },
+    {
+      name: "chromium",
+      use: { ...devices["Desktop Chrome"] },
+      dependencies: ["setup"],
+    },
+  ],
   webServer: {
     command: `pnpm build && pnpm start -p ${port}`,
     url: baseURL,

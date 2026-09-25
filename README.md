@@ -13,6 +13,17 @@ docker compose up
 
 The stack starts Postgres, applies migrations, then serves the app on http://localhost:3000. Postgres data lives in the `pgdata` volume.
 
+There is no public sign-up. Create the first platform operator with the CLI; it prints a one-time link (valid 24 hours) to set their password. Running it again for the same email issues a new link.
+
+```sh
+docker compose exec app node scripts/create-operator.mjs --email ops@example.com --name "Ops"
+# or, outside Docker: pnpm operator:create --email ops@example.com --name "Ops"
+```
+
+The operator signs in, creates an organization per business and hands its first admin the invitation link. Admins then manage their own organization.
+
+**Upgrading from the personal mileage tracker:** the fleet manager starts from a fresh database. Its migration history was replaced by a new baseline, so remove the old database first (`docker compose down -v` deletes the `pgdata` volume) and re-enter your cars.
+
 Serve any hostname other than `localhost` over HTTPS through a reverse proxy (Caddy, Traefik, nginx) in front of the app, with `BETTER_AUTH_URL` set to the public URL. The proxy should forward `Host` (or `X-Forwarded-Host`) and `X-Forwarded-For` unchanged and set `Strict-Transport-Security`; the app sets the other security headers itself.
 
 Set `POSTGRES_PASSWORD` to something other than the example value before exposing the host to a network. Postgres is only published on `127.0.0.1`.

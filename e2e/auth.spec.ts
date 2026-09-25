@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
-import { newAccount, signIn, signOut, signUp } from "./helpers/auth";
+import { signIn, signOut } from "./helpers/auth";
+import { setupOrganization } from "./helpers/org";
 
 test("a signed-out visitor is sent to the sign-in page", async ({ page }) => {
   await page.goto("/");
@@ -9,26 +10,25 @@ test("a signed-out visitor is sent to the sign-in page", async ({ page }) => {
   await expect(page).toHaveURL(/\/login/);
 });
 
-test("sign up, sign out and sign back in with email and password", async ({ page }) => {
-  const account = await signUp(page);
-  await expect(page.getByRole("banner")).toContainText(account.name);
+test("sign out and sign back in with email and password", async ({ page, browser }) => {
+  const { admin, name } = await setupOrganization(page, browser);
+  await expect(page.getByRole("banner")).toContainText(admin.name);
+  await expect(page.getByTestId("header-context")).toHaveText(name);
 
   await page.goto("/login");
-  await expect(page).toHaveURL("/cars");
-  await page.goto("/signup");
   await expect(page).toHaveURL("/cars");
 
   await signOut(page);
   await page.goto("/");
   await expect(page).toHaveURL("/login");
 
-  await signIn(page, account);
+  await signIn(page, admin);
   await expect(page).toHaveURL("/cars");
-  await expect(page.getByRole("banner")).toContainText(account.name);
+  await expect(page.getByRole("banner")).toContainText(admin.name);
 });
 
-test("an unknown email and a wrong password give the same error", async ({ page }) => {
-  const account = await signUp(page);
+test("an unknown email and a wrong password give the same error", async ({ page, browser }) => {
+  const { admin } = await setupOrganization(page, browser);
   await signOut(page);
 
   const attempt = async (email: string, password: string) => {
@@ -41,35 +41,30 @@ test("an unknown email and a wrong password give the same error", async ({ page 
     return error.textContent();
   };
 
-  const wrongPassword = await attempt(account.email, "not the password");
+  const wrongPassword = await attempt(admin.email, "not the password");
   const unknownEmail = await attempt(`nobody-${Date.now()}@example.test`, "whatever123");
   expect(wrongPassword).toBe(unknownEmail);
   await expect(page).toHaveURL("/login");
 });
 
-test("sign-up enforces the password rules and a name", async ({ page }) => {
-  const account = newAccount();
-  await page.goto("/signup");
-  await page.getByLabel("Name").fill("   ");
-  await page.getByLabel("Email").fill(account.email);
-  await page.getByLabel("Password").fill(account.password);
-  await page.getByRole("button", { name: "Create account" }).click();
-  await expect(page.getByTestId("name-error")).toHaveText("Enter your name.");
-
-  await page.getByLabel("Name").fill(account.name);
-  await page.getByLabel("Password").fill("short");
-  await page.getByRole("button", { name: "Create account" }).click();
-  await expect(page.getByTestId("password-error")).toContainText("at least 8 characters");
-  await expect(page).toHaveURL("/signup");
+test("public sign-up and the organization plugin's endpoints are disabled", async ({ page }) => {
+  expect((await page.goto("/signup"))?.status()).toBe(404);
+  const signUp = await page.request.post("/api/auth/sign-up/email", {
+    data: { name: "Mallory", email: `mallory-${Date.now()}@example.test`, password: "long enough password" },
+  });
+  expect(signUp.ok()).toBe(false);
+  const createOrg = await page.request.post("/api/auth/organization/create", {
+    data: { name: "Sneaky", slug: `sneaky-${Date.now()}` },
+  });
+  expect(createOrg.status()).toBe(404);
 });
 
 test("changing the password signs out other sessions", async ({ page, browser }) => {
-  const account = await signUp(page);
+  const { admin } = await setupOrganization(page, browser);
 
   const other = await browser.newContext();
   const otherPage = await other.newPage();
-  await signIn(otherPage, account);
-  await otherPage.goto("/cars");
+  await signIn(otherPage, admin);
   await expect(otherPage).toHaveURL("/cars");
 
   await page.goto("/settings");
@@ -78,7 +73,7 @@ test("changing the password signs out other sessions", async ({ page, browser })
   await page.getByRole("button", { name: "Change password" }).click();
   await expect(page.getByTestId("password-status")).toHaveText("The current password is incorrect.");
 
-  await page.getByLabel("Current password").fill(account.password);
+  await page.getByLabel("Current password").fill(admin.password);
   await page.getByRole("button", { name: "Change password" }).click();
   await expect(page.getByTestId("password-status")).toContainText("Password changed");
 
@@ -88,7 +83,7 @@ test("changing the password signs out other sessions", async ({ page, browser })
   await otherPage.goto("/cars");
   await expect(otherPage).toHaveURL(/\/login/);
 
-  await signIn(otherPage, { email: account.email, password: "a brand new password" });
+  await signIn(otherPage, { email: admin.email, password: "a brand new password" });
   await expect(otherPage).toHaveURL("/cars");
   await other.close();
 });

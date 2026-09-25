@@ -1,7 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 import { addCar } from "./helpers/cars";
 import { displayDate } from "./helpers/format";
-import { signUp } from "./helpers/auth";
+import { setupOrganization } from "./helpers/org";
 
 const dots = (page: Page) =>
   page.getByTestId("mileage-chart").locator("circle.recharts-line-dot");
@@ -15,8 +15,8 @@ async function addReading(page: Page, odometer: number, date: string) {
   await expect(rows(page)).toHaveCount(before + 1);
 }
 
-test.beforeEach(async ({ page }) => {
-  await signUp(page);
+test.beforeEach(async ({ page, browser }) => {
+  await setupOrganization(page, browser);
   const carId = await addCar(page, "Plotted");
   await page.goto(`/cars/${carId}`);
 });

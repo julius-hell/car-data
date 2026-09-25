@@ -6,7 +6,8 @@
   "Header": {
     "signOut": "Sign out",
     "language": "Language",
-    "settingsLabel": "Settings for {name}"
+    "settingsLabel": "Settings for {name}",
+    "operator": "Operator"
   },
   "Auth": {
     "title": "Sign in",
@@ -17,17 +18,8 @@
     "password": "Password",
     "signInButton": "Sign in",
     "signingIn": "Signing in…",
-    "noAccount": "No account yet?",
-    "signUpLink": "Create one",
-    "signUpTitle": "Create account",
-    "signUpDescription": "Enter your name, email and a password.",
     "name": "Name",
-    "signUpButton": "Create account",
-    "creating": "Creating…",
-    "haveAccount": "Already have an account?",
-    "signInLink": "Sign in",
     "passwordHint": "At least 8 characters.",
-    "nameRequired": "Enter your name.",
     "currentPassword": "Current password",
     "newPassword": "New password",
     "changePassword": "Change password",
@@ -36,9 +28,13 @@
     "errorInvalidCredentials": "Email or password is incorrect.",
     "errorPasswordTooShort": "The password must be at least 8 characters long.",
     "errorPasswordTooLong": "The password is too long.",
-    "errorEmailTaken": "An account with this email already exists.",
     "errorWrongCurrentPassword": "The current password is incorrect.",
-    "errorGeneric": "Something went wrong. Please try again."
+    "errorGeneric": "Something went wrong. Please try again.",
+    "setPasswordTitle": "Set your password",
+    "setPasswordDescription": "Choose the password you'll sign in with.",
+    "setPassword": "Set password",
+    "errorInvalidLink": "This link is invalid or has expired. Ask for a new one.",
+    "passwordSetNotice": "Your password is set. Sign in with it now."
   },
   "Cars": {
     "title": "Cars",
@@ -130,5 +126,73 @@
     "title": "Settings",
     "heading": "Settings",
     "password": "Password"
+  },
+  "Common": {
+    "copy": "Copy",
+    "copied": "Copied"
+  },
+  "Operator": {
+    "title": "Organizations",
+    "eyebrow": "Operator",
+    "heading": "Organizations",
+    "empty": "No organizations yet. Create the first one below.",
+    "organizationName": "Organization name",
+    "status": "Status",
+    "members": "Members",
+    "cars": "Cars",
+    "created": "Created",
+    "statusValue": {
+      "active": "Active",
+      "deactivated": "Deactivated"
+    },
+    "newTitle": "New organization",
+    "newDescription": "Creates the organization and an invitation for its first admin.",
+    "adminName": "First admin's name",
+    "adminEmail": "First admin's email",
+    "create": "Create organization",
+    "creating": "Creating…",
+    "errorName": "Enter an organization name of up to 100 characters.",
+    "errorAdminName": "Enter the admin's name.",
+    "errorEmail": "Enter a valid email address.",
+    "errorEmailTaken": "This email already belongs to a member of an organization.",
+    "allOrganizations": "All organizations",
+    "admins": "Admins",
+    "noAdmins": "No admin has joined yet.",
+    "invitations": "Open invitations"
+  },
+  "Invitations": {
+    "none": "No open invitations.",
+    "role": {
+      "admin": "Admin",
+      "driver": "Driver",
+      "viewer": "Viewer"
+    },
+    "expired": "Expired",
+    "expires": "Expires {date}",
+    "linkLabel": "Invitation link for {name}",
+    "reissue": "New link",
+    "revoke": "Revoke"
+  },
+  "Invite": {
+    "title": "Invitation",
+    "unavailableTitle": "Invitation not available",
+    "expired": "This invitation has expired. Ask for a new one.",
+    "used": "This invitation has already been used. Sign in instead.",
+    "unavailable": "This invitation is no longer valid. Ask for a new one.",
+    "heading": "Join {organization}",
+    "summary": "You've been invited to {organization} as {role}. Choose a password to join.",
+    "signedInAs": "You're signed in as {email}. Sign out to accept this invitation.",
+    "join": "Join",
+    "joining": "Joining…",
+    "errorInvalid": "This invitation is no longer valid.",
+    "errorName": "Enter your name.",
+    "passwordTooShort": "The password must be at least 8 characters long.",
+    "passwordTooLong": "The password is too long.",
+    "errorEmailTaken": "An account with this email already exists."
+  },
+  "NoOrganization": {
+    "title": "No organization",
+    "heading": "You're not part of an organization",
+    "description": "Your account doesn't belong to an organization. Ask an admin of your company for an invitation."
   }
 }
