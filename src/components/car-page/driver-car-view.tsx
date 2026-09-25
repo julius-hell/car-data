@@ -15,7 +15,7 @@ export async function DriverCarView({ actor, car, focusForm }: { actor: Actor; c
   return (
     <>
       <AddEntryForm carId={car.id} autoFocus={focusForm} />
-      <CarIntervals car={car} organizationId={actor.organizationId} canManage={false} />
+      <CarIntervals car={car} organizationId={actor.organizationId} canManage={false} showHistory={false} />
       <div className="aspect-[3/2]">
         <CarPhoto carId={car.id} plate={car.licencePlate} photoUpdatedAt={car.photoUpdatedAt} editable={false} />
       </div>

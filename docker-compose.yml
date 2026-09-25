@@ -41,9 +41,9 @@ services:
       SMTP_USER: ${SMTP_USER:-}
       SMTP_PASSWORD: ${SMTP_PASSWORD:-}
       SMTP_FROM: ${SMTP_FROM:-}
-      PHOTO_DIR: /data/photos
+      FILE_DIR: /data/files
     volumes:
-      - photos:/data/photos
+      - files:/data/files
     ports:
       - "${APP_PORT:-3000}:3000"
     depends_on:
@@ -63,4 +63,4 @@ services:
 
 volumes:
   pgdata:
-  photos:
+  files:

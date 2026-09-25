@@ -154,3 +154,64 @@ export const interval = pgTable(
 export type IntervalType = typeof intervalType.$inferSelect;
 export type Interval = typeof interval.$inferSelect;
 export type BuiltInInterval = NonNullable<IntervalType["builtIn"]>;
+
+export const completionResultEnum = pgEnum("completion_result", ["passed", "minor_defects", "major_defects"]);
+
+// The record of fulfilling an interval.
+export const completion = pgTable(
+  "completion",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    intervalId: uuid("interval_id")
+      .notNull()
+      .references(() => interval.id, { onDelete: "cascade" }),
+    completedOn: date("completed_on").notNull(),
+    odometer: integer("odometer"),
+    result: completionResultEnum("result"),
+    provider: text("provider"),
+    costCents: integer("cost_cents"),
+    note: text("note"),
+    // Licence checks only.
+    licenceClasses: text("licence_classes"),
+    licenceExpiresOn: date("licence_expires_on"),
+    // The mileage entry created from the odometer, removed with the completion.
+    mileageEntryId: uuid("mileage_entry_id").references(() => mileageEntry.id, { onDelete: "set null" }),
+    // The interval's due date and odometer before this completion, restored
+    // when it is deleted.
+    previousDueOn: date("previous_due_on"),
+    previousDueOdometer: integer("previous_due_odometer"),
+    recordedBy: text("recorded_by").references(() => user.id, { onDelete: "set null" }),
+    recordedByName: text("recorded_by_name"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [index("completion_interval_id_idx").on(table.intervalId)],
+);
+
+// A stored file. It belongs to exactly one record (one of the owner columns)
+// and lives on disk under its car or user.
+export const attachment = pgTable(
+  "attachment",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    organizationId: text("organization_id")
+      .notNull()
+      .references(() => organization.id, { onDelete: "cascade" }),
+    carId: uuid("car_id").references(() => car.id, { onDelete: "cascade" }),
+    userId: text("user_id").references(() => user.id, { onDelete: "cascade" }),
+    completionId: uuid("completion_id").references(() => completion.id, { onDelete: "cascade" }),
+    fileName: text("file_name").notNull(),
+    contentType: text("content_type").notNull(),
+    size: integer("size").notNull(),
+    uploadedBy: text("uploaded_by").references(() => user.id, { onDelete: "set null" }),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [
+    index("attachment_completion_id_idx").on(table.completionId),
+    index("attachment_car_id_idx").on(table.carId),
+  ],
+);
+
+export type Completion = typeof completion.$inferSelect;
+export type CompletionResult = NonNullable<Completion["result"]>;
+export const COMPLETION_RESULTS = completionResultEnum.enumValues;
+export type Attachment = typeof attachment.$inferSelect;

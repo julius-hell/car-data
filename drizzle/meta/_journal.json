@@ -50,6 +50,13 @@
       "when": 1790364946530,
       "tag": "0006_intervals",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1790365329824,
+      "tag": "0007_completions",
+      "breakpoints": true
     }
   ]
 }

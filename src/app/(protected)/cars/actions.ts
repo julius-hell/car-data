@@ -15,7 +15,7 @@ import {
 } from "@/lib/cars";
 import { db } from "@/lib/db";
 import { car } from "@/lib/db/schema";
-import { deleteCarPhoto } from "@/lib/photos";
+import { deleteCarFiles } from "@/lib/files";
 import { defaultFirstHu, trackDefaultIntervals } from "@/lib/intervals";
 import { parseDueDate } from "@/lib/interval-form";
 
@@ -124,7 +124,7 @@ export async function deleteCar(carId: string) {
     .delete(car)
     .where(and(eq(car.id, carId), eq(car.organizationId, actor.organizationId)))
     .returning({ id: car.id });
-  if (deleted) await deleteCarPhoto(deleted.id);
+  if (deleted) await deleteCarFiles(deleted.id);
   revalidatePath("/cars");
   redirect("/cars");
 }

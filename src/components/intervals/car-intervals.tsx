@@ -1,5 +1,12 @@
 import { getTranslations } from "next-intl/server";
+import {
+  deleteCompletionAction,
+  recordCompletionAction,
+  updateCompletionAction,
+} from "@/app/(protected)/cars/[carId]/completion-actions";
 import { startTrackingInterval, stopTrackingInterval } from "@/app/(protected)/cars/[carId]/interval-actions";
+import { CompletionDialog } from "@/components/completions/completion-dialog";
+import { CompletionHistory } from "@/components/completions/completion-history";
 import { DueBadge } from "@/components/due-badge";
 import { DueSummary } from "@/components/intervals/due-summary";
 import { IntervalEditDialog } from "@/components/intervals/interval-edit-dialog";
@@ -8,16 +15,36 @@ import { Button } from "@/components/ui/button";
 import type { Car } from "@/lib/db/schema";
 import { intervalTypeName } from "@/lib/interval-names";
 import { effectivePeriod, listCarIntervals, listIntervalTypes, odometerContext, statusOf } from "@/lib/intervals";
+import { listCompletionsWithAttachments } from "@/lib/completions";
 import { todayIso } from "@/lib/today";
 
 // A car's intervals with their due status; admins also edit and track them.
-export async function CarIntervals({ car, organizationId, canManage }: { car: Car; organizationId: string; canManage: boolean }) {
-  const [intervals, context, types, t] = await Promise.all([
+export async function CarIntervals({
+  car,
+  organizationId,
+  canManage,
+  showHistory,
+}: {
+  car: Car;
+  organizationId: string;
+  canManage: boolean;
+  // Completions are fleet records: admins and viewers see them, drivers don't.
+  showHistory: boolean;
+}) {
+  const [intervals, context, types, t, tc] = await Promise.all([
     listCarIntervals(car.id),
     odometerContext([car.id]),
     canManage ? listIntervalTypes(organizationId) : Promise.resolve([]),
     getTranslations("Intervals"),
+    getTranslations("Completions"),
   ]);
+  const histories = showHistory
+    ? new Map(
+        await Promise.all(
+          intervals.map(async (i) => [i.interval.id, await listCompletionsWithAttachments(i.interval.id)] as const),
+        ),
+      )
+    : new Map();
   const today = todayIso();
   const odometer = context.get(car.id) ?? { latestOdometer: null, kmPerDay: null };
   const tracked = new Set(intervals.map((i) => i.type.id));
@@ -60,9 +87,33 @@ export async function CarIntervals({ car, organizationId, canManage }: { car: Ca
                       ? t("everyMonthsOrKm", { months: period.months, km: period.km })
                       : t("everyMonths", { months: period.months })}
                   </span>
+                  {showHistory && (
+                    <CompletionHistory
+                      name={name}
+                      kind="car"
+                      precision={entry.type.precision}
+                      hasKm={period.km !== null}
+                      completions={histories.get(entry.interval.id) ?? []}
+                      editAction={
+                        canManage ? updateCompletionAction.bind(null, car.id, entry.interval.id) : undefined
+                      }
+                      deleteAction={
+                        canManage ? deleteCompletionAction.bind(null, car.id, entry.interval.id) : undefined
+                      }
+                    />
+                  )}
                 </div>
                 {canManage && (
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <CompletionDialog
+                      action={recordCompletionAction.bind(null, car.id, entry.interval.id)}
+                      name={name}
+                      kind="car"
+                      precision={entry.type.precision}
+                      hasKm={period.km !== null}
+                      triggerLabel={tc("record")}
+                      triggerAriaLabel={tc("recordLabel", { name })}
+                    />
                     <IntervalEditDialog
                       carId={car.id}
                       interval={{

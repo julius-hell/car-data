@@ -6,7 +6,7 @@ import { createSetPasswordToken, isEmail, NAME_MAX_LENGTH, normalizeEmail } from
 import { requireOperator } from "@/lib/actor";
 import { appUrl } from "@/lib/app-url";
 import { sendInvitationEmail } from "@/lib/invitation-mail";
-import { deleteCarFiles } from "@/lib/photos";
+import { deleteCarFiles, deleteUserFiles } from "@/lib/files";
 import { getLocale } from "next-intl/server";
 import {
   cancelInvitation,
@@ -100,8 +100,8 @@ export async function deleteOrganizationAction(
   if (!organization) redirect("/operator");
   if (String(formData.get("confirmName") ?? "").trim() !== organization.name) return { status: "error" };
 
-  const carIds = await deleteOrganization(organization.id);
-  await Promise.all(carIds.map((carId) => deleteCarFiles(carId)));
+  const { carIds, userIds } = await deleteOrganization(organization.id);
+  await Promise.all([...carIds.map(deleteCarFiles), ...userIds.map(deleteUserFiles)]);
   revalidatePath("/operator");
   redirect("/operator");
 }

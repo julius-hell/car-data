@@ -112,7 +112,7 @@ export async function FleetCarView({ actor, car, focusForm }: { actor: Actor; ca
         />
       </div>
 
-      <CarIntervals car={car} organizationId={actor.organizationId} canManage={canManage} />
+      <CarIntervals car={car} organizationId={actor.organizationId} canManage={canManage} showHistory />
 
       <section className="bg-card flex min-w-0 flex-col gap-3 rounded-xl border p-4 shadow-xs sm:p-5">
         <h2 className="text-muted-foreground text-xs font-medium tracking-wider uppercase">

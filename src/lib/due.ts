@@ -101,3 +101,32 @@ export function dueStatus(target: DueTarget, { today, latestOdometer, kmPerDay }
     estimatedDate,
   };
 }
+
+// When an interval is next due after a completion. Major defects call for a
+// re-inspection within a month; a licence check is due again no later than
+// the licence expires.
+export function nextDueAfter(
+  done: {
+    completedOn: string;
+    odometer: number | null;
+    result: "passed" | "minor_defects" | "major_defects" | null;
+    licenceExpiresOn?: string | null;
+  },
+  rule: { precision: DuePrecision; periodMonths: number; periodKm: number | null },
+  previous: { nextDueOdometer: number | null },
+): { nextDueOn: string; nextDueOdometer: number | null } {
+  if (done.result === "major_defects") {
+    const recheck = addMonths(done.completedOn, 1);
+    return {
+      nextDueOn: rule.precision === "month" ? monthStart(recheck) : recheck,
+      nextDueOdometer: previous.nextDueOdometer,
+    };
+  }
+  let nextDueOn = addMonths(done.completedOn, rule.periodMonths);
+  if (rule.precision === "month") nextDueOn = monthStart(nextDueOn);
+  if (done.licenceExpiresOn && done.licenceExpiresOn < nextDueOn) nextDueOn = done.licenceExpiresOn;
+  return {
+    nextDueOn,
+    nextDueOdometer: rule.periodKm !== null && done.odometer !== null ? done.odometer + rule.periodKm : null,
+  };
+}

@@ -281,8 +281,8 @@ export async function setOrganizationStatus(organizationId: string, status: "act
 
 // Erases an organization: its cars, entries, invitations and memberships go
 // with it (cascades), and so do its members' accounts, since each person
-// belongs to this one organization only. Returns the deleted cars' ids so
-// their files can be removed.
+// belongs to this one organization only. Returns the deleted cars' and
+// users' ids so their files can be removed.
 export async function deleteOrganization(organizationId: string) {
   return db.transaction(async (tx) => {
     const cars = await tx.select({ id: car.id }).from(car).where(eq(car.organizationId, organizationId));
@@ -294,6 +294,6 @@ export async function deleteOrganization(organizationId: string) {
     for (const { userId } of members) {
       await tx.delete(user).where(and(eq(user.id, userId), eq(user.isOperator, false)));
     }
-    return cars.map((c) => c.id);
+    return { carIds: cars.map((c) => c.id), userIds: members.map((m) => m.userId) };
   });
 }
