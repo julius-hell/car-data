@@ -1,8 +1,10 @@
 import { FileTextIcon } from "lucide-react";
 import { getFormatter, getTranslations } from "next-intl/server";
+import { AllowancePanel } from "@/components/contracts/allowance-panel";
 import { ContractDialog } from "@/components/contracts/contract-dialog";
+import { ReturnDialog } from "@/components/contracts/return-dialog";
 import { DueBadge } from "@/components/due-badge";
-import { listContractAttachments } from "@/lib/attachments";
+import { listContractAttachments, listReturnAttachments } from "@/lib/attachments";
 import { contractStatus, getContract } from "@/lib/contracts";
 import { isoDateToDate } from "@/lib/dates";
 import { todayIso } from "@/lib/today";
@@ -10,8 +12,12 @@ import { todayIso } from "@/lib/today";
 // How the car is held, for admins and viewers.
 export async function CarContract({ carId, canManage }: { carId: string; canManage: boolean }) {
   const [contract, t, format] = await Promise.all([getContract(carId), getTranslations("Contracts"), getFormatter()]);
-  const files = contract ? await listContractAttachments(contract.id) : [];
-  const status = contract ? contractStatus(contract, todayIso()) : null;
+  const [files, returnFiles] = contract
+    ? await Promise.all([listContractAttachments(contract.id), listReturnAttachments(contract.id)])
+    : [[], []];
+  // A returned contract is over; it no longer counts down.
+  const status = contract && !contract.returnedOn ? contractStatus(contract, todayIso()) : null;
+  const returnable = contract && (contract.kind === "leased" || contract.kind === "rented") && !contract.returnedOn;
   const date = (iso: string | null) => (iso ? format.dateTime(isoDateToDate(iso), { dateStyle: "medium" }) : null);
   const money = (cents: number | null) =>
     cents === null ? null : format.number(cents / 100, { style: "currency", currency: "EUR" });
@@ -52,7 +58,12 @@ export async function CarContract({ carId, canManage }: { carId: string; canMana
           )}
           {status && <DueBadge level={status.level} testId="contract-level" />}
         </div>
-        {canManage && <ContractDialog carId={carId} contract={contract ?? null} />}
+        {canManage && (
+          <div className="flex flex-wrap gap-2">
+            {returnable && <ReturnDialog carId={carId} />}
+            <ContractDialog carId={carId} contract={contract ?? null} />
+          </div>
+        )}
       </div>
       {!contract ? (
         <p className="text-muted-foreground text-sm">{t("none")}</p>
@@ -74,6 +85,38 @@ export async function CarContract({ carId, canManage }: { carId: string; canMana
             ? t("ended", { date: date(status.endOn)! })
             : t("endsIn", { count: status.daysLeft, date: date(status.endOn)! })}
         </p>
+      )}
+      {contract && (contract.kind === "leased" || contract.kind === "rented") && (
+        <AllowancePanel contract={contract} />
+      )}
+      {contract?.returnedOn && (
+        <div className="bg-muted/40 flex flex-col gap-2 rounded-lg p-3 text-sm" data-testid="contract-return">
+          <p className="font-medium">
+            {t("returnedSummary", {
+              date: date(contract.returnedOn)!,
+              odometer: format.number(contract.returnOdometer ?? 0),
+            })}
+          </p>
+          {contract.returnNotes && <p className="whitespace-pre-line">{contract.returnNotes}</p>}
+          {returnFiles.length > 0 && (
+            <ul className="flex flex-wrap gap-3">
+              {returnFiles.map((file) => (
+                <li key={file.id}>
+                  <a
+                    href={`/attachments/${file.id}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    data-testid="return-attachment-link"
+                    className="text-primary inline-flex items-center gap-1 underline-offset-4 hover:underline"
+                  >
+                    <FileTextIcon aria-hidden className="size-4" />
+                    {file.fileName}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       )}
       {files.length > 0 && (
         <ul className="flex flex-wrap gap-3">

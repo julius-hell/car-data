@@ -1,4 +1,5 @@
 import { eq, inArray } from "drizzle-orm";
+import { parseKmRate } from "@/lib/allowance";
 import { parseEuroCents } from "@/lib/completion-form";
 import { db } from "@/lib/db";
 import {
@@ -42,9 +43,18 @@ export function contractStatus(row: Pick<Contract, "kind" | "endOn" | "endAlertM
   };
 }
 
-export type ContractValues = Omit<Contract, "id" | "carId" | "updatedAt">;
+// Everything an admin enters in the contract form; the return is recorded separately.
+export type ContractValues = Omit<Contract, "id" | "carId" | "updatedAt" | "returnedOn" | "returnOdometer" | "returnNotes">;
 
-export type ContractFormError = "errorKind" | "errorDate" | "errorTerm" | "errorMoney" | "errorText" | "errorAlert";
+export type ContractFormError =
+  | "errorKind"
+  | "errorDate"
+  | "errorTerm"
+  | "errorMoney"
+  | "errorText"
+  | "errorAlert"
+  | "errorAllowance"
+  | "errorRate";
 
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -79,6 +89,10 @@ export function parseContractForm(formData: FormData): { values: ContractValues 
     includedServices: [],
     includedOther: null,
     endAlertMonths: 6,
+    kmPerYear: null,
+    handoverOdometer: null,
+    excessKmRate: null,
+    underKmRate: null,
   };
 
   const alert = text("endAlertMonths");
@@ -136,6 +150,22 @@ export function parseContractForm(formData: FormData): { values: ContractValues 
       .filter((service): service is IncludedService => INCLUDED_SERVICES.includes(service as IncludedService));
     values.includedOther = text("includedOther");
     if (values.includedOther && values.includedOther.length > 200) return { error: "errorText" };
+
+    for (const [name, key] of [
+      ["kmPerYear", "kmPerYear"],
+      ["handoverOdometer", "handoverOdometer"],
+    ] as const) {
+      const raw = text(name);
+      if (raw === null) continue;
+      const number = Number(raw);
+      if (!Number.isInteger(number) || number < 0) return { error: "errorAllowance" };
+      values[key] = number;
+    }
+    const excess = parseKmRate(formData.get("excessKmRate"));
+    const under = parseKmRate(formData.get("underKmRate"));
+    if ("error" in excess || "error" in under) return { error: "errorRate" };
+    values.excessKmRate = excess.value;
+    values.underKmRate = under.value;
   }
   return { values };
 }

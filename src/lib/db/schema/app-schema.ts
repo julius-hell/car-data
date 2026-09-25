@@ -182,6 +182,16 @@ export const contract = pgTable("contract", {
   includedOther: text("included_other"),
   // How many months before the end the contract shows as ending soon.
   endAlertMonths: integer("end_alert_months").default(6).notNull(),
+  // Mileage allowance of leased and rented cars. Per-km rates are stored in
+  // ten-thousandths of a euro, so €0.085 is 850.
+  kmPerYear: integer("km_per_year"),
+  handoverOdometer: integer("handover_odometer"),
+  excessKmRate: integer("excess_km_rate"),
+  underKmRate: integer("under_km_rate"),
+  // The handover at the end of a lease or rental.
+  returnedOn: date("returned_on"),
+  returnOdometer: integer("return_odometer"),
+  returnNotes: text("return_notes"),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
@@ -230,6 +240,8 @@ export const attachment = pgTable(
     userId: text("user_id").references(() => user.id, { onDelete: "cascade" }),
     completionId: uuid("completion_id").references(() => completion.id, { onDelete: "cascade" }),
     contractId: uuid("contract_id").references(() => contract.id, { onDelete: "cascade" }),
+    // Condition photos taken when a leased or rented car was returned.
+    returnOfContractId: uuid("return_of_contract_id").references(() => contract.id, { onDelete: "cascade" }),
     fileName: text("file_name").notNull(),
     contentType: text("content_type").notNull(),
     size: integer("size").notNull(),

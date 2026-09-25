@@ -22,6 +22,7 @@ import type { Contract, ContractKind } from "@/lib/db/schema";
 const KINDS: ContractKind[] = ["owned", "leased", "financed", "rented"];
 const SERVICES = ["maintenance", "tyres", "insurance", "vehicle_tax"] as const;
 const euros = (cents: number | null | undefined) => (cents == null ? "" : (cents / 100).toFixed(2));
+const perKm = (rate: number | null | undefined) => (rate == null ? "" : String(rate / 10_000));
 
 function Field({
   name,
@@ -140,6 +141,23 @@ export function ContractDialog({ carId, contract }: { carId: string; contract: C
                 ))}
               </div>
               <Field name="includedOther" label={t("includedOther")} defaultValue={same?.includedOther} />
+            </fieldset>
+          )}
+
+          {(kind === "leased" || kind === "rented") && (
+            <fieldset className="flex flex-col gap-2" key={`allowance-${kind}`}>
+              <legend className="text-sm font-medium">{t("allowance")}</legend>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <Field name="kmPerYear" label={t("kmPerYear")} inputMode="numeric" defaultValue={same?.kmPerYear} />
+                <Field
+                  name="handoverOdometer"
+                  label={t("handoverOdometer")}
+                  inputMode="numeric"
+                  defaultValue={same?.handoverOdometer}
+                />
+                <Field name="excessKmRate" label={t("excessKmRate")} inputMode="decimal" defaultValue={perKm(same?.excessKmRate)} />
+                <Field name="underKmRate" label={t("underKmRate")} inputMode="decimal" defaultValue={perKm(same?.underKmRate)} />
+              </div>
             </fieldset>
           )}
 

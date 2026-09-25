@@ -28,6 +28,7 @@ export type AttachmentOwner = {
   userId?: string | null;
   completionId?: string;
   contractId?: string;
+  returnOfContractId?: string;
 };
 
 export type AttachmentError = "errorFileTooLarge" | "errorFileType" | "errorTooManyFiles";
@@ -76,6 +77,7 @@ export async function storeUploads(
         userId: owner.carId ? null : (owner.userId ?? null),
         completionId: owner.completionId,
         contractId: owner.contractId,
+        returnOfContractId: owner.returnOfContractId,
         fileName: upload.name,
         contentType: upload.contentType,
         size: upload.bytes.length,
@@ -100,6 +102,10 @@ export async function countContractAttachments(contractId: string) {
 
 export async function listContractAttachments(contractId: string) {
   return db.query.attachment.findMany({ where: eq(attachment.contractId, contractId) });
+}
+
+export async function listReturnAttachments(contractId: string) {
+  return db.query.attachment.findMany({ where: eq(attachment.returnOfContractId, contractId) });
 }
 
 export async function attachmentsByCompletion(completionIds: string[]) {
@@ -146,6 +152,6 @@ export async function findViewableAttachment(actor: Actor, attachmentId: string)
     return allowed ? row : undefined;
   }
   // Contracts are fleet records; drivers see only the end date, not the documents.
-  if (row.contractId) return can(actor, "viewFleet") ? row : undefined;
+  if (row.contractId || row.returnOfContractId) return can(actor, "viewFleet") ? row : undefined;
   return undefined;
 }
