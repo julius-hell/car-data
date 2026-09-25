@@ -22,11 +22,15 @@ function navItems(context: HeaderContext) {
     case "admin":
       return [
         { href: "/cars", key: "cars" },
+        { href: "/damage", key: "damage" },
         { href: "/team", key: "team" },
         { href: "/interval-types", key: "intervalTypes" },
       ] as const;
     case "viewer":
-      return [{ href: "/cars", key: "cars" }] as const;
+      return [
+        { href: "/cars", key: "cars" },
+        { href: "/damage", key: "damage" },
+      ] as const;
     case "driver":
       return [{ href: "/my-cars", key: "myCars" }] as const;
   }

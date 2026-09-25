@@ -14,7 +14,8 @@
       "cars": "Cars",
       "team": "Team",
       "myCars": "My cars",
-      "intervalTypes": "Intervals"
+      "intervalTypes": "Intervals",
+      "damage": "Damage"
     }
   },
   "Auth": {
@@ -584,5 +585,37 @@
     "errorRate": "Enter per-km rates in euros, e.g. 0.085.",
     "errorOdometer": "Enter the final odometer as a whole number.",
     "errorNotReturnable": "Only leased or rented cars that haven't been returned can be returned."
+  },
+  "Damage": {
+    "title": "Damage reports",
+    "myReports": "My damage reports",
+    "none": "No damage reported.",
+    "eyebrow": "Fleet",
+    "openTitle": "Open damage reports",
+    "noneOpen": "No open damage reports.",
+    "report": "Report damage",
+    "reportTitle": "Report damage or a defect",
+    "reportDescription": "Describe what happened; photos help the fleet manager arrange the repair.",
+    "occurredOn": "Date",
+    "description": "What happened?",
+    "photos": "Photos (optional)",
+    "photosHint": "Up to 10 photos, 15 MB each.",
+    "send": "Send report",
+    "sending": "Sending…",
+    "status": {
+      "open": "Open",
+      "resolved": "Resolved"
+    },
+    "reportedBy": "{date} · reported by {name}",
+    "resolvedBy": "Resolved by {name}",
+    "resolve": "Resolve",
+    "resolutionNote": "Resolution note",
+    "resolutionPlaceholder": "e.g. repaired at Autohaus Müller",
+    "errorDate": "Enter a valid date.",
+    "errorDescription": "Describe the damage (up to 2,000 characters).",
+    "errorNote": "Keep the note under 2,000 characters.",
+    "errorFileTooLarge": "Each photo must be 15 MB or smaller.",
+    "errorFileType": "Only photos (JPEG, PNG, WebP, HEIC) can be attached.",
+    "errorTooManyFiles": "A report can have at most 10 photos."
   }
 }

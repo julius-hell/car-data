@@ -4,6 +4,7 @@ import { CarAssignments } from "@/components/assignments/car-assignments";
 import { CarPhoto } from "@/components/car-photo";
 import { CarIntervals } from "@/components/intervals/car-intervals";
 import { CarContract } from "@/components/contracts/car-contract";
+import { CarDamage } from "@/components/damage/car-damage";
 import { EntriesTable } from "@/components/entries-table";
 import { MileageChart } from "@/components/mileage-chart";
 import { MonthlyChart } from "@/components/monthly-chart";
@@ -116,6 +117,8 @@ export async function FleetCarView({ actor, car, focusForm }: { actor: Actor; ca
       <CarIntervals car={car} organizationId={actor.organizationId} canManage={canManage} showHistory />
 
       <CarContract carId={car.id} canManage={canManage} />
+
+      <CarDamage actor={actor} carId={car.id} retired={Boolean(car.retiredOn)} />
 
       <section className="bg-card flex min-w-0 flex-col gap-3 rounded-xl border p-4 shadow-xs sm:p-5">
         <h2 className="text-muted-foreground text-xs font-medium tracking-wider uppercase">

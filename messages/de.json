@@ -14,7 +14,8 @@
       "cars": "Fahrzeuge",
       "team": "Team",
       "myCars": "Meine Fahrzeuge",
-      "intervalTypes": "Fristen"
+      "intervalTypes": "Fristen",
+      "damage": "Schäden"
     }
   },
   "Auth": {
@@ -584,5 +585,37 @@
     "errorRate": "Gib Kilometersätze in Euro ein, z. B. 0,085.",
     "errorOdometer": "Gib den Kilometerstand als ganze Zahl ein.",
     "errorNotReturnable": "Nur geleaste oder gemietete Fahrzeuge, die noch nicht zurückgegeben wurden, können zurückgegeben werden."
+  },
+  "Damage": {
+    "title": "Schadensmeldungen",
+    "myReports": "Meine Schadensmeldungen",
+    "none": "Keine Schäden gemeldet.",
+    "eyebrow": "Flotte",
+    "openTitle": "Offene Schadensmeldungen",
+    "noneOpen": "Keine offenen Schadensmeldungen.",
+    "report": "Schaden melden",
+    "reportTitle": "Schaden oder Mangel melden",
+    "reportDescription": "Beschreibe, was passiert ist; Fotos helfen dem Fuhrparkmanagement bei der Reparatur.",
+    "occurredOn": "Datum",
+    "description": "Was ist passiert?",
+    "photos": "Fotos (optional)",
+    "photosHint": "Bis zu 10 Fotos, je 15 MB.",
+    "send": "Meldung senden",
+    "sending": "Wird gesendet…",
+    "status": {
+      "open": "Offen",
+      "resolved": "Erledigt"
+    },
+    "reportedBy": "{date} · gemeldet von {name}",
+    "resolvedBy": "Erledigt von {name}",
+    "resolve": "Erledigen",
+    "resolutionNote": "Notiz zur Erledigung",
+    "resolutionPlaceholder": "z. B. repariert bei Autohaus Müller",
+    "errorDate": "Gib ein gültiges Datum ein.",
+    "errorDescription": "Beschreibe den Schaden (höchstens 2.000 Zeichen).",
+    "errorNote": "Die Notiz darf höchstens 2.000 Zeichen haben.",
+    "errorFileTooLarge": "Jedes Foto darf höchstens 15 MB groß sein.",
+    "errorFileType": "Nur Fotos (JPEG, PNG, WebP, HEIC) können angehängt werden.",
+    "errorTooManyFiles": "Eine Meldung kann höchstens 10 Fotos haben."
   }
 }

@@ -3,7 +3,7 @@ import path from "node:path";
 import { and, count, eq, inArray } from "drizzle-orm";
 import { can, type Actor } from "@/lib/actor";
 import { db } from "@/lib/db";
-import { attachment, completion, interval, intervalType, type Attachment } from "@/lib/db/schema";
+import { attachment, completion, damageReport, interval, intervalType, type Attachment } from "@/lib/db/schema";
 import { carFilesDir, userFilesDir } from "@/lib/files";
 
 export const ATTACHMENT_MAX_BYTES = 15 * 1024 * 1024;
@@ -29,6 +29,7 @@ export type AttachmentOwner = {
   completionId?: string;
   contractId?: string;
   returnOfContractId?: string;
+  damageReportId?: string;
 };
 
 export type AttachmentError = "errorFileTooLarge" | "errorFileType" | "errorTooManyFiles";
@@ -45,6 +46,7 @@ export type Upload = { name: string; bytes: Buffer; contentType: string };
 export async function readUploads(
   files: File[],
   existing = 0,
+  { imagesOnly = false }: { imagesOnly?: boolean } = {},
 ): Promise<{ uploads: Upload[] } | { error: AttachmentError }> {
   if (existing + files.length > ATTACHMENTS_PER_OWNER) return { error: "errorTooManyFiles" };
   const uploads: Upload[] = [];
@@ -52,7 +54,7 @@ export async function readUploads(
     if (file.size > ATTACHMENT_MAX_BYTES) return { error: "errorFileTooLarge" };
     const bytes = Buffer.from(await file.arrayBuffer());
     const contentType = detectContentType(bytes);
-    if (!contentType) return { error: "errorFileType" };
+    if (!contentType || (imagesOnly && !contentType.startsWith("image/"))) return { error: "errorFileType" };
     uploads.push({ name: file.name.slice(0, 200) || "file", bytes, contentType });
   }
   return { uploads };
@@ -78,6 +80,7 @@ export async function storeUploads(
         completionId: owner.completionId,
         contractId: owner.contractId,
         returnOfContractId: owner.returnOfContractId,
+        damageReportId: owner.damageReportId,
         fileName: upload.name,
         contentType: upload.contentType,
         size: upload.bytes.length,
@@ -153,5 +156,11 @@ export async function findViewableAttachment(actor: Actor, attachmentId: string)
   }
   // Contracts are fleet records; drivers see only the end date, not the documents.
   if (row.contractId || row.returnOfContractId) return can(actor, "viewFleet") ? row : undefined;
+  // Damage photos: the whole fleet for admins and viewers, their own reports for drivers.
+  if (row.damageReportId) {
+    if (can(actor, "viewFleet")) return row;
+    const report = await db.query.damageReport.findFirst({ where: eq(damageReport.id, row.damageReportId) });
+    return report?.reportedBy === actor.userId ? row : undefined;
+  }
   return undefined;
 }

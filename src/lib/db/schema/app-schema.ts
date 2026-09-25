@@ -195,6 +195,30 @@ export const contract = pgTable("contract", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+export const damageStatusEnum = pgEnum("damage_status", ["open", "resolved"]);
+
+// Damage or a defect reported for a car, open until an admin resolves it.
+export const damageReport = pgTable(
+  "damage_report",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    carId: uuid("car_id")
+      .notNull()
+      .references(() => car.id, { onDelete: "cascade" }),
+    occurredOn: date("occurred_on").notNull(),
+    description: text("description").notNull(),
+    status: damageStatusEnum("status").default("open").notNull(),
+    reportedBy: text("reported_by").references(() => user.id, { onDelete: "set null" }),
+    reportedByName: text("reported_by_name").notNull(),
+    resolvedBy: text("resolved_by").references(() => user.id, { onDelete: "set null" }),
+    resolvedByName: text("resolved_by_name"),
+    resolvedAt: timestamp("resolved_at"),
+    resolutionNote: text("resolution_note"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [index("damage_report_car_id_idx").on(table.carId)],
+);
+
 export const completionResultEnum = pgEnum("completion_result", ["passed", "minor_defects", "major_defects"]);
 
 // The record of fulfilling an interval.
@@ -242,6 +266,7 @@ export const attachment = pgTable(
     contractId: uuid("contract_id").references(() => contract.id, { onDelete: "cascade" }),
     // Condition photos taken when a leased or rented car was returned.
     returnOfContractId: uuid("return_of_contract_id").references(() => contract.id, { onDelete: "cascade" }),
+    damageReportId: uuid("damage_report_id").references(() => damageReport.id, { onDelete: "cascade" }),
     fileName: text("file_name").notNull(),
     contentType: text("content_type").notNull(),
     size: integer("size").notNull(),
@@ -265,3 +290,5 @@ export type ContractKind = Contract["kind"];
 export const CONTRACT_KINDS = contractKindEnum.enumValues;
 export type IncludedService = Contract["includedServices"][number];
 export const INCLUDED_SERVICES = includedServiceEnum.enumValues;
+
+export type DamageReport = typeof damageReport.$inferSelect;
