@@ -1,6 +1,14 @@
 # Car Data
 
-Track the mileage of your cars over time. Passkey sign-in, multiple cars per user, a mileage chart, installable as a PWA. Self-hosted with Docker Compose.
+Fleet management for businesses: inspection intervals (HU/AU, UVV, service), driver checks, contracts and mileage for every company car. Self-hosted with Docker Compose.
+
+- **Organizations** — one deployment serves many businesses. A platform operator creates each organization and its first admin; every person belongs to exactly one organization.
+- **Roles** — admins manage everything; drivers see the cars assigned to them, log mileage and report damage; viewers see the fleet read-only.
+- **Intervals** — HU/AU (by month, like the sticker), UVV inspection, service (months or km, whichever first) and custom types per car; licence checks and UVV instructions per driver. Completions record result, cost and documents and move the next due date.
+- **Contracts** — owned, leased, financed or rented, with documents, an alert before the end, a mileage-allowance projection for leases and rentals, and the return.
+- **Staying on top** — a fleet dashboard, a weekly email digest for admins and a calendar feed for everyone.
+
+German and English; German is the default. Domain vocabulary is in `CONTEXT.md`, decisions in `docs/adr/`.
 
 ## Run it
 
@@ -11,7 +19,26 @@ docker compose up
 
 The stack starts Postgres, applies migrations, then serves the app on http://localhost:3000. Postgres data lives in the `pgdata` volume.
 
-Passkeys and the installable PWA need a secure context: `localhost` works as is, any other hostname must be served over HTTPS by a reverse proxy (Caddy, Traefik, nginx) in front of the app, with `BETTER_AUTH_URL` and `PASSKEY_RP_ID` set to match. The proxy should forward `Host` (or `X-Forwarded-Host`) and `X-Forwarded-For` unchanged and set `Strict-Transport-Security`; the app sets the other security headers itself.
+There is no public sign-up. Create the first platform operator with the CLI; it prints a one-time link (valid 24 hours) to set their password. Running it again for the same email issues a new link.
+
+```sh
+docker compose exec app node scripts/create-operator.mjs --email ops@example.com --name "Ops"
+# or, outside Docker: pnpm operator:create --email ops@example.com --name "Ops"
+```
+
+The operator signs in, creates an organization per business and hands its first admin the invitation link. Admins then manage their own organization.
+
+### Email
+
+Email is optional. Set `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD` and `SMTP_FROM` (see `.env.example`) to email invitations, password resets and address verification. Without SMTP everything still works: invitations and password-reset links are copied by admins (or, for an organization's admins, by the operator) and handed over directly.
+
+### Weekly digest
+
+With email configured, admins get a weekly digest of everything overdue or due soon. The compose stack's `scheduler` service triggers it every Monday at 07:00 in `APP_TIME_ZONE` by calling `POST /api/digest` with `DIGEST_SECRET` as a bearer token; set `DIGEST_SECRET` (e.g. `openssl rand -hex 32`) to enable it. Admins can turn the digest off in their settings.
+
+**Upgrading from the personal mileage tracker:** the fleet manager starts from a fresh database. Its migration history was replaced by a new baseline, so remove the old database first (`docker compose down -v` deletes the `pgdata` volume) and re-enter your cars.
+
+Serve any hostname other than `localhost` over HTTPS through a reverse proxy (Caddy, Traefik, nginx) in front of the app, with `BETTER_AUTH_URL` set to the public URL. The proxy should forward `Host` (or `X-Forwarded-Host`) and `X-Forwarded-For` unchanged and set `Strict-Transport-Security`; the app sets the other security headers itself.
 
 Set `POSTGRES_PASSWORD` to something other than the example value before exposing the host to a network. Postgres is only published on `127.0.0.1`.
 
@@ -21,6 +48,7 @@ Set `POSTGRES_PASSWORD` to something other than the example value before exposin
 cp .env.example .env
 pnpm install
 docker compose up -d postgres
+docker compose --profile dev up -d mailpit   # optional: catches email, UI on http://localhost:8025
 pnpm db:migrate
 pnpm dev
 ```
@@ -45,11 +73,12 @@ pnpm db:migrate    # applies pending migrations to DATABASE_URL
 ```sh
 pnpm typecheck
 pnpm lint
-pnpm test:e2e      # Playwright; builds and serves a production build on :3100, needs Postgres up
+pnpm test:e2e      # Playwright; builds and serves a production build on :3100 and :3101
 ```
 
-The suite runs against a production build because the service worker is
-network-only in development. To run it against the docker compose app instead,
+The suite needs Postgres and Mailpit (`docker compose --profile dev up -d postgres mailpit`). It serves the build twice: on :3100 with email going to Mailpit, and on :3101 without SMTP for the copy-the-link fallback.
+
+The suite runs against a production build. To run it against the docker compose app instead,
 start the stack with auth rate limiting off (all tests share one IP) and point
 Playwright at it:
 
@@ -59,35 +88,6 @@ PLAYWRIGHT_BASE_URL=http://localhost:3000 pnpm test:e2e
 ```
 
 First-time Playwright setup: `pnpm exec playwright install chromium`.
-
-### PWA icons
-
-`public/icons/` is generated from `scripts/icon-source.svg`; after changing the
-source run `node scripts/generate-icons.mjs` and commit the PNGs.
-
-## Odometer scanning
-
-"Scan odometer" on the car page runs Tesseract.js in the browser (nothing is
-uploaded). `scripts/prepare-ocr-assets.mjs` stages the worker, WASM core and
-English model into `public/ocr/` before `pnpm dev` and `pnpm build`; the
-folder is git-ignored.
-
-## Migrating mileage from the legacy Firebase app
-
-`scripts/migrate-legacy-mileage.mts` copies the `mileage` subcollection of one
-legacy car (`cars/{id}/mileage`, fields `timestamp` and `value`) into a car in
-this app. Only the readings move; create the car here first and take its id
-from the URL.
-
-```sh
-export GOOGLE_APPLICATION_CREDENTIALS=~/car-stats-service-account.json   # or: gcloud auth application-default login
-pnpm migrate:legacy --legacy dmEz5yySfTldLPtPHWJU --car <new car uuid> --dry-run
-pnpm migrate:legacy --legacy dmEz5yySfTldLPtPHWJU --car <new car uuid>
-```
-
-Timestamps become calendar dates in `--tz` (default `Europe/Berlin`).
-Re-running is safe: readings that already exist with the same date and value
-are skipped.
 
 ## Docs for agents
 

@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 import { addCar } from "./helpers/cars";
-import { enableVirtualPasskeys, signUp } from "./helpers/passkey";
+import { setupOrganization } from "./helpers/org";
 
 const DAY_MS = 86_400_000;
 const daysAgo = (days: number) => new Date(Date.now() - days * DAY_MS).toISOString().slice(0, 10);
@@ -14,9 +14,8 @@ async function addReading(page: Page, odometer: number, date: string) {
   await expect(rows).toHaveCount(before + 1);
 }
 
-test.beforeEach(async ({ page }) => {
-  await enableVirtualPasskeys(page);
-  await signUp(page, `Analyst ${Date.now()}-${Math.random()}`);
+test.beforeEach(async ({ page, browser }) => {
+  await setupOrganization(page, browser);
 });
 
 test("statistics are derived from the readings", async ({ page }) => {

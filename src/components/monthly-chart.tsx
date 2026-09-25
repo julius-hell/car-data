@@ -2,10 +2,9 @@
 
 import { useFormatter, useTranslations } from "next-intl";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import type { Unit } from "@/lib/db/schema";
 import type { MonthDistance } from "@/lib/stats";
 
-export function MonthlyChart({ months, unit }: { months: MonthDistance[]; unit: Unit }) {
+export function MonthlyChart({ months, unit }: { months: MonthDistance[]; unit: string }) {
   const t = useTranslations("Stats");
   const format = useFormatter();
   const monthLabel = (month: string, style: "short" | "long") =>

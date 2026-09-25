@@ -8,16 +8,37 @@ import { authClient } from "@/lib/auth-client";
 import { BrandMark, Wordmark } from "@/components/brand";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { Button } from "@/components/ui/button";
+import type { Role } from "@/lib/roles";
 
-// The service worker keeps visited pages for offline use; drop them so a
-// shared device shows nothing of this account after sign-out.
-async function clearOfflineCaches() {
-  if (typeof caches === "undefined") return;
-  const keys = await caches.keys();
-  await Promise.all(keys.map((key) => caches.delete(key)));
+export type HeaderContext =
+  | { kind: "operator" }
+  | { kind: "member"; organizationName: string; role: Role }
+  | null;
+
+function navItems(context: HeaderContext) {
+  if (!context) return [];
+  if (context.kind === "operator") return [{ href: "/operator", key: "organizations" }] as const;
+  switch (context.role) {
+    case "admin":
+      return [
+        { href: "/dashboard", key: "dashboard" },
+        { href: "/cars", key: "cars" },
+        { href: "/damage", key: "damage" },
+        { href: "/team", key: "team" },
+        { href: "/interval-types", key: "intervalTypes" },
+      ] as const;
+    case "viewer":
+      return [
+        { href: "/dashboard", key: "dashboard" },
+        { href: "/cars", key: "cars" },
+        { href: "/damage", key: "damage" },
+      ] as const;
+    case "driver":
+      return [{ href: "/my-cars", key: "myCars" }] as const;
+  }
 }
 
-export function AppHeader({ userName }: { userName: string }) {
+export function AppHeader({ userName, context }: { userName: string; context: HeaderContext }) {
   const t = useTranslations("Header");
   const router = useRouter();
   const [pending, setPending] = useState(false);
@@ -25,19 +46,49 @@ export function AppHeader({ userName }: { userName: string }) {
   async function signOut() {
     setPending(true);
     await authClient.signOut();
-    await clearOfflineCaches();
     router.push("/login");
+    router.refresh();
   }
 
   return (
     <header className="bg-background/80 sticky top-0 z-10 border-b backdrop-blur">
-      <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-4 px-4 py-3">
-        <Link href="/" className="flex shrink-0 items-center gap-2.5">
-          <BrandMark />
-          <Wordmark className="text-lg" />
-        </Link>
+      <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3">
+        <div className="flex min-w-0 items-center gap-3">
+          <Link href="/" className="flex shrink-0 items-center gap-2.5">
+            <BrandMark />
+            <Wordmark className="hidden text-lg sm:inline" />
+          </Link>
+          {context && (
+            <span
+              data-testid="header-context"
+              className="bg-muted text-muted-foreground min-w-0 truncate rounded-md px-2 py-0.5 text-xs font-medium"
+            >
+              {context.kind === "operator" ? t("operator") : context.organizationName}
+            </span>
+          )}
+        </div>
+        <nav
+          aria-label={t("navigation")}
+          className="order-last -mx-2 flex w-[calc(100%+1rem)] items-center gap-1 overflow-x-auto sm:order-none sm:mx-0 sm:w-auto sm:flex-1"
+        >
+          {navItems(context).map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="text-muted-foreground hover:text-foreground rounded-md px-2 py-1 text-sm transition-colors"
+            >
+              {t(`nav.${item.key}`)}
+            </Link>
+          ))}
+        </nav>
         <div className="flex min-w-0 items-center gap-2">
-          <span className="text-muted-foreground min-w-0 truncate text-sm">{userName}</span>
+          <Link
+            href="/settings"
+            className="text-muted-foreground hover:text-foreground min-w-0 truncate text-sm transition-colors"
+            aria-label={t("settingsLabel", { name: userName })}
+          >
+            {userName}
+          </Link>
           <LocaleSwitcher />
           <Button
             type="button"

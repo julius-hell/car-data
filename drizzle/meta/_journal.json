@@ -5,43 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1789831945375,
-      "tag": "0000_complex_firelord",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1789832473878,
-      "tag": "0001_clear_strong_guy",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1789833706051,
-      "tag": "0002_colossal_crystal",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1789833828252,
-      "tag": "0003_spicy_madame_masque",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1789846187069,
-      "tag": "0004_naive_betty_ross",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1789930863268,
-      "tag": "0005_flowery_lilith",
+      "when": 1790367758628,
+      "tag": "0000_baseline",
       "breakpoints": true
     }
   ]

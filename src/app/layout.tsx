@@ -1,4 +1,3 @@
-import { SerwistProvider } from "@serwist/turbopack/react";
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
@@ -24,14 +23,6 @@ export async function generateMetadata(): Promise<Metadata> {
       template: `%s · ${t("appName")}`,
     },
     description: t("description"),
-    appleWebApp: {
-      capable: true,
-      statusBarStyle: "default",
-      title: t("appName"),
-    },
-    icons: {
-      apple: "/icons/apple-touch-icon.png",
-    },
     formatDetection: {
       telephone: false,
     },
@@ -56,9 +47,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="flex min-h-full flex-col">
         <NextIntlClientProvider>
-          <SerwistProvider swUrl="/serwist/sw.js" options={{ scope: "/" }}>
-            {children}
-          </SerwistProvider>
+          {children}
         </NextIntlClientProvider>
       </body>
     </html>

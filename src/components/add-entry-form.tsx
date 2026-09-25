@@ -9,28 +9,19 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { OdometerScanner } from "@/components/odometer-scanner";
-import type { Unit } from "@/lib/db/schema";
+import { localIsoDate } from "@/lib/local-date";
 
-function localIsoDate() {
-  const now = new Date();
-  const offsetMs = now.getTimezoneOffset() * 60_000;
-  return new Date(now.getTime() - offsetMs).toISOString().slice(0, 10);
-}
 
 const noopSubscribe = () => () => {};
 
 export function AddEntryForm({
   carId,
-  unit,
-  latest,
   autoFocus = false,
 }: {
   carId: string;
-  unit: Unit;
-  latest: number | null;
   autoFocus?: boolean;
 }) {
+  const unit = "km";
   const t = useTranslations("Entry");
   const format = useFormatter();
   const [state, action, pending] = useActionState<AddEntryState, FormData>(
@@ -96,12 +87,6 @@ export function AddEntryForm({
           onChange={update("note")}
         />
       </div>
-
-      <OdometerScanner
-        latest={latest}
-        unit={unit}
-        onRecognized={(value) => setFields((current) => ({ ...current, odometer: String(value) }))}
-      />
 
       {state.status === "error" && (
         <p role="alert" data-testid="entry-error" className="text-destructive text-sm">

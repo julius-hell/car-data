@@ -1,22 +1,11 @@
 import { drizzleAdapter } from "@better-auth/drizzle-adapter";
-import { passkey } from "@better-auth/passkey";
 import { betterAuth } from "better-auth";
-import { APIError } from "better-auth/api";
+import { APIError, createAuthMiddleware } from "better-auth/api";
 import { nextCookies } from "better-auth/next-js";
 import { db } from "@/lib/db";
 import * as schema from "@/lib/db/schema";
-
-const DISPLAY_NAME_MAX_LENGTH = 64;
-
-function parseDisplayName(context: string | null | undefined): string {
-  const name = context?.trim() ?? "";
-  if (name.length === 0 || name.length > DISPLAY_NAME_MAX_LENGTH) {
-    throw new APIError("BAD_REQUEST", {
-      message: `Enter a name between 1 and ${DISPLAY_NAME_MAX_LENGTH} characters.`,
-    });
-  }
-  return name;
-}
+import { resetPasswordEmail, verifyEmail } from "@/lib/email-templates";
+import { sendMail } from "@/lib/mail";
 
 export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_URL,
@@ -27,43 +16,44 @@ export const auth = betterAuth({
     // come from one IP, so they switch it off explicitly.
     enabled: process.env.BETTER_AUTH_RATE_LIMIT === "off" ? false : undefined,
   },
-  plugins: [
-    passkey({
-      rpID: process.env.PASSKEY_RP_ID,
-      rpName: process.env.PASSKEY_RP_NAME,
-      origin: process.env.BETTER_AUTH_URL,
-      authenticatorSelection: {
-        residentKey: "required",
-        userVerification: "preferred",
-      },
-      registration: {
-        requireSession: false,
-        // Runs before the ceremony for signed-out visitors. The id only becomes
-        // the WebAuthn user handle; the account itself is created afterwards so
-        // a cancelled ceremony leaves nothing behind.
-        resolveUser: async ({ context }) => {
-          const name = parseDisplayName(context);
-          return { id: crypto.randomUUID(), name, displayName: name };
-        },
-        afterVerification: async ({ ctx, user }) => {
-          const existing = await ctx.context.internalAdapter.findUserById(user.id);
-          if (existing) return;
-          // Better Auth requires a unique email on every user; this app never
-          // collects one, so store an unroutable placeholder.
-          const created = await ctx.context.internalAdapter.createUser(
-            {
-              name: user.name,
-              email: `${crypto.randomUUID()}@passkey.invalid`,
-              emailVerified: false,
-            },
-            { method: "passkey" },
-          );
-          return { userId: created.id };
-        },
-      },
+  emailAndPassword: {
+    enabled: true,
+    // Accounts only come from accepted invitations and the operator CLI.
+    disableSignUp: true,
+    revokeSessionsOnPasswordReset: true,
+    // Only verified addresses get reset links, so a mistyped email in an
+    // invitation can't be used to take over the account. Better Auth answers
+    // the request the same way either way.
+    sendResetPassword: async ({ user, url }) => {
+      if (!user.emailVerified) return;
+      await sendMail(
+        await resetPasswordEmail({ to: user.email, name: user.name, url, locale: (user as { locale?: string }).locale }),
+      );
+    },
+  },
+  emailVerification: {
+    sendVerificationEmail: async ({ user, url }) => {
+      await sendMail(
+        await verifyEmail({ to: user.email, name: user.name, url, locale: (user as { locale?: string }).locale }),
+      );
+    },
+  },
+  user: {
+    additionalFields: {
+      isOperator: { type: "boolean", defaultValue: false, input: false },
+      locale: { type: "string", required: false, input: false },
+      digestOptIn: { type: "boolean", defaultValue: true, input: false },
+    },
+  },
+  hooks: {
+    // Organizations, members and invitations live in the organization
+    // plugin's tables but are only written by the app's own server actions,
+    // which enforce one organization per user and the role rules.
+    before: createAuthMiddleware(async (ctx) => {
+      if (ctx.path.startsWith("/organization")) throw new APIError("NOT_FOUND");
     }),
-    nextCookies(),
-  ],
+  },
+  plugins: [nextCookies()],
 });
 
 export type Session = typeof auth.$Infer.Session;

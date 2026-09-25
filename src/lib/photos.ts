@@ -1,6 +1,7 @@
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import sharp from "sharp";
+import { carFilesDir } from "@/lib/files";
 
 export const PHOTO_MAX_BYTES = 15 * 1024 * 1024;
 export const PHOTO_VARIANTS = ["original", "display", "thumb"] as const;
@@ -29,14 +30,8 @@ const ACCEPTED_FORMATS: Record<string, string> = {
   heif: "image/heic",
 };
 
-function photoDir() {
-  return process.env.PHOTO_DIR ?? path.join(process.cwd(), "data", "photos");
-}
-
-// PHOTO_DIR is only known at runtime; the ignore comments stop Turbopack from
-// tracing the whole project into the standalone build.
 function carDir(carId: string) {
-  return path.join(/* turbopackIgnore: true */ photoDir(), carId);
+  return path.join(/* turbopackIgnore: true */ carFilesDir(carId), "photo");
 }
 
 export function photoPath(carId: string, variant: PhotoVariant) {

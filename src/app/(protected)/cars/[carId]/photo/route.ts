@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { findOwnedCar } from "@/lib/cars";
+import { can, getActor } from "@/lib/actor";
+import { findCar } from "@/lib/cars";
 import { db } from "@/lib/db";
 import { car } from "@/lib/db/schema";
 import {
@@ -30,8 +31,9 @@ export async function GET(request: Request, context: RouteContext<"/cars/[carId]
   const session = await getSession();
   if (!session) return new Response(null, { status: 401 });
 
+  const actor = await getActor();
   const { carId } = await context.params;
-  const owned = await findOwnedCar(session.user.id, carId);
+  const owned = actor && (await findCar(actor, carId));
   if (!owned?.photoContentType || !owned.photoUpdatedAt) return new Response(null, { status: 404 });
 
   const requested = new URL(request.url).searchParams.get("variant");
@@ -58,8 +60,9 @@ export async function POST(request: Request, context: RouteContext<"/cars/[carId
   if (!session) return json(401, { error: t("errorSignedOut") });
   if (!isSameOrigin(request)) return json(403, { error: t("errorCrossSite") });
 
+  const actor = await getActor();
   const { carId } = await context.params;
-  const owned = await findOwnedCar(session.user.id, carId);
+  const owned = actor && can(actor, "manageFleet") ? await findCar(actor, carId) : undefined;
   if (!owned) return json(404, { error: t("errorCarGone") });
 
   // Reject oversized bodies before reading them; the multipart wrapper is small.

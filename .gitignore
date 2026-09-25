@@ -44,12 +44,7 @@ next-env.d.ts
 # playwright
 /test-results/
 /playwright-report/
+/e2e/.auth/
 
 # car photos (local dev)
 /data/
-
-# tesseract assets staged by scripts/prepare-ocr-assets.mjs
-/public/ocr/
-
-# tesseract.js cache written when running OCR in Node
-/*.traineddata

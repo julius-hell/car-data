@@ -1,7 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 import { addCar } from "./helpers/cars";
 import { displayDate } from "./helpers/format";
-import { enableVirtualPasskeys, signUp } from "./helpers/passkey";
+import { setupOrganization } from "./helpers/org";
 
 const rows = (page: Page) => page.getByTestId("entries").locator("tbody tr");
 
@@ -16,10 +16,9 @@ async function addReading(
   await page.getByRole("button", { name: "Add reading" }).click();
 }
 
-test.beforeEach(async ({ page }) => {
-  await enableVirtualPasskeys(page);
-  await signUp(page, `Logger ${Date.now()}-${Math.random()}`);
-  const carId = await addCar(page, "Logbook", "mi");
+test.beforeEach(async ({ page, browser }) => {
+  await setupOrganization(page, browser);
+  const carId = await addCar(page, "Logbook");
   await page.goto(`/cars/${carId}`);
 });
 
@@ -36,7 +35,7 @@ test("a reading defaults to today and appears at the top with the unit", async (
   await addReading(page, 12345);
   await expect(rows(page)).toHaveCount(1);
   await expect(rows(page).first()).toContainText(displayDate(today));
-  await expect(rows(page).first()).toContainText("12,345 mi");
+  await expect(rows(page).first()).toContainText("12,345 km");
   await expect(page.getByLabel(/Odometer/)).toHaveValue("");
 });
 
@@ -63,14 +62,14 @@ test("a reading lower than the latest warns but can still be saved", async ({ pa
 
   await addReading(page, 49000, { date: "2026-02-02", note: "typo fix" });
   const warning = page.getByTestId("entry-warning");
-  await expect(warning).toContainText("49,000 mi is lower than the latest reading of 50,000 mi");
+  await expect(warning).toContainText("49,000 km is lower than the latest reading of 50,000 km");
   await expect(rows(page)).toHaveCount(1);
   await expect(page.getByLabel(/Odometer/)).toHaveValue("49000");
   await expect(page.getByLabel("Note (optional)")).toHaveValue("typo fix");
 
   await page.getByRole("button", { name: "Save anyway" }).click();
   await expect(rows(page)).toHaveCount(2);
-  await expect(rows(page).first()).toContainText("49,000 mi");
+  await expect(rows(page).first()).toContainText("49,000 km");
   await expect(warning).toBeHidden();
 });
 

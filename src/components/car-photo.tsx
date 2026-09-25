@@ -27,12 +27,14 @@ function RemoveButton() {
 
 export function CarPhoto({
   carId,
-  carName,
+  plate,
   photoUpdatedAt,
+  editable,
 }: {
   carId: string;
-  carName: string;
+  plate: string;
   photoUpdatedAt: Date | null;
+  editable: boolean;
 }) {
   const t = useTranslations("Photo");
   const router = useRouter();
@@ -68,7 +70,7 @@ export function CarPhoto({
           // eslint-disable-next-line @next/next/no-img-element -- served by our own ownership-checked route
           <img
             src={photoUrl(carId, "display", photoUpdatedAt)}
-            alt={t("alt", { name: carName })}
+            alt={t("alt", { name: plate })}
             data-testid="car-photo"
             className="absolute inset-0 size-full object-contain"
           />
@@ -81,34 +83,36 @@ export function CarPhoto({
           </div>
         )}
 
-        <div className="absolute bottom-3 left-3 flex flex-wrap items-center gap-2">
-          <input
-            id={inputId}
-            type="file"
-            accept="image/*"
-            className="sr-only"
-            aria-label={photoUpdatedAt ? t("change") : t("add")}
-            onChange={(event) => {
-              upload(event.target.files?.[0]);
-              event.target.value = "";
-            }}
-          />
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            disabled={uploading}
-            className="bg-background/85 backdrop-blur dark:bg-background/85"
-            onClick={() => document.getElementById(inputId)?.click()}
-          >
-            {uploading ? t("uploading") : photoUpdatedAt ? t("change") : t("add")}
-          </Button>
-          {photoUpdatedAt && (
-            <form action={removeCarPhoto.bind(null, carId)}>
-              <RemoveButton />
-            </form>
-          )}
-        </div>
+        {editable && (
+          <div className="absolute bottom-3 left-3 flex flex-wrap items-center gap-2">
+            <input
+              id={inputId}
+              type="file"
+              accept="image/*"
+              className="sr-only"
+              aria-label={photoUpdatedAt ? t("change") : t("add")}
+              onChange={(event) => {
+                upload(event.target.files?.[0]);
+                event.target.value = "";
+              }}
+            />
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={uploading}
+              className="bg-background/85 backdrop-blur dark:bg-background/85"
+              onClick={() => document.getElementById(inputId)?.click()}
+            >
+              {uploading ? t("uploading") : photoUpdatedAt ? t("change") : t("add")}
+            </Button>
+            {photoUpdatedAt && (
+              <form action={removeCarPhoto.bind(null, carId)}>
+                <RemoveButton />
+              </form>
+            )}
+          </div>
+        )}
       </div>
 
       {error && (

@@ -1,4 +1,3 @@
-import { withSerwist } from "@serwist/turbopack";
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 
@@ -18,9 +17,13 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  experimental: {
+    // Documents are uploaded with their form (up to 15 MB per file).
+    serverActions: { bodySizeLimit: "50mb" },
+  },
   async headers() {
     return [{ source: "/(.*)", headers: securityHeaders }];
   },
 };
 
-export default withNextIntl(withSerwist(nextConfig));
+export default withNextIntl(nextConfig);
