@@ -13,7 +13,8 @@
       "organizations": "Organizations",
       "cars": "Cars",
       "team": "Team",
-      "myCars": "My cars"
+      "myCars": "My cars",
+      "intervalTypes": "Intervals"
     }
   },
   "Auth": {
@@ -475,5 +476,34 @@
     "errorFileTooLarge": "Each file must be 15 MB or smaller.",
     "errorFileType": "Only PDFs and photos (JPEG, PNG, WebP, HEIC) can be attached.",
     "errorTooManyFiles": "A completion can have at most 10 files."
+  },
+  "IntervalTypes": {
+    "title": "Interval types",
+    "eyebrow": "Settings",
+    "heading": "Interval types",
+    "description": "Defaults for every car or driver that tracks a type. A car's own period overrides them.",
+    "name": "Name",
+    "subject": "Applies to",
+    "subjects": {
+      "car": "Cars",
+      "driver": "Drivers"
+    },
+    "builtIn": "built-in",
+    "periodMonths": "Every (months)",
+    "periodKm": "or every (km)",
+    "dueSoonDays": "Due soon (days before)",
+    "dueSoonKm": "Due soon (km before)",
+    "save": "Save",
+    "saved": "Saved.",
+    "add": "Add interval type",
+    "newTitle": "New interval type",
+    "newDescription": "For example a first-aid kit check, tyre change or tachograph. Driver types are tracked for everyone who drives a company car.",
+    "delete": "Delete",
+    "deleteLabel": "Delete {name}",
+    "errorName": "Enter a name of up to 64 characters.",
+    "errorPeriod": "Enter a period of 1 to 240 months (and km above zero).",
+    "errorWindow": "Enter the due-soon window as a whole number (up to 365 days).",
+    "errorSubject": "Choose cars or drivers.",
+    "errorInUse": "This type is tracked for a car or driver and can't be deleted."
   }
 }

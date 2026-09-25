@@ -23,6 +23,7 @@ function navItems(context: HeaderContext) {
       return [
         { href: "/cars", key: "cars" },
         { href: "/team", key: "team" },
+        { href: "/interval-types", key: "intervalTypes" },
       ] as const;
     case "viewer":
       return [{ href: "/cars", key: "cars" }] as const;

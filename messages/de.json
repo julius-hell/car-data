@@ -13,7 +13,8 @@
       "organizations": "Organisationen",
       "cars": "Fahrzeuge",
       "team": "Team",
-      "myCars": "Meine Fahrzeuge"
+      "myCars": "Meine Fahrzeuge",
+      "intervalTypes": "Fristen"
     }
   },
   "Auth": {
@@ -475,5 +476,34 @@
     "errorFileTooLarge": "Jede Datei darf höchstens 15 MB groß sein.",
     "errorFileType": "Nur PDFs und Fotos (JPEG, PNG, WebP, HEIC) können angehängt werden.",
     "errorTooManyFiles": "Eine Erledigung kann höchstens 10 Dateien haben."
+  },
+  "IntervalTypes": {
+    "title": "Fristarten",
+    "eyebrow": "Einstellungen",
+    "heading": "Fristarten",
+    "description": "Standards für jedes Fahrzeug und jede Person, die eine Frist verfolgt. Ein eigener Zeitraum am Fahrzeug hat Vorrang.",
+    "name": "Name",
+    "subject": "Gilt für",
+    "subjects": {
+      "car": "Fahrzeuge",
+      "driver": "Fahrer:innen"
+    },
+    "builtIn": "eingebaut",
+    "periodMonths": "Alle (Monate)",
+    "periodKm": "oder alle (km)",
+    "dueSoonDays": "Bald fällig (Tage vorher)",
+    "dueSoonKm": "Bald fällig (km vorher)",
+    "save": "Speichern",
+    "saved": "Gespeichert.",
+    "add": "Fristart hinzufügen",
+    "newTitle": "Neue Fristart",
+    "newDescription": "Zum Beispiel Verbandkasten, Reifenwechsel oder Tachograph. Fahrer-Fristen gelten für alle, die ein Firmenfahrzeug fahren.",
+    "delete": "Löschen",
+    "deleteLabel": "{name} löschen",
+    "errorName": "Gib einen Namen mit höchstens 64 Zeichen ein.",
+    "errorPeriod": "Gib einen Zeitraum von 1 bis 240 Monaten ein (und km über null).",
+    "errorWindow": "Gib das Vorwarnfenster als ganze Zahl ein (höchstens 365 Tage).",
+    "errorSubject": "Wähle Fahrzeuge oder Fahrer:innen.",
+    "errorInUse": "Diese Fristart wird für ein Fahrzeug oder eine Person verfolgt und kann nicht gelöscht werden."
   }
 }
