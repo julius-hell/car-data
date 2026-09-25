@@ -7,6 +7,7 @@ import { FormMessage } from "@/components/form-message";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ActionForm } from "@/components/action-form";
 
 export function ForgotPasswordForm() {
   const t = useTranslations("Auth");
@@ -21,7 +22,7 @@ export function ForgotPasswordForm() {
   }
 
   return (
-    <form action={action} className="flex flex-col gap-3">
+    <ActionForm action={action} className="flex flex-col gap-3">
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="email">{t("email")}</Label>
         <Input id="email" name="email" type="email" autoComplete="username" required />
@@ -29,6 +30,6 @@ export function ForgotPasswordForm() {
       <Button type="submit" disabled={pending} className="w-full">
         {pending ? t("sending") : t("sendResetLink")}
       </Button>
-    </form>
+    </ActionForm>
   );
 }

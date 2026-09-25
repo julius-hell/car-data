@@ -207,7 +207,11 @@
     "digestOff": "The weekly digest is turned off.",
     "digestTurnOn": "Turn on",
     "digestTurnOff": "Turn off",
-    "digestNeedsVerification": "Confirm your email address to receive it."
+    "digestNeedsVerification": "Confirm your email address to receive it.",
+    "calendar": "Calendar",
+    "calendarDescription": "Subscribe to this address in Outlook, Google Calendar or Apple Calendar to see the due dates you're responsible for. Keep it private: anyone with the link can read it.",
+    "calendarUrl": "Calendar subscription URL",
+    "calendarRegenerate": "New address"
   },
   "Common": {
     "copy": "Copy",
@@ -660,5 +664,11 @@
     "noDueDate": "no due date set",
     "projectedOver": "projected {km, number} km over by the end",
     "allowanceOk": "within the allowance"
+  },
+  "Calendar": {
+    "name": "Car Data · {organization}",
+    "event": "{name} · {subject}",
+    "dueInMonth": "{name} due in {month} · {subject}",
+    "contractEnd": "Contract end"
   }
 }

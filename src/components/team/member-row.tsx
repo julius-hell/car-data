@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { ROLES, type Role } from "@/lib/roles";
+import { ActionForm } from "@/components/action-form";
 
 export type MemberRowData = {
   userId: string;
@@ -74,7 +75,7 @@ export function MemberRow({ member }: { member: MemberRowData }) {
             </p>
           )}
         </div>
-        <form action={roleAction} className="flex items-center gap-2">
+        <ActionForm action={roleAction} className="flex items-center gap-2">
           <NativeSelect
             name="role"
             defaultValue={member.role}
@@ -90,7 +91,7 @@ export function MemberRow({ member }: { member: MemberRowData }) {
           <Button type="submit" variant="outline" size="sm" disabled={rolePending}>
             {t("saveRole")}
           </Button>
-        </form>
+        </ActionForm>
       </div>
       <div className="flex flex-wrap items-start gap-2">
         <ResetLinkButton action={createMemberResetLink.bind(null, member.userId)} name={member.name} />

@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ROLES } from "@/lib/roles";
+import { ActionForm } from "@/components/action-form";
 
 export function InviteMemberForm() {
   const t = useTranslations("Team");
@@ -16,7 +17,7 @@ export function InviteMemberForm() {
   const [state, action, pending] = useActionState<InviteState, FormData>(inviteMember, { status: "idle" });
 
   return (
-    <form action={action} className="flex flex-col gap-4" noValidate key={state.status === "invited" ? state.name : "form"}>
+    <ActionForm action={action} className="flex flex-col gap-4" noValidate key={state.status === "invited" ? state.name : "form"}>
       <div className="grid gap-4 sm:grid-cols-[1fr_1fr_auto]">
         <div className="flex flex-col gap-1.5">
           <Label htmlFor="invite-name">{t("name")}</Label>
@@ -50,6 +51,6 @@ export function InviteMemberForm() {
       <Button type="submit" disabled={pending} className="sm:self-start">
         {pending ? t("inviting") : t("invite")}
       </Button>
-    </form>
+    </ActionForm>
   );
 }

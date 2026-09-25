@@ -5,7 +5,10 @@ import { LocaleSwitcher } from "@/components/locale-switcher";
 import { Button } from "@/components/ui/button";
 import { getMembership } from "@/lib/actor";
 import { isEmailEnabled } from "@/lib/mail";
-import { setDigestOptIn } from "./actions";
+import { CopyField } from "@/components/copy-field";
+import { appUrl } from "@/lib/app-url";
+import { calendarPath, ensureCalendarToken } from "@/lib/calendar";
+import { regenerateCalendarUrl, setDigestOptIn } from "./actions";
 import { requireSession } from "@/lib/session";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -18,6 +21,8 @@ export default async function SettingsPage() {
   const [t, membership] = await Promise.all([getTranslations("Settings"), getMembership()]);
   // The digest is for admins, and only exists where email can be sent.
   const showDigest = membership?.role === "admin" && isEmailEnabled();
+  const calendarToken =
+    membership?.organizationStatus === "active" ? await ensureCalendarToken(user.id) : null;
 
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-4 py-8">
@@ -36,6 +41,18 @@ export default async function SettingsPage() {
           <LocaleSwitcher />
         </div>
       </section>
+      {calendarToken && (
+        <section className="bg-card flex flex-col gap-3 rounded-xl border p-4 shadow-xs sm:p-5" data-testid="calendar-setting">
+          <h2 className="text-muted-foreground text-xs font-medium tracking-wider uppercase">{t("calendar")}</h2>
+          <p className="text-muted-foreground text-sm">{t("calendarDescription")}</p>
+          <CopyField value={appUrl(calendarPath(calendarToken))} label={t("calendarUrl")} testId="calendar-url" />
+          <form action={regenerateCalendarUrl}>
+            <Button type="submit" variant="outline" size="sm">
+              {t("calendarRegenerate")}
+            </Button>
+          </form>
+        </section>
+      )}
       {showDigest && (
         <section className="bg-card flex flex-col gap-3 rounded-xl border p-4 shadow-xs sm:p-5" data-testid="digest-setting">
           <h2 className="text-muted-foreground text-xs font-medium tracking-wider uppercase">{t("digest")}</h2>

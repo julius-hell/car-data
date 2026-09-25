@@ -20,6 +20,7 @@ import { Label } from "@/components/ui/label";
 import type { DuePrecision } from "@/lib/due";
 
 import type { CompletionState as State } from "@/lib/completion-form";
+import { ActionForm } from "@/components/action-form";
 
 export type CompletionDefaults = {
   completedOn: string;
@@ -71,7 +72,7 @@ export function CompletionDialog({
         {triggerLabel}
       </DialogTrigger>
       <DialogContent className="max-h-[90dvh] overflow-y-auto">
-        <form action={formAction} className="flex flex-col gap-4" noValidate>
+        <ActionForm action={formAction} className="flex flex-col gap-4" noValidate>
           <DialogHeader>
             <DialogTitle>{defaults ? t("editTitle", { name }) : t("recordTitle", { name })}</DialogTitle>
             <DialogDescription>{t("description")}</DialogDescription>
@@ -190,7 +191,7 @@ export function CompletionDialog({
               {pending ? t("saving") : t("save")}
             </Button>
           </DialogFooter>
-        </form>
+        </ActionForm>
       </DialogContent>
     </Dialog>
   );

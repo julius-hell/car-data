@@ -7,6 +7,7 @@ import { FormMessage } from "@/components/form-message";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ActionForm } from "@/components/action-form";
 
 export function RenameOrganizationForm({ name }: { name: string }) {
   const t = useTranslations("Team");
@@ -15,7 +16,7 @@ export function RenameOrganizationForm({ name }: { name: string }) {
   });
 
   return (
-    <form action={action} className="flex flex-col gap-3 sm:flex-row sm:items-end" noValidate>
+    <ActionForm action={action} className="flex flex-col gap-3 sm:flex-row sm:items-end" noValidate>
       <div className="flex flex-1 flex-col gap-1.5">
         <Label htmlFor="organization-name">{t("organizationName")}</Label>
         <Input id="organization-name" name="name" defaultValue={name} maxLength={100} />
@@ -25,6 +26,6 @@ export function RenameOrganizationForm({ name }: { name: string }) {
       </Button>
       {state.status === "error" && <FormMessage kind="error">{t("errorOrganizationName")}</FormMessage>}
       {state.status === "saved" && <FormMessage kind="success">{t("renamed")}</FormMessage>}
-    </form>
+    </ActionForm>
   );
 }

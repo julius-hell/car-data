@@ -6,6 +6,7 @@ import { resolveDamage, type DamageState } from "@/app/(protected)/damage/action
 import { FormMessage } from "@/components/form-message";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { ActionForm } from "@/components/action-form";
 
 export function ResolveDamageForm({ reportId }: { reportId: string }) {
   const t = useTranslations("Damage");
@@ -13,7 +14,7 @@ export function ResolveDamageForm({ reportId }: { reportId: string }) {
     status: "idle",
   });
   return (
-    <form action={action} className="flex flex-col gap-1">
+    <ActionForm action={action} className="flex flex-col gap-1">
       <div className="flex flex-wrap items-center gap-2">
         <Input name="resolutionNote" placeholder={t("resolutionPlaceholder")} aria-label={t("resolutionNote")} className="max-w-sm" />
         <Button type="submit" variant="outline" size="sm" disabled={pending}>
@@ -21,6 +22,6 @@ export function ResolveDamageForm({ reportId }: { reportId: string }) {
         </Button>
       </div>
       {state.status === "error" && <FormMessage kind="error">{t(state.message)}</FormMessage>}
-    </form>
+    </ActionForm>
   );
 }

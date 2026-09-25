@@ -1,37 +1,19 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
-import { authClient, authErrorKey } from "@/lib/auth-client";
+import { useActionState } from "react";
+import { signIn, type SignInState } from "@/app/login/actions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ActionForm } from "@/components/action-form";
 
 export function SignInForm({ next = "/" }: { next?: string }) {
   const t = useTranslations("Auth");
-  const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
-  const [pending, setPending] = useState(false);
-
-  async function submit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const form = new FormData(event.currentTarget);
-    setError(null);
-    setPending(true);
-    const { error } = await authClient.signIn.email({
-      email: String(form.get("email") ?? "").trim(),
-      password: String(form.get("password") ?? ""),
-    });
-    if (error) {
-      setPending(false);
-      setError(t(authErrorKey(error.code)));
-      return;
-    }
-    router.push(next);
-    router.refresh();
-  }
+  const [state, action, pending] = useActionState<SignInState, FormData>(signIn.bind(null, next), {
+    status: "idle",
+  });
 
   return (
     <Card className="w-full shadow-sm">
@@ -40,30 +22,24 @@ export function SignInForm({ next = "/" }: { next?: string }) {
         <CardDescription>{t("signInDescription")}</CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={submit} className="flex flex-col gap-3">
+        <ActionForm action={action} className="flex flex-col gap-3">
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="email">{t("email")}</Label>
             <Input id="email" name="email" type="email" autoComplete="username" required />
           </div>
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="password">{t("password")}</Label>
-            <Input
-              id="password"
-              name="password"
-              type="password"
-              autoComplete="current-password"
-              required
-            />
+            <Input id="password" name="password" type="password" autoComplete="current-password" required />
           </div>
-          {error && (
+          {state.status === "error" && (
             <p role="alert" data-testid="auth-error" className="text-destructive text-sm">
-              {error}
+              {t(state.message)}
             </p>
           )}
           <Button type="submit" disabled={pending} className="w-full">
             {pending ? t("signingIn") : t("signInButton")}
           </Button>
-        </form>
+        </ActionForm>
       </CardContent>
     </Card>
   );

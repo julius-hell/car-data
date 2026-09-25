@@ -18,6 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { Contract, ContractKind } from "@/lib/db/schema";
+import { ActionForm } from "@/components/action-form";
 
 const KINDS: ContractKind[] = ["owned", "leased", "financed", "rented"];
 const SERVICES = ["maintenance", "tyres", "insurance", "vehicle_tax"] as const;
@@ -67,7 +68,7 @@ export function ContractDialog({ carId, contract }: { carId: string; contract: C
         {contract ? t("edit") : t("add")}
       </DialogTrigger>
       <DialogContent className="max-h-[90dvh] overflow-y-auto">
-        <form action={action} className="flex flex-col gap-4" noValidate>
+        <ActionForm action={action} className="flex flex-col gap-4" noValidate>
           <DialogHeader>
             <DialogTitle>{t("dialogTitle")}</DialogTitle>
             <DialogDescription>{t("dialogDescription")}</DialogDescription>
@@ -181,7 +182,7 @@ export function ContractDialog({ carId, contract }: { carId: string; contract: C
               {t("save")}
             </Button>
           </DialogFooter>
-        </form>
+        </ActionForm>
       </DialogContent>
     </Dialog>
   );

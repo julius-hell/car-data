@@ -18,6 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { localIsoDate } from "@/lib/local-date";
+import { ActionForm } from "@/components/action-form";
 
 const REASONS = ["sold", "returned", "scrapped", "other"] as const;
 const noopSubscribe = () => () => {};
@@ -40,7 +41,7 @@ export function RetireCarDialog({ carId, plate }: { carId: string; plate: string
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger render={<Button variant="outline" />}>{t("retire")}</DialogTrigger>
       <DialogContent>
-        <form action={action} className="flex flex-col gap-4">
+        <ActionForm action={action} className="flex flex-col gap-4">
           <DialogHeader>
             <DialogTitle>{t("retireTitle", { plate })}</DialogTitle>
             <DialogDescription>{t("retireDescription")}</DialogDescription>
@@ -67,7 +68,7 @@ export function RetireCarDialog({ carId, plate }: { carId: string; plate: string
               {t("retireConfirm")}
             </Button>
           </DialogFooter>
-        </form>
+        </ActionForm>
       </DialogContent>
     </Dialog>
   );

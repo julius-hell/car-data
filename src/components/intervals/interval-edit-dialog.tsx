@@ -17,6 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { DuePrecision } from "@/lib/due";
+import { ActionForm } from "@/components/action-form";
 
 export function IntervalEditDialog({
   action,
@@ -55,7 +56,7 @@ export function IntervalEditDialog({
         {t("edit")}
       </DialogTrigger>
       <DialogContent>
-        <form action={formAction} className="flex flex-col gap-4" noValidate>
+        <ActionForm action={formAction} className="flex flex-col gap-4" noValidate>
           <DialogHeader>
             <DialogTitle>{interval.name}</DialogTitle>
             <DialogDescription>{t("editDescription")}</DialogDescription>
@@ -127,7 +128,7 @@ export function IntervalEditDialog({
               {t("save")}
             </Button>
           </DialogFooter>
-        </form>
+        </ActionForm>
       </DialogContent>
     </Dialog>
   );

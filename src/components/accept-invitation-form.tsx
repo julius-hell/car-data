@@ -11,6 +11,7 @@ import { FormMessage } from "@/components/form-message";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ActionForm } from "@/components/action-form";
 
 export function AcceptInvitationForm({
   invitationId,
@@ -33,7 +34,7 @@ export function AcceptInvitationForm({
   );
 
   return (
-    <form action={action} className="flex flex-col gap-3" noValidate>
+    <ActionForm action={action} className="flex flex-col gap-3" noValidate>
       {proof && <input type="hidden" name="proof" value={proof} />}
       {hasAccount ? (
         <p className="text-muted-foreground text-sm" data-testid="invite-existing-account">
@@ -67,6 +68,6 @@ export function AcceptInvitationForm({
       <Button type="submit" disabled={pending} className="w-full">
         {pending ? t("joining") : t("join")}
       </Button>
-    </form>
+    </ActionForm>
   );
 }

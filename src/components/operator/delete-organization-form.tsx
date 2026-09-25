@@ -7,6 +7,7 @@ import { FormMessage } from "@/components/form-message";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ActionForm } from "@/components/action-form";
 
 export function DeleteOrganizationForm({ organizationId, name }: { organizationId: string; name: string }) {
   const t = useTranslations("Operator");
@@ -16,7 +17,7 @@ export function DeleteOrganizationForm({ organizationId, name }: { organizationI
   );
 
   return (
-    <form action={action} className="flex flex-col gap-3">
+    <ActionForm action={action} className="flex flex-col gap-3">
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="confirm-name">{t("deleteConfirmLabel", { name })}</Label>
         <Input id="confirm-name" name="confirmName" autoComplete="off" />
@@ -29,6 +30,6 @@ export function DeleteOrganizationForm({ organizationId, name }: { organizationI
       <Button type="submit" variant="destructive" disabled={pending} className="sm:self-start">
         {t("deletePermanently")}
       </Button>
-    </form>
+    </ActionForm>
   );
 }

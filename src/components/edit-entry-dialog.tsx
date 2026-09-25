@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ActionForm } from "@/components/action-form";
 
 export function EditEntryDialog({
   entry,
@@ -44,7 +45,7 @@ export function EditEntryDialog({
         <PencilIcon className="size-4" />
       </DialogTrigger>
       <DialogContent>
-        <form action={action} className="flex flex-col gap-4" noValidate>
+        <ActionForm action={action} className="flex flex-col gap-4" noValidate>
           <DialogHeader>
             <DialogTitle>{t("editTitle")}</DialogTitle>
           </DialogHeader>
@@ -79,7 +80,7 @@ export function EditEntryDialog({
               {pending ? t("saving") : t("save")}
             </Button>
           </DialogFooter>
-        </form>
+        </ActionForm>
       </DialogContent>
     </Dialog>
   );

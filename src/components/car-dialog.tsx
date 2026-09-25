@@ -17,6 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { Car } from "@/lib/db/schema";
+import { ActionForm } from "@/components/action-form";
 
 type Values = Pick<Car, "licencePlate" | "make" | "model" | "vin" | "firstRegistration" | "costCenter" | "location">;
 
@@ -61,7 +62,7 @@ export function CarDialog({ car }: { car?: Values & { id: string } }) {
         {car ? t("edit") : t("addCar")}
       </DialogTrigger>
       <DialogContent className="max-h-[90dvh] overflow-y-auto">
-        <form action={action} className="flex flex-col gap-4" noValidate>
+        <ActionForm action={action} className="flex flex-col gap-4" noValidate>
           <DialogHeader>
             <DialogTitle>{car ? t("editTitle", { plate: car.licencePlate }) : t("dialogTitle")}</DialogTitle>
             <DialogDescription>{t("dialogDescription")}</DialogDescription>
@@ -149,7 +150,7 @@ export function CarDialog({ car }: { car?: Values & { id: string } }) {
               {pending ? t("saving") : car ? t("save") : t("addCar")}
             </Button>
           </DialogFooter>
-        </form>
+        </ActionForm>
       </DialogContent>
     </Dialog>
   );

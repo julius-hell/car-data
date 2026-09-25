@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ActionForm } from "@/components/action-form";
 
 export function ReturnDialog({ carId }: { carId: string }) {
   const t = useTranslations("Contracts");
@@ -34,7 +35,7 @@ export function ReturnDialog({ carId }: { carId: string }) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger render={<Button variant="outline" size="sm" />}>{t("recordReturn")}</DialogTrigger>
       <DialogContent>
-        <form action={action} className="flex flex-col gap-4" noValidate>
+        <ActionForm action={action} className="flex flex-col gap-4" noValidate>
           <DialogHeader>
             <DialogTitle>{t("returnTitle")}</DialogTitle>
             <DialogDescription>{t("returnDescription")}</DialogDescription>
@@ -73,7 +74,7 @@ export function ReturnDialog({ carId }: { carId: string }) {
               {t("recordReturn")}
             </Button>
           </DialogFooter>
-        </form>
+        </ActionForm>
       </DialogContent>
     </Dialog>
   );

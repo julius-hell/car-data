@@ -207,7 +207,11 @@
     "digestOff": "Die wöchentliche Übersicht ist ausgeschaltet.",
     "digestTurnOn": "Einschalten",
     "digestTurnOff": "Ausschalten",
-    "digestNeedsVerification": "Bestätige deine E-Mail-Adresse, um sie zu bekommen."
+    "digestNeedsVerification": "Bestätige deine E-Mail-Adresse, um sie zu bekommen.",
+    "calendar": "Kalender",
+    "calendarDescription": "Abonniere diese Adresse in Outlook, Google Kalender oder Apple Kalender, um die Fälligkeiten zu sehen, für die du zuständig bist. Halte sie geheim: Wer den Link hat, kann ihn lesen.",
+    "calendarUrl": "Kalender-Abo-Adresse",
+    "calendarRegenerate": "Neue Adresse"
   },
   "Common": {
     "copy": "Kopieren",
@@ -660,5 +664,11 @@
     "noDueDate": "keine Fälligkeit hinterlegt",
     "projectedOver": "voraussichtlich {km, number} km über der Leistung",
     "allowanceOk": "innerhalb der Kilometerleistung"
+  },
+  "Calendar": {
+    "name": "Car Data · {organization}",
+    "event": "{name} · {subject}",
+    "dueInMonth": "{name} fällig im {month} · {subject}",
+    "contractEnd": "Vertragsende"
   }
 }

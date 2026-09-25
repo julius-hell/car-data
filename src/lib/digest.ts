@@ -1,13 +1,12 @@
 import { and, eq } from "drizzle-orm";
-import { createTranslator } from "next-intl";
 import type { Actor } from "@/lib/actor";
 import { appUrl } from "@/lib/app-url";
 import { db } from "@/lib/db";
 import { member, organization, user } from "@/lib/db/schema";
 import { collectDueItems, dueItemLink, type DueItem } from "@/lib/due-items";
-import { defaultLocale, isLocale, type Locale } from "@/i18n/config";
 import { intervalTypeName } from "@/lib/interval-names";
 import { isEmailEnabled, sendMail, type Mail } from "@/lib/mail";
+import { translatorsFor } from "@/lib/translators";
 
 type Recipient = Actor & { locale: string | null };
 
@@ -38,24 +37,12 @@ async function recipients(): Promise<Recipient[]> {
   }));
 }
 
-async function translators(locale: string | null) {
-  const resolved: Locale = isLocale(locale) ? locale : defaultLocale;
-  const messages = (await import(`../../messages/${resolved}.json`)).default;
-  return {
-    locale: resolved,
-    email: createTranslator({ locale: resolved, messages, namespace: "Email" }),
-    dashboard: createTranslator({ locale: resolved, messages, namespace: "Dashboard" }),
-    intervals: createTranslator({ locale: resolved, messages, namespace: "Intervals" }),
-    due: createTranslator({ locale: resolved, messages, namespace: "Due" }),
-  };
-}
-
 function escapeHtml(value: string) {
   return value.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 }
 
 export async function composeDigest(recipient: Recipient, items: DueItem[]): Promise<Mail> {
-  const t = await translators(recipient.locale);
+  const t = await translatorsFor(recipient.locale);
   const dates = new Intl.DateTimeFormat(t.locale, { dateStyle: "medium", timeZone: "UTC" });
   const months = new Intl.DateTimeFormat(t.locale, { month: "long", year: "numeric", timeZone: "UTC" });
   const when = (item: DueItem) => {

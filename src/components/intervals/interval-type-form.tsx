@@ -14,6 +14,7 @@ import { NativeSelect } from "@/components/native-select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ActionForm } from "@/components/action-form";
 
 type TypeValues = {
   id: string;
@@ -53,7 +54,7 @@ export function IntervalTypeForm({ type }: { type?: TypeValues }) {
   const prefix = type ? `type-${type.id}` : "new-type";
 
   return (
-    <form action={action} className="flex flex-col gap-3" noValidate key={formKey}>
+    <ActionForm action={action} className="flex flex-col gap-3" noValidate key={formKey}>
       <div className="grid gap-3 sm:grid-cols-2">
         {!type?.builtIn && (
           <div className="flex flex-col gap-1.5">
@@ -95,7 +96,7 @@ export function IntervalTypeForm({ type }: { type?: TypeValues }) {
       <Button type="submit" variant={type ? "outline" : "default"} size="sm" disabled={pending} className="self-start">
         {type ? t("save") : t("add")}
       </Button>
-    </form>
+    </ActionForm>
   );
 }
 
@@ -106,7 +107,7 @@ export function DeleteIntervalTypeButton({ typeId, name }: { typeId: string; nam
     { status: "idle" },
   );
   return (
-    <form action={action} className="flex flex-col gap-1">
+    <ActionForm action={action} className="flex flex-col gap-1">
       <Button
         type="submit"
         variant="ghost"
@@ -122,6 +123,6 @@ export function DeleteIntervalTypeButton({ typeId, name }: { typeId: string; nam
           {t(state.message)}
         </FormMessage>
       )}
-    </form>
+    </ActionForm>
   );
 }

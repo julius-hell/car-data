@@ -20,6 +20,8 @@ export const user = pgTable("user", {
   locale: text("locale"),
   // Admins get the weekly digest unless they turn it off.
   digestOptIn: boolean("digest_opt_in").default(true).notNull(),
+  // The secret in the member's calendar feed URL; replaced to revoke it.
+  calendarToken: text("calendar_token").unique(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()

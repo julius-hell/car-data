@@ -9,6 +9,7 @@ import { NativeSelect } from "@/components/native-select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ActionForm } from "@/components/action-form";
 
 export function AssignForm({ carId, members }: { carId: string; members: { userId: string; name: string }[] }) {
   const t = useTranslations("Assignments");
@@ -19,7 +20,7 @@ export function AssignForm({ carId, members }: { carId: string; members: { userI
   if (members.length === 0) return <p className="text-muted-foreground text-sm">{t("nobodyToAssign")}</p>;
 
   return (
-    <form action={action} className="flex flex-col gap-3" noValidate>
+    <ActionForm action={action} className="flex flex-col gap-3" noValidate>
       <div className="grid gap-3 sm:grid-cols-[1fr_auto_auto_auto] sm:items-end">
         <div className="flex flex-col gap-1.5">
           <Label htmlFor="assign-member">{t("driver")}</Label>
@@ -48,6 +49,6 @@ export function AssignForm({ carId, members }: { carId: string; members: { userI
           {t(state.message)}
         </FormMessage>
       )}
-    </form>
+    </ActionForm>
   );
 }

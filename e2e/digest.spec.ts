@@ -45,11 +45,12 @@ test("no digest when nothing is due, when turned off, or without a verified addr
   const other = await browser.newContext();
   const optedOutPage = await other.newPage();
   const optedOut = await verifiedAdmin(optedOutPage, browser);
-  await addCar(optedOutPage, "OP-T 1", { ...quiet, nextHu: monthOf(inMonths(-1)) });
+  // Opt out before anything is due: other tests trigger the digest at any time.
   await optedOutPage.goto("/settings");
   await expect(optedOutPage.getByTestId("digest-state")).toContainText("every Monday");
   await optedOutPage.getByRole("button", { name: "Turn off" }).click();
   await expect(optedOutPage.getByTestId("digest-state")).toHaveText("The weekly digest is turned off.");
+  await addCar(optedOutPage, "OP-T 1", { ...quiet, nextHu: monthOf(inMonths(-1)) });
 
   const third = await browser.newContext();
   const unverifiedPage = await third.newPage();
@@ -60,7 +61,7 @@ test("no digest when nothing is due, when turned off, or without a verified addr
   // A digest for anyone else in this run proves the trigger has gone through.
   await page.waitForTimeout(1500);
   for (const email of [quietOrg.admin.email, optedOut.admin.email, unverified.admin.email]) {
-    expect(await countEmails(email, "attention")).toBe(0);
+    expect(await countEmails(email, "attention"), email).toBe(0);
   }
   await other.close();
   await third.close();
