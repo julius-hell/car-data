@@ -155,6 +155,36 @@ export type IntervalType = typeof intervalType.$inferSelect;
 export type Interval = typeof interval.$inferSelect;
 export type BuiltInInterval = NonNullable<IntervalType["builtIn"]>;
 
+export const contractKindEnum = pgEnum("contract_kind", ["owned", "leased", "financed", "rented"]);
+export const includedServiceEnum = pgEnum("included_service", ["maintenance", "tyres", "insurance", "vehicle_tax"]);
+
+// How a car is held. One per car; changing the kind replaces the details.
+export const contract = pgTable("contract", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  carId: uuid("car_id")
+    .notNull()
+    .unique()
+    .references(() => car.id, { onDelete: "cascade" }),
+  kind: contractKindEnum("kind").notNull(),
+  // Lessor, lender or rental provider.
+  counterparty: text("counterparty"),
+  contractNumber: text("contract_number"),
+  startOn: date("start_on"),
+  termMonths: integer("term_months"),
+  // Entered for rentals; derived from start and term for leasing and financing.
+  endOn: date("end_on"),
+  monthlyRateCents: integer("monthly_rate_cents"),
+  downPaymentCents: integer("down_payment_cents"),
+  balloonPaymentCents: integer("balloon_payment_cents"),
+  purchasedOn: date("purchased_on"),
+  purchasePriceCents: integer("purchase_price_cents"),
+  includedServices: includedServiceEnum("included_services").array().default([]).notNull(),
+  includedOther: text("included_other"),
+  // How many months before the end the contract shows as ending soon.
+  endAlertMonths: integer("end_alert_months").default(6).notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 export const completionResultEnum = pgEnum("completion_result", ["passed", "minor_defects", "major_defects"]);
 
 // The record of fulfilling an interval.
@@ -199,6 +229,7 @@ export const attachment = pgTable(
     carId: uuid("car_id").references(() => car.id, { onDelete: "cascade" }),
     userId: text("user_id").references(() => user.id, { onDelete: "cascade" }),
     completionId: uuid("completion_id").references(() => completion.id, { onDelete: "cascade" }),
+    contractId: uuid("contract_id").references(() => contract.id, { onDelete: "cascade" }),
     fileName: text("file_name").notNull(),
     contentType: text("content_type").notNull(),
     size: integer("size").notNull(),
@@ -208,6 +239,7 @@ export const attachment = pgTable(
   (table) => [
     index("attachment_completion_id_idx").on(table.completionId),
     index("attachment_car_id_idx").on(table.carId),
+    index("attachment_contract_id_idx").on(table.contractId),
   ],
 );
 
@@ -215,3 +247,9 @@ export type Completion = typeof completion.$inferSelect;
 export type CompletionResult = NonNullable<Completion["result"]>;
 export const COMPLETION_RESULTS = completionResultEnum.enumValues;
 export type Attachment = typeof attachment.$inferSelect;
+
+export type Contract = typeof contract.$inferSelect;
+export type ContractKind = Contract["kind"];
+export const CONTRACT_KINDS = contractKindEnum.enumValues;
+export type IncludedService = Contract["includedServices"][number];
+export const INCLUDED_SERVICES = includedServiceEnum.enumValues;

@@ -505,5 +505,59 @@
     "errorWindow": "Gib das Vorwarnfenster als ganze Zahl ein (höchstens 365 Tage).",
     "errorSubject": "Wähle Fahrzeuge oder Fahrer:innen.",
     "errorInUse": "Diese Fristart wird für ein Fahrzeug oder eine Person verfolgt und kann nicht gelöscht werden."
+  },
+  "Contracts": {
+    "title": "Vertrag",
+    "none": "Noch keine Vertragsdaten.",
+    "add": "Vertrag hinzufügen",
+    "edit": "Vertrag bearbeiten",
+    "dialogTitle": "Vertrag",
+    "dialogDescription": "Wie das Fahrzeug gehalten wird. Ein Wechsel der Art ersetzt die Angaben.",
+    "kind": "Art",
+    "kinds": {
+      "owned": "Eigentum",
+      "leased": "Leasing",
+      "financed": "Finanzierung",
+      "rented": "Miete"
+    },
+    "counterparty": {
+      "leased": "Leasinggeber",
+      "financed": "Kreditgeber",
+      "rented": "Vermieter"
+    },
+    "contractNumber": "Vertragsnummer",
+    "startOn": "Beginn",
+    "termMonths": "Laufzeit (Monate)",
+    "endOn": "Ende",
+    "months": "{count, plural, one {# Monat} other {# Monate}}",
+    "monthlyRate": "Monatsrate (EUR)",
+    "downPayment": "Sonderzahlung (EUR)",
+    "balloonPayment": "Schlussrate (EUR)",
+    "purchasedOn": "Gekauft am",
+    "purchasePrice": "Kaufpreis (EUR)",
+    "endAlertMonths": "Hinweis vor Vertragsende (Monate)",
+    "includedServices": "In der Rate enthalten",
+    "services": {
+      "maintenance": "Wartung und Verschleiß",
+      "tyres": "Reifen",
+      "insurance": "Versicherung",
+      "vehicle_tax": "Kfz-Steuer"
+    },
+    "includedOther": "Außerdem enthalten",
+    "documents": "Vertragsunterlagen (optional)",
+    "save": "Speichern",
+    "until": "bis {date}",
+    "ended": "Der Vertrag ist am {date} ausgelaufen.",
+    "endsIn": "Der Vertrag endet in {count, plural, one {# Tag} other {# Tagen}}, am {date}.",
+    "driverEnd": "Vertrag endet am {date}.",
+    "errorKind": "Wähle, wie das Fahrzeug gehalten wird.",
+    "errorDate": "Prüfe die Daten.",
+    "errorTerm": "Gib eine Laufzeit von 1 bis 120 Monaten ein.",
+    "errorMoney": "Gib Beträge in Euro ein, z. B. 349,00.",
+    "errorText": "Halte die Texte kürzer.",
+    "errorAlert": "Gib 0 bis 36 Monate ein.",
+    "errorFileTooLarge": "Jede Datei darf höchstens 15 MB groß sein.",
+    "errorFileType": "Nur PDFs und Fotos (JPEG, PNG, WebP, HEIC) können angehängt werden.",
+    "errorTooManyFiles": "Ein Vertrag kann höchstens 10 Dateien haben."
   }
 }

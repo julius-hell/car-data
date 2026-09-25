@@ -12,6 +12,8 @@ import { can, requirePermission } from "@/lib/actor";
 import { currentDriversByCar } from "@/lib/assignments";
 import { countRetired, fleetFilterOptions, listFleet } from "@/lib/cars";
 import { worstLevelByCar } from "@/lib/intervals";
+import { contractsByCar } from "@/lib/contracts";
+import { isoDateToDate } from "@/lib/dates";
 import { DueBadge } from "@/components/due-badge";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -34,9 +36,11 @@ export default async function CarsPage(props: PageProps<"/cars">) {
     getFormatter(),
   ]);
   const filtered = Boolean(filter.location || filter.costCenter);
-  const [drivers, levels] = await Promise.all([
+  const [drivers, levels, contracts, tContracts] = await Promise.all([
     currentDriversByCar(cars.map((c) => c.id)),
     worstLevelByCar(actor.organizationId, cars.map((c) => c.id)),
+    contractsByCar(cars.map((c) => c.id)),
+    getTranslations("Contracts"),
   ]);
 
   return (
@@ -113,6 +117,16 @@ export default async function CarsPage(props: PageProps<"/cars">) {
                     </span>
                     {levels.has(car.id) && <DueBadge level={levels.get(car.id)!} testId="car-level" />}
                   </span>
+                  {contracts.has(car.id) && (
+                    <span className="text-muted-foreground truncate text-xs" data-testid="car-contract">
+                      {tContracts(`kinds.${contracts.get(car.id)!.kind}`)}
+                      {contracts.get(car.id)!.kind !== "owned" && contracts.get(car.id)!.endOn
+                        ? ` · ${tContracts("until", {
+                            date: format.dateTime(isoDateToDate(contracts.get(car.id)!.endOn!), { dateStyle: "medium" }),
+                          })}`
+                        : ""}
+                    </span>
+                  )}
                   {(car.location || car.costCenter) && (
                     <span className="text-muted-foreground truncate text-xs" data-testid="car-org-details">
                       {[car.location, car.costCenter].filter(Boolean).join(" · ")}

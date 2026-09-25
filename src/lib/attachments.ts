@@ -27,6 +27,7 @@ export type AttachmentOwner = {
   carId?: string | null;
   userId?: string | null;
   completionId?: string;
+  contractId?: string;
 };
 
 export type AttachmentError = "errorFileTooLarge" | "errorFileType" | "errorTooManyFiles";
@@ -74,6 +75,7 @@ export async function storeUploads(
         carId: owner.carId ?? null,
         userId: owner.carId ? null : (owner.userId ?? null),
         completionId: owner.completionId,
+        contractId: owner.contractId,
         fileName: upload.name,
         contentType: upload.contentType,
         size: upload.bytes.length,
@@ -89,6 +91,15 @@ export async function storeUploads(
 export async function countCompletionAttachments(completionId: string) {
   const [row] = await db.select({ count: count() }).from(attachment).where(eq(attachment.completionId, completionId));
   return row?.count ?? 0;
+}
+
+export async function countContractAttachments(contractId: string) {
+  const [row] = await db.select({ count: count() }).from(attachment).where(eq(attachment.contractId, contractId));
+  return row?.count ?? 0;
+}
+
+export async function listContractAttachments(contractId: string) {
+  return db.query.attachment.findMany({ where: eq(attachment.contractId, contractId) });
 }
 
 export async function attachmentsByCompletion(completionIds: string[]) {
@@ -134,5 +145,7 @@ export async function findViewableAttachment(actor: Actor, attachmentId: string)
     const allowed = owner.subject === "car" ? can(actor, "viewFleet") : can(actor, "manageMembers");
     return allowed ? row : undefined;
   }
+  // Contracts are fleet records; drivers see only the end date, not the documents.
+  if (row.contractId) return can(actor, "viewFleet") ? row : undefined;
   return undefined;
 }

@@ -505,5 +505,59 @@
     "errorWindow": "Enter the due-soon window as a whole number (up to 365 days).",
     "errorSubject": "Choose cars or drivers.",
     "errorInUse": "This type is tracked for a car or driver and can't be deleted."
+  },
+  "Contracts": {
+    "title": "Contract",
+    "none": "No contract details yet.",
+    "add": "Add contract",
+    "edit": "Edit contract",
+    "dialogTitle": "Contract",
+    "dialogDescription": "How the car is held. Changing the kind replaces the details.",
+    "kind": "Held as",
+    "kinds": {
+      "owned": "Owned",
+      "leased": "Leased",
+      "financed": "Financed",
+      "rented": "Rented"
+    },
+    "counterparty": {
+      "leased": "Lessor",
+      "financed": "Lender",
+      "rented": "Provider"
+    },
+    "contractNumber": "Contract number",
+    "startOn": "Start",
+    "termMonths": "Term (months)",
+    "endOn": "End",
+    "months": "{count, plural, one {# month} other {# months}}",
+    "monthlyRate": "Monthly rate (EUR)",
+    "downPayment": "Down payment (EUR)",
+    "balloonPayment": "Balloon payment (EUR)",
+    "purchasedOn": "Purchased on",
+    "purchasePrice": "Purchase price (EUR)",
+    "endAlertMonths": "Alert before the end (months)",
+    "includedServices": "Included in the rate",
+    "services": {
+      "maintenance": "Maintenance and wear",
+      "tyres": "Tyres",
+      "insurance": "Insurance",
+      "vehicle_tax": "Vehicle tax"
+    },
+    "includedOther": "Also included",
+    "documents": "Contract documents (optional)",
+    "save": "Save",
+    "until": "until {date}",
+    "ended": "The contract ended on {date}.",
+    "endsIn": "The contract ends in {count, plural, one {# day} other {# days}}, on {date}.",
+    "driverEnd": "Contract ends {date}.",
+    "errorKind": "Choose how the car is held.",
+    "errorDate": "Check the dates.",
+    "errorTerm": "Enter a term of 1 to 120 months.",
+    "errorMoney": "Enter amounts in euros, e.g. 349.00.",
+    "errorText": "Keep the texts shorter.",
+    "errorAlert": "Enter 0 to 36 months.",
+    "errorFileTooLarge": "Each file must be 15 MB or smaller.",
+    "errorFileType": "Only PDFs and photos (JPEG, PNG, WebP, HEIC) can be attached.",
+    "errorTooManyFiles": "A contract can have at most 10 files."
   }
 }
