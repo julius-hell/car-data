@@ -1,1 +1,0 @@
-ALTER TABLE "car" DROP COLUMN "name";

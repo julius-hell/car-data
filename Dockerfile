@@ -33,6 +33,9 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/scripts ./scripts
+# The operator CLI emails its link when SMTP is set; nodemailer (no
+# dependencies of its own) is bundled into the app, so give the CLI a copy.
+COPY --from=deps --chown=nextjs:nodejs /app/node_modules/nodemailer ./scripts/node_modules/nodemailer
 USER nextjs
 EXPOSE 3000
 CMD ["node", "server.js"]

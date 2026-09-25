@@ -2,7 +2,13 @@
 
 Fleet management for businesses: inspection intervals (HU/AU, UVV, service), driver checks, contracts and mileage for every company car. Self-hosted with Docker Compose.
 
-The app is being rebuilt from a personal mileage tracker into a multi-tenant fleet manager; see the spec in issue #13.
+- **Organizations** — one deployment serves many businesses. A platform operator creates each organization and its first admin; every person belongs to exactly one organization.
+- **Roles** — admins manage everything; drivers see the cars assigned to them, log mileage and report damage; viewers see the fleet read-only.
+- **Intervals** — HU/AU (by month, like the sticker), UVV inspection, service (months or km, whichever first) and custom types per car; licence checks and UVV instructions per driver. Completions record result, cost and documents and move the next due date.
+- **Contracts** — owned, leased, financed or rented, with documents, an alert before the end, a mileage-allowance projection for leases and rentals, and the return.
+- **Staying on top** — a fleet dashboard, a weekly email digest for admins and a calendar feed for everyone.
+
+German and English; German is the default. Domain vocabulary is in `CONTEXT.md`, decisions in `docs/adr/`.
 
 ## Run it
 
